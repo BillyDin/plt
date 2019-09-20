@@ -312,7 +312,7 @@ void    createDirectories(const char* path) {
             createDirectories(tmp);
         }
         printf("Create '%s'\n",path);
-#ifdef __unix__
+#if defined(__unix__) || defined(__APPLE__)
         if (mkdir(path,ACCESSPERMS) != 0) {
             return;
         }

@@ -77,6 +77,11 @@ function(add_custom_test name)
   add_test(NAME ${target_name}
     COMMAND $<TARGET_FILE:${target_name}>
     )
+
+  # Add dependency to build test target before code coverage
+  if(BUILD_CODE_COVERAGE)
+    add_dependencies(code-coverage ${target_name})
+  endif()
 endfunction()
 
 add_subdirectory(shared)
