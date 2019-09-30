@@ -17,8 +17,7 @@ target_include_directories(${lib_client_target} INTERFACE
   ${SFML_INCLUDE_DIR}
   )
 target_link_libraries(${lib_client_target} PUBLIC
-  sfml-graphics
-  sfml-network
+  ${SFML_LIBRARIES}
   $<TARGET_NAME:shared_static>
   )
 
