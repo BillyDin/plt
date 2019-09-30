@@ -6,3 +6,4 @@ src/*/*.h
 src/*/*/*.h
 .idea
 .vs
+.vscode
