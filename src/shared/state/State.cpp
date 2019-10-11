@@ -4,7 +4,7 @@
 namespace state
 {
 
-State::State() : playerOneElements {1}, playerTwoElements {2} {
+State::State(){
     std::cout << "Creating an state object\n"; 
 }
 
