@@ -31,6 +31,7 @@ int MapCell::isOccupied(State& state){
         res = (position.equals(charactersList[i]->getPosition())) ? i : -1;
         if (res != -1) break;
     }
+    return res;
 }
 
 // Setters and Getters
