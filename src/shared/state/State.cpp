@@ -63,7 +63,28 @@ void State::initializeMapCell(){
         s s
         s o 
     */
+    vector<unique_ptr<MapCell>> line1;
 
+    SpaceMapCell smp1{SpaceMapCellID::SAND, 0, 0};
+    unique_ptr<SpaceMapCell> ptrSmp1(new SpaceMapCell(smp1));
+    line1.push_back(move(ptrSmp1));
+
+    SpaceMapCell smp2{SpaceMapCellID::CONCRETE, 1, 0};
+    unique_ptr<SpaceMapCell> ptrSmp2(new SpaceMapCell(smp2));
+    line1.push_back(move(ptrSmp2));
+
+    vector<unique_ptr<MapCell>> line2;
+
+    SpaceMapCell smp3{SpaceMapCellID::SAND, 0, 1};
+    unique_ptr<SpaceMapCell> ptrSmp3(new SpaceMapCell(smp3));
+    line1.push_back(move(ptrSmp3));
+
+    ObstacleMapCell omp1{ObstacleMapCellID::TREE, 1, 1};
+    unique_ptr<ObstacleMapCell> ptrOmp1(new ObstacleMapCell(omp1));
+    line1.push_back(move(ptrOmp1));
+
+    map.push_back(move(line1));
+    map.push_back(move(line2));
 }
 
 void State::setTurn(int newTurn){

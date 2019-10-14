@@ -10,10 +10,10 @@
 using namespace std;
 using namespace state;
 
-MapCell::MapCell(int newX, int newY){
-    this->position.setX(newX);
-    this->position.setY(newY);
-}
+// MapCell::MapCell(int newX, int newY){
+//     this->position.setX(newX);
+//     this->position.setY(newY);
+// }
 
 bool MapCell::isMapCell(){
     return true;
