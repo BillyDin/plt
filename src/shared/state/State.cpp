@@ -12,12 +12,12 @@ using namespace state;
 // Operations
 State::State()
 {
+
     std::cout << "Creating an state object\n";
 }
 
 State::~State(){
-	delete ptr_cursor;
-	ptr_cursor=nullptr;
+
 }
 
 std::vector<std::unique_ptr<Character>> & State::getCharacters(){
@@ -42,18 +42,17 @@ Cursor * State::getCursor(){
     return ptr_cursor;
 }
 
-void State::initializeCharacters(){
-    Character c1 (STRENGHT, true, "Shaker", 0, 0);
-    unique_ptr<Character> ptrC1(new Character(c1));
+int State::initializeCharacters(){
+    std::unique_ptr<Character> ptrC1(new Character(STRENGHT, true, "Shaker", 0, 0));
     characters.push_back(move(ptrC1));
 
-    Character c2 (DISTANCE, true, "Miss Ranger", 1, 0);
-    unique_ptr<Character> ptrC2(new Character(c2));
+    std::unique_ptr<Character> ptrC2(new Character(DISTANCE, true, "Miss Ranger", 1, 0));
     characters.push_back(move(ptrC2));
 
-    Character c3 (MAGICIAN, true, "Witch Doctor", 0, 1);
-    unique_ptr<Character> ptrC3(new Character(c3));
+    std::unique_ptr<Character> ptrC3(new Character(MAGICIAN, true, "Witch Doctor", 0, 1));
     characters.push_back(move(ptrC3));
+    cout << "finished\n";
+    return 1;
 }
 
 void State::initializeMapCell(){
@@ -65,22 +64,18 @@ void State::initializeMapCell(){
     */
     vector<unique_ptr<MapCell>> line1;
 
-    SpaceMapCell smp1{SpaceMapCellID::SAND, 0, 0};
-    unique_ptr<SpaceMapCell> ptrSmp1(new SpaceMapCell(smp1));
+    unique_ptr<MapCell> ptrSmp1(new SpaceMapCell(SpaceMapCellID::SAND, 0, 0));
     line1.push_back(move(ptrSmp1));
 
-    SpaceMapCell smp2{SpaceMapCellID::CONCRETE, 1, 0};
-    unique_ptr<SpaceMapCell> ptrSmp2(new SpaceMapCell(smp2));
+    unique_ptr<MapCell> ptrSmp2(new SpaceMapCell(SpaceMapCellID::CONCRETE, 1, 0));
     line1.push_back(move(ptrSmp2));
 
     vector<unique_ptr<MapCell>> line2;
 
-    SpaceMapCell smp3{SpaceMapCellID::SAND, 0, 1};
-    unique_ptr<SpaceMapCell> ptrSmp3(new SpaceMapCell(smp3));
+    unique_ptr<MapCell> ptrSmp3(new SpaceMapCell(SpaceMapCellID::SAND, 0, 1));
     line1.push_back(move(ptrSmp3));
 
-    ObstacleMapCell omp1{ObstacleMapCellID::TREE, 1, 1};
-    unique_ptr<ObstacleMapCell> ptrOmp1(new ObstacleMapCell(omp1));
+    unique_ptr<MapCell> ptrOmp1(new ObstacleMapCell(ObstacleMapCellID::TREE, 1, 1));
     line1.push_back(move(ptrOmp1));
 
     map.push_back(move(line1));

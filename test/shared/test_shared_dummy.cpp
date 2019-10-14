@@ -29,9 +29,9 @@ BOOST_AUTO_TEST_CASE(TestCharacter)
 
   // State
   {
-    
     State s;
-    
+    s.initializeCharacters();
+    s.initializeMapCell();
     BOOST_CHECK_LE(1, 32); // Less than equal
     BOOST_CHECK_GT(22, 11); // Greater than equl
   }
