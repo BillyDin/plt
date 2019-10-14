@@ -4,7 +4,8 @@
 #include <sstream>
 #include <memory>
 #include <vector>
-
+#include "SpaceMapCell.h"
+#include "ObstacleMapCell.h"
 using namespace std;
 using namespace state;
 
@@ -43,20 +44,26 @@ Cursor * State::getCursor(){
 
 void State::initializeCharacters(){
     Character c1 (STRENGHT, true, "Shaker", 0, 0);
-    std::unique_ptr<Character> ptrC1(new Character(c1));
-    characters.push_back(ptrC1);
+    unique_ptr<Character> ptrC1(new Character(c1));
+    characters.push_back(move(ptrC1));
 
-    Character c2 (DISTANCE, true, "Miss Ranger", 1, 1);
-    std::unique_ptr<Character> ptrC2(new Character(c2));
-    characters.push_back(ptrC2);
+    Character c2 (DISTANCE, true, "Miss Ranger", 1, 0);
+    unique_ptr<Character> ptrC2(new Character(c2));
+    characters.push_back(move(ptrC2));
 
-    Character c3 (MAGICIAN, true, "Witch Doctor", 2, 2);
-    std::unique_ptr<Character> ptrC3(new Character(c3));
-    characters.push_back(ptrC3);
+    Character c3 (MAGICIAN, true, "Witch Doctor", 0, 1);
+    unique_ptr<Character> ptrC3(new Character(c3));
+    characters.push_back(move(ptrC3));
 }
 
 void State::initializeMapCell(){
-    
+    // for tests purposes
+    // a 2 lines map. s => space; o => obstacle
+    /* 
+        s s
+        s o 
+    */
+
 }
 
 void State::setTurn(int newTurn){
