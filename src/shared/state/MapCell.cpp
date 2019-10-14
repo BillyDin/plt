@@ -1,5 +1,5 @@
-#include "Character.h"
 #include "MapCell.h"
+#include "Character.h"
 #include "State.h"
 #include <fstream>
 #include <iostream>

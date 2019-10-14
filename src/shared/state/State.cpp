@@ -14,6 +14,11 @@ State::State()
     std::cout << "Creating an state object\n";
 }
 
+State::~State(){
+	delete ptr_cursor;
+	ptr_cursor=nullptr;
+}
+
 std::vector<std::unique_ptr<Character>> & State::getCharacters(){
     vector<unique_ptr<Character>> & refCharacters = characters;
 	return refCharacters;
@@ -34,6 +39,24 @@ bool State::getEnd(){
 
 Cursor * State::getCursor(){
     return ptr_cursor;
+}
+
+void State::initializeCharacters(){
+    Character c1 (STRENGHT, true, "Shaker", 0, 0);
+    std::unique_ptr<Character> ptrC1(new Character(c1));
+    characters.push_back(ptrC1);
+
+    Character c2 (DISTANCE, true, "Miss Ranger", 1, 1);
+    std::unique_ptr<Character> ptrC2(new Character(c2));
+    characters.push_back(ptrC2);
+
+    Character c3 (MAGICIAN, true, "Witch Doctor", 2, 2);
+    std::unique_ptr<Character> ptrC3(new Character(c3));
+    characters.push_back(ptrC3);
+}
+
+void State::initializeMapCell(){
+    
 }
 
 void State::setTurn(int newTurn){

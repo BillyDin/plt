@@ -15,6 +15,9 @@ Element::Element()
     position.setY(0);
 }
 
+Element::~Element(){
+}
+
 std::string Element::getName()
 {
     return name;
@@ -24,6 +27,10 @@ Position &Element::getPosition()
 {
     Position &refPosition = position;
     return refPosition;
+}
+
+bool Element::equals(Element& other){
+	return (this->name == other.getName() && this->position.equals(other.getPosition()));
 }
 
 // int Element::getTileCode()

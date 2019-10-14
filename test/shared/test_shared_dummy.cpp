@@ -1,7 +1,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "../../src/shared/state/State.h"
+#include "../../src/shared/state.h"
 
 using namespace ::state;
 
@@ -10,11 +10,30 @@ BOOST_AUTO_TEST_CASE(TestStaticAssert)
   BOOST_CHECK(1);
 }
 
-BOOST_AUTO_TEST_CASE(TestExemple)
+BOOST_AUTO_TEST_CASE(TestCharacter)
 {
   {
-    BOOST_CHECK_EQUAL(0, 0);
-    BOOST_CHECK_EQUAL(21, 21);
+    // Character
+    Character c {STRENGHT, true, "Testy", 0, 0};
+    BOOST_CHECK_EQUAL(c.getPosition().getY(), 0);
+    BOOST_CHECK_EQUAL(c.getPosition().getX(), 0);
+    BOOST_CHECK_EQUAL(c.getType(), STRENGHT);
+    BOOST_CHECK_EQUAL(c.getName(), "Testy");
+    BOOST_CHECK_EQUAL(c.isMapCell(), false);
+    
+    Position p {10,10};
+    c.setPosition(p);
+    BOOST_CHECK_EQUAL(c.getPosition().equals(p), true);
+
+  }
+
+  // State
+  {
+    
+    State s;
+    
+    BOOST_CHECK_LE(1, 32); // Less than equal
+    BOOST_CHECK_GT(22, 11); // Greater than equl
   }
 
   {
