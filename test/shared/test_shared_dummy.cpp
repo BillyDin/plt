@@ -24,7 +24,14 @@ BOOST_AUTO_TEST_CASE(TestCharacter)
     Position p {10,10};
     c.setPosition(p);
     BOOST_CHECK_EQUAL(c.getPosition().equals(p), true);
+    c.setTypeID(MAGICIAN);
+    BOOST_CHECK_EQUAL(c.getType(), MAGICIAN);
 
+    Position p2{-12,-32};
+    BOOST_CHECK_GT(p.distance(p2), 0); // distance returns a positive int.
+
+    Character c2 {DISTANCE, true, "Shaker", 10, 10};
+    BOOST_CHECK_EQUAL(c.getPosition().equals(c2.getPosition()), true);
   }
 
   // State
@@ -32,8 +39,22 @@ BOOST_AUTO_TEST_CASE(TestCharacter)
     State s;
     s.initializeCharacters();
     s.initializeMapCell();
-    BOOST_CHECK_LE(1, 32); // Less than equal
-    BOOST_CHECK_GT(22, 11); // Greater than equl
+    s.setEnd(false);
+    BOOST_CHECK_EQUAL(s.getEnd(), false);
+
+    BOOST_CHECK_GT(s.getMap().size(), 0); // Greater than equl
+    BOOST_CHECK_GT(s.getCharacters().size(), 0); // Greater than equl
+
+    StateEvent se {ALLCHANGED};
+    se.setStateEventID(CHARACTERCHANGED);
+    BOOST_CHECK_NE(se.stateEventID, ALLCHANGED);
+
+    Stats stats;
+    stats.setAttack(10);
+    stats.setDefense(10);
+    stats.setHealth(10);
+    stats.setMana(100);
+    BOOST_CHECK_EQUAL((stats.getAttack() == 10 && stats.getDefense() == 10), (stats.getHealth() < stats.getMana()));
   }
 
   {

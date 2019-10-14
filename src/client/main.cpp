@@ -16,9 +16,10 @@ using namespace state;
 
 int main(int argc,char* argv[])
 {
-    State stateExample;
 
-    cout << "Bonjour " << argv[1] << endl;
+    if(argv[1] != NULL)
+        cout << "Bonjour " << (argv[1]) << endl;
+    else cout << "Bonjour " << endl;
 
     return 0;
 }
