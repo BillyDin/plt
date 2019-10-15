@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		BOOST_CHECK_GT(c.getCharacterAttack(), 0);
 		c.setCharacterMove(10);
 		c.getStats();
-		
+
 		BOOST_CHECK_EQUAL(c.getIsInBase(), true);
 
 		Position p{10, 10};
@@ -47,13 +47,12 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		Character c1{STRENGHT, true, "Testy", 0, 0};
 		Character c1identical{STRENGHT, true, "Testy", 0, 0};
 		BOOST_CHECK_EQUAL(c1.equals(c1identical), true);
-
 	}
 
 	// Cursor
 	{
-		Position nextPos{0,0};
-		Cursor c {1,1};
+		Position nextPos{0, 0};
+		Cursor c{1, 1};
 		BOOST_CHECK_EQUAL(c.isMapCell(), false);
 		c.move(nextPos);
 		BOOST_CHECK_EQUAL(c.getPosition().equals(nextPos), true);
@@ -69,12 +68,13 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		// because there are 4 map cells and only 3 characters.
 		// To the future, we know that always must be a free cell in the game to have sense.
 		bool mapCellFree = false;
-		
+
 		for (auto &row : s.getMap())
 		{
 			for (auto &cell : row)
 			{
-				if((mapCellFree = cell.get()->isOccupied(s))) break;
+				if ((mapCellFree = cell.get()->isOccupied(s)))
+					break;
 			}
 		}
 
@@ -97,6 +97,29 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		BOOST_CHECK_NE(se.stateEventID, ALLCHANGED);
 	}
 
+	// Observable
+	{
+		class DummyObserver : IObserver
+		{
+		private:
+			bool notified = false;
+		public:
+			void stateChanged(const StateEvent &e, State &s)
+			{
+				notified = true;
+			}
+			bool getNotified(){ return notified; }
+		};
+
+		DummyObserver * dummyObs = new DummyObserver();
+		BOOST_CHECK_EQUAL(dummyObs->getNotified(), false);
+		State s;
+		StateEvent se{StateEventID::ALLCHANGED};
+		s.registerObserver((IObserver *)dummyObs);
+		s.notifyObservers(se, s);
+		BOOST_CHECK_EQUAL(dummyObs->getNotified(), true);
+	}
+
 	// Stats
 	{
 		Stats stats;
@@ -111,7 +134,7 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 	{
 		int x = 1, y = 2;
 		SpaceMapCell smp{SpaceMapCellID::CONCRETE, x, y};
-		
+
 		BOOST_CHECK_EQUAL(smp.getSpaceMapCellID(), SpaceMapCellID::CONCRETE);
 		smp.setIsBoost(true);
 		BOOST_CHECK_EQUAL(smp.getIsBoost(), true);
