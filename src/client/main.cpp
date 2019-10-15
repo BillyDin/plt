@@ -6,7 +6,6 @@
 void testSFML() {
     sf::Texture texture;
 }
-
 // Fin test SFML
 
 #include <state.h>
@@ -16,10 +15,6 @@ using namespace state;
 
 int main(int argc,char* argv[])
 {
-
-    if(argv[1] != NULL)
-        cout << "Bonjour " << (argv[1]) << endl;
-    else cout << "Bonjour " << endl;
-
+    cout << "Bonjour " << ((argv[1]) ? argv[1] : "Monsieur/Madame ") << endl;
     return 0;
 }

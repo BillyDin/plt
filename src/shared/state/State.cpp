@@ -12,7 +12,8 @@ using namespace state;
 // Operations
 State::State()
 {
-
+    Cursor c {0,0};
+    this->cursor = c;
     std::cout << "Creating an state object\n";
 }
 
@@ -38,8 +39,9 @@ bool State::getEnd(){
     return end;
 }
 
-Cursor * State::getCursor(){
-    return ptr_cursor;
+Cursor & State::getCursor(){
+    Cursor & refCursor = cursor;
+    return refCursor;
 }
 
 void State::initializeCharacters(){
@@ -58,8 +60,11 @@ void State::initializeMapCell(){
     // for tests purposes
     // a 2 lines map. s => space; o => obstacle
     /* 
-        s s
-        s o 
+            0   1
+        0  spa spa
+        1  spa obs 
+        
+        (1, 1) is an obstacle and is not occuped.
     */
     vector<unique_ptr<MapCell>> line1;
 

@@ -22,7 +22,13 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		BOOST_CHECK_EQUAL(c.isMapCell(), false);
 		c.setBoosted(2);
 		BOOST_CHECK_GT(c.getBoosted(), 0);
-
+		c.setStatus(CharacterStatusID::SELECTED);
+		BOOST_CHECK_NE(c.getStatus(), CharacterStatusID::AVAILABLE);
+		BOOST_CHECK_GT(c.getCharacterMove(), 0);
+		BOOST_CHECK_GT(c.getCharacterAttack(), 0);
+		c.setCharacterMove(10);
+		c.getStats();
+		
 		BOOST_CHECK_EQUAL(c.getIsInBase(), true);
 
 		Position p{10, 10};
@@ -36,6 +42,21 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 
 		Character c2{DISTANCE, true, "Shaker", 10, 10};
 		BOOST_CHECK_EQUAL(c.getPosition().equals(c2.getPosition()), true);
+
+		// inherited equal method from Element
+		Character c1{STRENGHT, true, "Testy", 0, 0};
+		Character c1identical{STRENGHT, true, "Testy", 0, 0};
+		BOOST_CHECK_EQUAL(c1.equals(c1identical), true);
+
+	}
+
+	// Cursor
+	{
+		Position nextPos{0,0};
+		Cursor c {1,1};
+		BOOST_CHECK_EQUAL(c.isMapCell(), false);
+		c.move(nextPos);
+		BOOST_CHECK_EQUAL(c.getPosition().equals(nextPos), true);
 	}
 
 	// State
@@ -43,9 +64,12 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		State s;
 		s.initializeCharacters();
 		s.initializeMapCell();
+
 		// Looking the map and character distribution, it must be one cell free.
 		// because there are 4 map cells and only 3 characters.
+		// To the future, we know that always must be a free cell in the game to have sense.
 		bool mapCellFree = false;
+		
 		for (auto &row : s.getMap())
 		{
 			for (auto &cell : row)
@@ -53,6 +77,7 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 				if((mapCellFree = cell.get()->isOccupied(s))) break;
 			}
 		}
+
 		BOOST_CHECK_EQUAL(mapCellFree, true);
 		s.setEnd(false);
 		BOOST_CHECK_EQUAL(s.getEnd(), false);
@@ -60,10 +85,20 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		BOOST_CHECK_GT(s.getMap().size(), 0);		 // Greater than equl
 		BOOST_CHECK_GT(s.getCharacters().size(), 0); // Greater than equl
 
+		s.setTurn(2);
+		BOOST_CHECK_EQUAL(s.getTurn(), 2);
+		BOOST_CHECK_EQUAL(s.getCursor().isMapCell(), false);
+	}
+
+	// StateEvent
+	{
 		StateEvent se{ALLCHANGED};
 		se.setStateEventID(CHARACTERCHANGED);
 		BOOST_CHECK_NE(se.stateEventID, ALLCHANGED);
+	}
 
+	// Stats
+	{
 		Stats stats;
 		stats.setAttack(10);
 		stats.setDefense(10);
@@ -72,9 +107,18 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		BOOST_CHECK_EQUAL((stats.getAttack() == 10 && stats.getDefense() == 10), (stats.getHealth() < stats.getMana()));
 	}
 
+	// MapCells
 	{
-		BOOST_CHECK_LE(1, 32);  // Less than equal
-		BOOST_CHECK_GT(22, 11); // Greater than equl
+		int x = 1, y = 2;
+		SpaceMapCell smp{SpaceMapCellID::CONCRETE, x, y};
+		
+		BOOST_CHECK_EQUAL(smp.getSpaceMapCellID(), SpaceMapCellID::CONCRETE);
+		smp.setIsBoost(true);
+		BOOST_CHECK_EQUAL(smp.getIsBoost(), true);
+		BOOST_CHECK_EQUAL(smp.isMapCell(), true);
+
+		ObstacleMapCell omp{ObstacleMapCellID::FIRE, x, y};
+		BOOST_CHECK_EQUAL(omp.getObstacleMapCellID(), ObstacleMapCellID::FIRE);
 	}
 }
 
