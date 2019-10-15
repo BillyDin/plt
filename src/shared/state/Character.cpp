@@ -89,20 +89,6 @@ Stats &Character::getStats(){
     return refStats;
 }
 // Setters and Getters
-void Character::setIsInBase(bool isInBase){
-    this->isInBase = isInBase;
-}
-
-void Character::setCharacterAttack(int characterAttack){
-    this->characterAttack = characterAttack;
-}
-
-CharacterTypeID Character::getTypeID() const{
-    return typeID;
-}
 void Character::setTypeID(CharacterTypeID typeID){
     this->typeID = typeID;
-}
-void Character::setStats(const Stats &stats){
-    this->stats = stats;
 }

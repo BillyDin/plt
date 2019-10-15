@@ -42,7 +42,3 @@ int Position::distance(Position& other){
     // |x - otherX| + |y - otherY|
 	return abs(x - other.getX()) + abs(y - other.getY());
 }
-
-// std::vector<Position> getNearPositions(State &state){
-//     // TODO
-// }

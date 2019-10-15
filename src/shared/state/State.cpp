@@ -42,7 +42,7 @@ Cursor * State::getCursor(){
     return ptr_cursor;
 }
 
-int State::initializeCharacters(){
+void State::initializeCharacters(){
     std::unique_ptr<Character> ptrC1(new Character(STRENGHT, true, "Shaker", 0, 0));
     characters.push_back(move(ptrC1));
 
@@ -52,7 +52,6 @@ int State::initializeCharacters(){
     std::unique_ptr<Character> ptrC3(new Character(MAGICIAN, true, "Witch Doctor", 0, 1));
     characters.push_back(move(ptrC3));
     cout << "finished\n";
-    return 1;
 }
 
 void State::initializeMapCell(){

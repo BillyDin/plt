@@ -33,21 +33,7 @@ bool Element::equals(Element& other){
 	return (this->name == other.getName() && this->position.equals(other.getPosition()));
 }
 
-// int Element::getTileCode()
-// {
-//     return tileCode;
-// }
-
-// void Element::setTileCode(int newTileCode)
-// {
-//     this->tileCode = newTileCode;
-// }
-
 // Setters and Getters
-void Element::setName(const std::string &name)
-{
-    this->name = name;
-}
 
 void Element::setPosition(const Position &position)
 {

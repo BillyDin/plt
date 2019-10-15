@@ -10,11 +10,6 @@
 using namespace std;
 using namespace state;
 
-// MapCell::MapCell(int newX, int newY){
-//     this->position.setX(newX);
-//     this->position.setY(newY);
-// }
-
 bool MapCell::isMapCell(){
     return true;
 }
@@ -28,7 +23,9 @@ int MapCell::isOccupied(State& state){
 	vector<std::unique_ptr<Character>> & charactersList = state.getCharacters();
     for (size_t i = 0; i < charactersList.size(); i++)
     {
+
         res = (position.equals(charactersList[i]->getPosition())) ? i : -1;
+
         if (res != -1) break;
     }
     return res;
