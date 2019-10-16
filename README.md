@@ -1,7 +1,8 @@
 # Projet Logiciel Transversal
 
-> This project is to make a video game in C++ for our final year in ENSEA IS specialization
-> Livraison 1.final
+> This project is to make a video game in C++ for our final year in ENSEA "Informatique et système" specialization
+
+## Livraison 1.final :white_check_mark:
 
 ## Get Started
 
