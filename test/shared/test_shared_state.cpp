@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 
 		// Looking the map and character distribution, it must be one cell free.
 		// because there are 4 map cells and only 3 characters.
-		// To the future, we know that always must be a free cell in the game to have sense.
+		// To the future, we know that always must be at least a free cell in the game to have sense.
 		bool mapCellFree = false;
 
 		for (auto &row : s.getMap())
