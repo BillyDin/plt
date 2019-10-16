@@ -81,6 +81,7 @@ function(add_custom_test name)
   # Add dependency to build test target before code coverage
   if(BUILD_CODE_COVERAGE)
     add_dependencies(code-coverage ${target_name})
+    add_dependencies(code-coverage-gcov ${target_name})
   endif()
 endfunction()
 
