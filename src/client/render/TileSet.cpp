@@ -12,35 +12,21 @@ TileSet::TileSet(TileSetID newID)
 	{
 		cellWidth = 32;
 		cellHeight = 32;
-		resourceFile = "res/32x32map.png";
+		resourceFile = "../res/32x32map.png";
 	}
 
-	else if (id == TileSetID::CHARACTER_MAGE)
+	else if (id == TileSetID::CHARACTER)
 	{
 		cellWidth = 32;
 		cellHeight = 32;
-		resourceFile = "res/mage.png";
-	}
-
-	else if (id == TileSetID::CHARACTER_SOLDIER)
-	{
-		cellWidth = 32;
-		cellHeight = 32;
-		resourceFile = "res/soldier.png";
-	}
-
-	else if (id == TileSetID::CHARACTER_DISTANCE)
-	{
-		cellWidth = 32;
-		cellHeight = 32;
-		resourceFile = "res/distance.png";
+		resourceFile = "../res/characters.png";
 	}
 
 	else if (id == TileSetID::MAPCELL)
 	{
 		cellWidth = 32;
 		cellHeight = 32;
-		resourceFile = "res/32x32map.png";
+		resourceFile = "../res/32x32map.png";
 	}
 
 	// else if (id == TileSetID::CURSOR)
