@@ -53,13 +53,15 @@ Cursor &State::getCursor()
 
 void State::initializeCharacters()
 {
-    std::unique_ptr<Character> ptrC1(new Character(STRENGHT, true, "Soldier", 0, 0, 24));
+    /* initialize random seed: */
+    srand (time(NULL));
+    std::unique_ptr<Character> ptrC1(new Character(STRENGHT, true, "Soldier", (rand() % 23 + 1), (rand() % 18 + 1), 24));
     characters.push_back(move(ptrC1));
 
-    std::unique_ptr<Character> ptrC2(new Character(DISTANCE, true, "Miss Ranger", 10, 10, 12));
+    std::unique_ptr<Character> ptrC2(new Character(DISTANCE, true, "Miss Ranger", (rand() % 23 + 1), (rand() % 18 + 1), 12));
     characters.push_back(move(ptrC2));
 
-    std::unique_ptr<Character> ptrC3(new Character(MAGICIAN, true, "Witch Doctor", 0, 1, 0));
+    std::unique_ptr<Character> ptrC3(new Character(MAGICIAN, true, "Witch Doctor", (rand() % 23 + 1), (rand() % 18 + 1), 0));
     characters.push_back(move(ptrC3));
     cout << "finished\n";
 }
@@ -93,7 +95,7 @@ void State::initializeMapCell()
 
     mapp_obstacles[496] = WATER;
     mapp_obstacles[497] = WATER;
-
+    // TODO -> READ FROM TEXTFILE OR JSON
     int map_tile[] = {
 118,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	120,
 141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
