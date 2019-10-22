@@ -8,8 +8,9 @@
 using namespace std;
 using namespace state;
 
-Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, int newY, int newX)
+Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, int newY, int newX, int p_tileCode)
 {
+    tileCode = p_tileCode;
     typeID = id;
     isInBase = newIsInBase;
     status = AVAILABLE;
