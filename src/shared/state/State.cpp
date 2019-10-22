@@ -55,13 +55,13 @@ void State::initializeCharacters()
 {
     /* initialize random seed: */
     srand (time(NULL));
-    std::unique_ptr<Character> ptrC1(new Character(STRENGHT, true, "Soldier", (rand() % 23 + 1), (rand() % 18 + 1), 24));
+    std::unique_ptr<Character> ptrC1(new Character(STRENGHT, true, "Soldier", (rand() % 18 + 1), (rand() % 23 + 1), 24));
     characters.push_back(move(ptrC1));
 
-    std::unique_ptr<Character> ptrC2(new Character(DISTANCE, true, "Miss Ranger", (rand() % 23 + 1), (rand() % 18 + 1), 12));
+    std::unique_ptr<Character> ptrC2(new Character(DISTANCE, true, "Miss Ranger", (rand() % 18 + 1), (rand() % 23 + 1), 12));
     characters.push_back(move(ptrC2));
 
-    std::unique_ptr<Character> ptrC3(new Character(MAGICIAN, true, "Witch Doctor", (rand() % 23 + 1), (rand() % 18 + 1), 0));
+    std::unique_ptr<Character> ptrC3(new Character(MAGICIAN, true, "Witch Doctor", (rand() % 18 + 1), (rand() % 23 + 1), 0));
     characters.push_back(move(ptrC3));
     cout << "finished\n";
 }
