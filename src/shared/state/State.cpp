@@ -98,7 +98,7 @@ void State::initializeMapCell()
     mapp_obstacles[497] = WATER;
 
     // be careful with this path ... TODO => FIND A PORTABLE SOLUTION
-    std::ifstream file("../res/map_v0.txt", ios::in);
+    std::ifstream file("res/map_v0.txt", ios::in);
     int map_tile[25 * 20];
 
     //this way we read the txt file.

@@ -14,7 +14,7 @@ using namespace state;
 
 StateLayer::StateLayer(state::State &state, sf::RenderWindow &window) : window(window)
 {
-    font.loadFromFile("../plt/res/typographie.ttf");
+    font.loadFromFile("res/typographie.ttf");
 
     std::unique_ptr<TileSet> tilesetMapCell(new TileSet(TileSetID::MAPCELL));
     tilesets.push_back(move(tilesetMapCell));

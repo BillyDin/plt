@@ -12,21 +12,21 @@ TileSet::TileSet(TileSetID newID)
 	{
 		cellWidth = 32;
 		cellHeight = 32;
-		resourceFile = "../plt/res/32x32map.png";
+		resourceFile = "res/32x32map.png";
 	}
 
 	else if (id == TileSetID::CHARACTER)
 	{
 		cellWidth = 32;
 		cellHeight = 32;
-		resourceFile = "../plt/res/characters.png";
+		resourceFile = "res/characters.png";
 	}
 
 	else if (id == TileSetID::MAPCELL)
 	{
 		cellWidth = 32;
 		cellHeight = 32;
-		resourceFile = "../plt/res/32x32map.png";
+		resourceFile = "res/32x32map.png";
 	}
 
 	// else if (id == TileSetID::CURSOR)
