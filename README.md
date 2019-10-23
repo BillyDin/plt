@@ -1,6 +1,6 @@
 # Projet Logiciel Transversal
 
-> This project is to make a video game in C++ for our final year in ENSEA "Informatique et système" specialization
+> This project is to make a video game in C++ for our final year in ENSEA "Informatique et systèmes" specialization
 
 ## Livraison 2.1
 
@@ -8,7 +8,7 @@
 
 Clone the repository
 ```sh 
-$ git clone <projectUrl>
+$ git clone https://github.com/BillyDin/plt.git
 ```
 
 ## Build
