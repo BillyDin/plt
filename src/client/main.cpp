@@ -39,17 +39,10 @@ int main(int argc, char *argv[])
                 while (window.pollEvent(event))
                 {
                     if (event.type == sf::Event::Closed)
-                    {
                         window.close();
-                    }
                 }
-                window.clear();
-                // show 3 layers ? i think is SHOW 3 SURFACES (living on a layer)
-                window.draw(*layer.getSurfaces()[0]); // map
-                window.draw(*layer.getSurfaces()[1]); // chars
-                // window.draw(*layer.getSurfaces()[2]); // texts / info
-                layer.showText();
-                window.display();
+                // render
+                layer.draw(window);
             }
         }
     }

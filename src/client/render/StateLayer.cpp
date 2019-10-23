@@ -98,11 +98,14 @@ void StateLayer::stateChanged(const state::StateEvent &e, state::State &state)
 void StateLayer::draw(sf::RenderWindow &window)
 {
     window.clear();
+    // draw mapcells
+    window.draw(*surface[0]);	
 
-    // simple rectangle
-	sf::RectangleShape rectangle(sf::Vector2f(100.f, 50.f));
-	rectangle.setPosition(50.f, 50.f);
-    rectangle.setFillColor(sf::Color(100,100,100));
+    // draw characters		
+	window.draw(*surface[1]);
+
+    // draw text
+    showText();
     
 	window.display();
 }
