@@ -54,7 +54,7 @@ Cursor &State::getCursor()
 void State::initializeCharacters()
 {
     /* initialize random seed: */
-    srand (time(NULL));
+    srand(time(NULL));
     std::unique_ptr<Character> ptrC1(new Character(STRENGHT, true, "Soldier", (rand() % 18 + 1), (rand() % 23 + 1), 24));
     characters.push_back(move(ptrC1));
 
@@ -68,11 +68,12 @@ void State::initializeCharacters()
 
 void State::initializeMapCell()
 {
-    int i, j, k = 0;
     // mapping (this will be dependent on the choosed resource)
+    // dictionary to signalize the type of each tileset by his id
+    // (tile id defined by the position of the tile in de resource, we dont define it)
     std::map<int, SpaceMapCellID> mapp_spaces;
     std::map<int, ObstacleMapCellID> mapp_obstacles;
-    
+
     mapp_spaces[118] = SAND;
     mapp_spaces[119] = SAND;
     mapp_spaces[120] = SAND;
@@ -87,7 +88,7 @@ void State::initializeMapCell()
     mapp_spaces[39] = CONCRETE;
     mapp_spaces[40] = CONCRETE;
     mapp_spaces[43] = CONCRETE;
-    mapp_spaces[44] = CONCRETE; // red
+    mapp_spaces[44] = CONCRETE;
     mapp_spaces[31] = CONCRETE; // actually is wood
     mapp_spaces[54] = CONCRETE; // actually is wood
     mapp_spaces[55] = CONCRETE; // actually is wood
@@ -95,53 +96,63 @@ void State::initializeMapCell()
 
     mapp_obstacles[496] = WATER;
     mapp_obstacles[497] = WATER;
-    // TODO -> READ FROM TEXTFILE OR JSON
-    int map_tile[] = {
-118,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	119,	120,
-141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
-141,	142,	142,	142,	39,	    142,	142,	142,	142,	142,	142,	142,	39,	    142,	142,	142,	142,	142,	142,	142,	39,	    142,	142,	142,	143,
-141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
-141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
-141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
-141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
-141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
-141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
-520,	31,     31,	    520,	520,	520,	520,	520,	520,	520,	54,	    54,	    31,	    31,	    31,	    520,	520,	520,	520,	520,	520,	520,	31,	    31,	    520,
-496,	54,     54,	    496,	496,	496,	496,	496,	496,	496,	54,	    54,	    54,	    54,	    54,	    496,	496,	496,	496,	496,	496,	496,	54,	    54,	    496,
-566,	77,     77,	    566,	566,	566,	566,	566,	566,	566,	54,	    54,	    77,	    77,	    77,	    566,	566,	566,	566,	566,	566,	566,	77,	    77,	    566,
-141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
-141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
-141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
-141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
-141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
-141,	142,	142,	142,	43,	    142,	142,	142,	142,	142,	142,	142,	43,	    142,	142,	142,	142,	142,	142,	142,	43,	    142,	142,	142,	143,
-141,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	142,	143,
-164,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	165,	166
-    };
+
+    // be careful with this path ... TODO => FIND A PORTABLE SOLUTION
+    std::ifstream file("../res/map_v0.txt", ios::in);
+    int map_tile[25 * 20];
+
+    //this way we read the txt file.
+    std::string content, line, tilecode;
+    if (file)
+    {
+        while (getline(file, line))
+        {
+            line = line + ",";
+            content = content + line;
+        }
+        file.close();
+    }
+    else
+        return;
+
+    // Conversion des codes des tuiles en int
+    std::stringstream contentStream(content);
+    unsigned int i = 0, j = 0, k = 0;
+
+    while (std::getline(contentStream, tilecode, ','))
+    {
+        map_tile[i] = std::stoi(tilecode);
+        i++;
+    }
+
     for (i = 0; i < 20; i++)
     {
-        std::vector<std::unique_ptr<MapCell>> newLigne;
+        std::vector<std::unique_ptr<MapCell>> newline;
         for (j = 0; j < 25; j++)
         {
+            cout << map_tile[k] << ",";
             if (map_tile[k] >= 0 && map_tile[k])
             {
                 if (mapp_spaces.find(map_tile[k]) != mapp_spaces.end())
                 {
                     std::unique_ptr<SpaceMapCell> spc(new SpaceMapCell(mapp_spaces[map_tile[k]], i, j, map_tile[k]));
-                    newLigne.push_back(move(spc));
+                    newline.push_back(move(spc));
                 }
                 else if (mapp_obstacles.find(map_tile[k]) != mapp_obstacles.end())
                 {
                     std::unique_ptr<ObstacleMapCell> obs(new ObstacleMapCell(mapp_obstacles[map_tile[k]], i, j, map_tile[k]));
-                    newLigne.push_back(move(obs));
-                } else {
+                    newline.push_back(move(obs));
+                }
+                else
+                {
                     std::unique_ptr<SpaceMapCell> spc(new SpaceMapCell(mapp_spaces[map_tile[118]], i, j, map_tile[118]));
-                    newLigne.push_back(move(spc));
+                    newline.push_back(move(spc));
                 }
             }
             k++;
         }
-        map.push_back(move(newLigne));
+        cout << endl;
+        map.push_back(move(newline));
     }
 }
 
