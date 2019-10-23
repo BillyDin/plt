@@ -39,3 +39,11 @@ void Element::setPosition(const Position &position)
 {
     this->position = position;
 }
+
+int Element::getTileCode(){
+    return tileCode;
+}
+
+void Element::setTileCode(int p_tileCode){
+    this->tileCode = p_tileCode;
+}

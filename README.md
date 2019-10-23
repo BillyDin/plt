@@ -33,10 +33,18 @@ $ cd ./plt/build
 $ make code-coverage
 ```
 
+## Print a rendering
+
+```sh
+$ ./bin/client render
+```
+
 ## Release History
 
 * 2.1
-    * Work in progress
+    * Report 2.1
+    * Render diagram
+    * Implemented code to print a rendering of state
 
 * 1.final
     * State diagram 
