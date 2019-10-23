@@ -68,6 +68,9 @@ void State::initializeCharacters()
 
 void State::initializeMapCell()
 {
+    // Iteration helpers
+    unsigned int i, j, k = 0;
+
     // mapping (this will be dependent on the choosed resource)
     // dictionary to signalize the type of each tileset by his id
     // (tile id defined by the position of the tile in de resource, we dont define it)
@@ -103,22 +106,19 @@ void State::initializeMapCell()
 
     //this way we read the txt file.
     std::string content, line, tilecode;
-    if (file)
-    {
-        while (getline(file, line))
-        {
-            line = line + ",";
-            content = content + line;
-        }
-        file.close();
-    }
-    else
+    if (!file)
         return;
+    while (getline(file, line))
+    {
+        line += ",";
+        content += line;
+    }
+    file.close();
 
-    // Conversion des codes des tuiles en int
+    // from string to stream
     std::stringstream contentStream(content);
-    unsigned int i = 0, j = 0, k = 0;
 
+    // delimiting by comma
     while (std::getline(contentStream, tilecode, ','))
     {
         map_tile[i] = std::stoi(tilecode);
