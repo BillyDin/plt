@@ -123,9 +123,13 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		smp.setIsBoost(true);
 		BOOST_CHECK_EQUAL(smp.getIsBoost(), true);
 		BOOST_CHECK_EQUAL(smp.isMapCell(), true);
-
+		BOOST_CHECK_EQUAL(smp.getTypeID(), CONCRETE);
+		BOOST_CHECK_EQUAL(smp.isSpace(), true);
+		
 		ObstacleMapCell omp{ObstacleMapCellID::FIRE, x, y};
 		BOOST_CHECK_EQUAL(omp.getObstacleMapCellID(), ObstacleMapCellID::FIRE);
+		BOOST_CHECK_EQUAL(omp.getTypeID(), FIRE);
+		BOOST_CHECK_EQUAL(omp.isSpace(), false);
 	}
 }
 
