@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 {
 	{
 		// Character
-		Character c{STRENGHT, true, "Testy", 0, 0};
+		Character c{STRENGHT, true, "Testy", 0, 0, 1};
 		BOOST_CHECK_EQUAL(c.getPosition().getY(), 0);
 		BOOST_CHECK_EQUAL(c.getPosition().getX(), 0);
 		BOOST_CHECK_EQUAL(c.getType(), STRENGHT);
@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		c.setStatus(CharacterStatusID::SELECTED);
 		BOOST_CHECK_NE(c.getStatus(), CharacterStatusID::AVAILABLE);
 		BOOST_CHECK_GT(c.getCharacterMove(), 0);
-		BOOST_CHECK_GT(c.getCharacterAttack(), 0);
+		BOOST_CHECK_GT(c.getCharacterAttackDistance(), 0);
 		c.setCharacterMove(10);
 		c.getStats();
 
@@ -40,12 +40,12 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		Position p2{-12, -32};
 		BOOST_CHECK_GT(p.distance(p2), 0); // distance returns a positive int.
 
-		Character c2{DISTANCE, true, "Shaker", 10, 10};
+		Character c2{DISTANCE, true, "Shaker", 10, 10, 1};
 		BOOST_CHECK_EQUAL(c.getPosition().equals(c2.getPosition()), true);
 
 		// inherited equal method from Element
-		Character c1{STRENGHT, true, "Testy", 0, 0};
-		Character c1identical{STRENGHT, true, "Testy", 0, 0};
+		Character c1{STRENGHT, true, "Testy", 0, 0, 1};
+		Character c1identical{STRENGHT, true, "Testy", 0, 0, 1};
 		BOOST_CHECK_EQUAL(c1.equals(c1identical), true);
 	}
 
@@ -64,25 +64,9 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		s.initializeCharacters();
 		s.initializeMapCell();
 
-		// Looking the map and character distribution, it must be one cell free.
-		// because there are 4 map cells and only 3 characters.
-		// To the future, we know that always must be at least a free cell in the game to have sense.
-		bool mapCellFree = false;
-
-		for (auto &row : s.getMap())
-		{
-			for (auto &cell : row)
-			{
-				if ((mapCellFree = cell.get()->isOccupied(s)))
-					break;
-			}
-		}
-
-		BOOST_CHECK_EQUAL(mapCellFree, true);
 		s.setEnd(false);
 		BOOST_CHECK_EQUAL(s.getEnd(), false);
 
-		BOOST_CHECK_GT(s.getMap().size(), 0);		 // Greater than equl
 		BOOST_CHECK_GT(s.getCharacters().size(), 0); // Greater than equl
 
 		s.setTurn(2);
@@ -139,9 +123,13 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		smp.setIsBoost(true);
 		BOOST_CHECK_EQUAL(smp.getIsBoost(), true);
 		BOOST_CHECK_EQUAL(smp.isMapCell(), true);
-
+		BOOST_CHECK_EQUAL(smp.getTypeID(), CONCRETE);
+		BOOST_CHECK_EQUAL(smp.isSpace(), true);
+		
 		ObstacleMapCell omp{ObstacleMapCellID::FIRE, x, y};
 		BOOST_CHECK_EQUAL(omp.getObstacleMapCellID(), ObstacleMapCellID::FIRE);
+		BOOST_CHECK_EQUAL(omp.getTypeID(), FIRE);
+		BOOST_CHECK_EQUAL(omp.isSpace(), false);
 	}
 }
 

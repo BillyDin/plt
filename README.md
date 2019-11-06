@@ -1,8 +1,20 @@
-# Projet Logiciel Transversal
+
+# :warning: WARNING :warning:
+
+> When you try to compile, there should be normally 2 errors. To correct those 2 errors, you have to write the line below in Engine.h and Command.h (we are working on it!)
+
+```sh 
+#include "../state/State.h"
+```
+
+# Projet Logiciel Transversal 
 
 > This project is to make a video game in C++ for our final year in ENSEA "Informatique et systèmes" specialization
 
-## Livraison 2.1
+[![forthebadge](https://forthebadge.com/images/badges/made-with-c-plus-plus.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
+
+## Livraison 2.2
 
 ## Get Started
 
@@ -39,7 +51,20 @@ $ make code-coverage
 $ ./bin/client render
 ```
 
+## Run the engine
+
+```sh
+$ ./bin/client engine
+```
+
+
 ## Release History
+
+* 2.2
+    * Report 2.2
+    * Engine diagram
+    * Implemented code for the game engine
+    * Print different renderings of state by calling the game engine 
 
 * 2.1
     * Report 2.1
