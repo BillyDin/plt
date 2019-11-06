@@ -14,7 +14,7 @@ AttackCommand::AttackCommand(state::Character &newAttacker, state::Character &ne
 void AttackCommand::execute(state::State &state){
 
     // check distance
-    int maxDistance = attacker.getCharacterAttack();
+    int maxDistance = attacker.getCharacterAttackDistance();
     // if the target is within the max distance of the attacker
     if (attacker.getPosition().distance(target.getPosition()) <= maxDistance)
     {

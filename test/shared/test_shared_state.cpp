@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		c.setStatus(CharacterStatusID::SELECTED);
 		BOOST_CHECK_NE(c.getStatus(), CharacterStatusID::AVAILABLE);
 		BOOST_CHECK_GT(c.getCharacterMove(), 0);
-		BOOST_CHECK_GT(c.getCharacterAttack(), 0);
+		BOOST_CHECK_GT(c.getCharacterAttackDistance(), 0);
 		c.setCharacterMove(10);
 		c.getStats();
 
