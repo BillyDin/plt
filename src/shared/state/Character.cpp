@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "State.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -8,7 +9,7 @@
 using namespace std;
 using namespace state;
 
-Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, int newY, int newX, int p_tileCode)
+Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, int newY, int newX, int newPlayerOwner, int p_tileCode)
 {
     tileCode = p_tileCode;
     typeID = id;
@@ -17,6 +18,7 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
     name = newNom;
     position.setX(newX);
     position.setY(newY);
+    playerOwner = newPlayerOwner;
 
     if (id == DISTANCE)
     {
@@ -30,7 +32,7 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
 
     else if (id == STRENGHT)
     {
-        characterMove = 1;
+        characterMove = 2;
         characterAttack = 1;
         stats.setHealth(100);
         stats.setAttack(50);
@@ -40,7 +42,7 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
 
     else if (id == MAGICIAN)
     {
-        characterMove = 2;
+        characterMove = 1;
         characterAttack = 2;
         stats.setHealth(100);
         stats.setAttack(70);
@@ -49,47 +51,96 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
     }
 }
 
-int Character::getCharacterMove(){
+// this algo will check for all the 
+// tiles located in north, east, south and west of our character
+std::vector<Position> Character::allowedPosToMove(State &state)
+{
+    std::vector<Position> canGoList;
+
+    // xAxis: one tile west, one tile east
+    for (int xAxis = position.getX() - 1; xAxis <= position.getX() + 1; xAxis++)
+    {
+        // yAxis: one tile north, one tile south
+        for (int yAxis = position.getY() - 1; yAxis <= position.getY() + 1; yAxis++)
+        {
+            // gonna use absolute values,
+            // reference https://www.programiz.com/cpp-programming/library-function/cstdlib/abs
+            if (
+                //only nears
+                abs(xAxis - position.getX()) + abs(yAxis - position.getY()) <= 1
+                
+                //within the map top/left
+                && xAxis >= 0 && yAxis >= 0
+
+                //within the map bottom/right
+                && abs(xAxis) < state.getMap().size() && abs(yAxis) < state.getMap()[xAxis].size())
+            {
+                if (state.getMap()[xAxis][yAxis]->isOccupied(state) == -1 && state.getMap()[xAxis][yAxis]->isSpace())
+                {
+                    Position posHelper;
+                    posHelper.setX(xAxis);
+                    posHelper.setY(yAxis);
+                    canGoList.push_back(posHelper);
+                }
+            }
+        }
+    }
+    return canGoList;
+}
+
+int Character::getCharacterMove()
+{
     return characterMove;
 }
 
-bool Character::getIsInBase(){
+bool Character::getIsInBase()
+{
     return isInBase;
 }
-CharacterStatusID Character::getStatus(){
+CharacterStatusID Character::getStatus()
+{
     return status;
 }
 
-int Character::getCharacterAttack(){
+int Character::getCharacterAttack()
+{
     return characterAttack;
 }
-CharacterTypeID Character::getType(){
+CharacterTypeID Character::getType()
+{
     return typeID;
 }
-void Character::setStatus(CharacterStatusID newStatus){
+void Character::setStatus(CharacterStatusID newStatus)
+{
     this->status = newStatus;
 }
-void Character::setCharacterMove(int newCharacterMove){
+void Character::setCharacterMove(int newCharacterMove)
+{
     this->characterMove = newCharacterMove;
 }
 
-bool Character::isMapCell(){
+bool Character::isMapCell()
+{
     return false;
 }
 
-int Character::getBoosted(){
+int Character::getBoosted()
+{
     return boosted;
 }
 
-void Character::setBoosted(int numberOfTurns){
+void Character::setBoosted(int numberOfTurns)
+{
     this->boosted = numberOfTurns; // number of turns being boosted
 }
 
-Stats &Character::getStats(){
-    Stats & refStats = stats;
+Stats &Character::getStats()
+{
+    Stats &refStats = stats;
     return refStats;
 }
 // Setters and Getters
-void Character::setTypeID(CharacterTypeID typeID){
+void Character::setTypeID(CharacterTypeID typeID)
+{
     this->typeID = typeID;
 }

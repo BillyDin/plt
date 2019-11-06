@@ -53,23 +53,23 @@ Cursor &State::getCursor()
 
 void State::initializeCharacters()
 {
-    /* initialize random seed: */
-    srand(time(NULL));
-    std::unique_ptr<Character> ptrC1(new Character(STRENGHT, true, "Soldier", (rand() % 18 + 1), (rand() % 23 + 1), 24));
+    int centerX = 12;
+    // no more random pos
+    std::unique_ptr<Character> ptrC1(new Character(STRENGHT, true, "Soldier", 2, centerX, 1, 24));
     characters.push_back(move(ptrC1));
 
-    std::unique_ptr<Character> ptrC2(new Character(DISTANCE, true, "Miss Ranger", (rand() % 18 + 1), (rand() % 23 + 1), 12));
+    std::unique_ptr<Character> ptrC2(new Character(DISTANCE, true, "Miss Ranger", 17, centerX, 2, 12));
     characters.push_back(move(ptrC2));
 
-    std::unique_ptr<Character> ptrC3(new Character(MAGICIAN, true, "Witch Doctor", (rand() % 18 + 1), (rand() % 23 + 1), 0));
-    characters.push_back(move(ptrC3));
-    cout << "finished\n";
+    // std::unique_ptr<Character> ptrC3(new Character(MAGICIAN, true, "Witch Doctor", (rand() % 18 + 1), (rand() % 23 + 1), 0));
+    // characters.push_back(move(ptrC3));
+    cout << "characters inits finished\n";
 }
 
 void State::initializeMapCell()
 {
     // Iteration helpers
-    unsigned int i, j, k = 0;
+    unsigned int i = 0, j = 0, k = 0;
 
     // mapping (this will be dependent on the choosed resource)
     // dictionary to signalize the type of each tileset by his id
@@ -113,10 +113,14 @@ void State::initializeMapCell()
         line += ",";
         content += line;
     }
+    cout << "--- file read succesfully ---" << endl;
+
     file.close();
+    cout << "--- file closed succesfully ---" << endl;
 
     // from string to stream
     std::stringstream contentStream(content);
+    cout << "--- from string to stream succesfully ---" << endl;
 
     // delimiting by comma
     while (std::getline(contentStream, tilecode, ','))
@@ -124,6 +128,8 @@ void State::initializeMapCell()
         map_tile[i] = std::stoi(tilecode);
         i++;
     }
+    cout << "--- building map_tile array succesfully ---" << endl;
+
 
     for (i = 0; i < 20; i++)
     {
@@ -154,6 +160,8 @@ void State::initializeMapCell()
         cout << endl;
         map.push_back(move(newline));
     }
+    cout << "--- map created succesfully ---" << endl;
+
 }
 
 void State::setTurn(int newTurn)

@@ -20,3 +20,15 @@ ObstacleMapCellID ObstacleMapCell::getObstacleMapCellID()
 {
     return this->typeID;
 }
+
+ObstacleMapCellID ObstacleMapCell::getTypeID (){
+    return typeID;
+}
+
+void ObstacleMapCell::setTypeID (ObstacleMapCellID newTypeID){
+    this->typeID = newTypeID;
+}
+
+bool ObstacleMapCell::isSpace (){
+    return false;
+}

@@ -42,7 +42,7 @@ bool StateLayer::showText()
     // select the font
     text.setFont(font); // font is a sf::Font
     // set the string to display
-    text.setString("Hello, welcome to our game! Enjoy this static image.");
+    text.setString("Hello, welcome to our game! Enjoy.");
 
     // set the character size
     text.setCharacterSize(24); // in pixels, not points!

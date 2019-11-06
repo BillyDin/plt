@@ -28,3 +28,15 @@ void SpaceMapCell::setIsBoost(bool newIsBoost)
 {
     this->isBoost = newIsBoost;
 }
+
+SpaceMapCellID SpaceMapCell::getTypeID (){
+    return typeID;
+}
+
+void SpaceMapCell::setTypeID (SpaceMapCellID newTypeID){
+    this->typeID = newTypeID;
+}
+
+bool SpaceMapCell::isSpace (){
+    return true;
+}

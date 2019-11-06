@@ -45,8 +45,6 @@ bool Surface::loadCharacters(state::State &state, sf::Texture &textureTileset, s
 bool Surface::loadTextures(state::State &state, sf::Texture &textureTileset, sf::Vector2u tileSize, unsigned int width, unsigned int height)
 {
     texture = textureTileset;
-    cout << " x = " << tileSize.x << " y = " << tileSize.y << endl;
-    cout << " width = " << width << " height = " << height << endl;
 
     // on redimensionne le tableau de vertex pour qu'il puisse contenir tout le niveau
     quads.setPrimitiveType(sf::Quads);

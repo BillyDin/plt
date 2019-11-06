@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 {
 	{
 		// Character
-		Character c{STRENGHT, true, "Testy", 0, 0};
+		Character c{STRENGHT, true, "Testy", 0, 0, 1};
 		BOOST_CHECK_EQUAL(c.getPosition().getY(), 0);
 		BOOST_CHECK_EQUAL(c.getPosition().getX(), 0);
 		BOOST_CHECK_EQUAL(c.getType(), STRENGHT);
@@ -40,12 +40,12 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		Position p2{-12, -32};
 		BOOST_CHECK_GT(p.distance(p2), 0); // distance returns a positive int.
 
-		Character c2{DISTANCE, true, "Shaker", 10, 10};
+		Character c2{DISTANCE, true, "Shaker", 10, 10, 1};
 		BOOST_CHECK_EQUAL(c.getPosition().equals(c2.getPosition()), true);
 
 		// inherited equal method from Element
-		Character c1{STRENGHT, true, "Testy", 0, 0};
-		Character c1identical{STRENGHT, true, "Testy", 0, 0};
+		Character c1{STRENGHT, true, "Testy", 0, 0, 1};
+		Character c1identical{STRENGHT, true, "Testy", 0, 0, 1};
 		BOOST_CHECK_EQUAL(c1.equals(c1identical), true);
 	}
 

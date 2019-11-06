@@ -24,23 +24,33 @@ void Engine::addPassiveCommands()
 {
 }
 
-void Engine::addCommand(int priority, std::unique_ptr<Command> ptr_cmd)
+void Engine::addCommand(int prioriteratory, std::unique_ptr<Command> ptr_cmd)
 {
-    currentCommands[priority] = move(ptr_cmd);
+    currentCommands[prioriteratory] = move(ptr_cmd);
 }
 
 void Engine::update()
 {
-    map<int, std::unique_ptr<Command>>::iterator it;
+    cout << "Executing commands from turn " << currentState.getTurn() << endl;
+    //default event
+    StateEvent stateEvent(ALLCHANGED);
+    
     for (size_t i = 0; i < currentCommands.size(); i++)
     {
+        if(currentCommands[i]->getCommandID() == MOVE)
+            stateEvent.setStateEventID(CHARACTERCHANGED);
         // TODO: Execute only the player active's commands.
         currentCommands[i]->execute(currentState);
-        sleep(2);
+        currentState.notifyObservers(stateEvent , currentState);
+        usleep(200*1000);
     }
-    // clean
-    for (it = currentCommands.begin(); it != currentCommands.end(); it++)
+    // clean using iterator
+    map<int, std::unique_ptr<Command>>::iterator iterator;
+    for (iterator = currentCommands.begin(); iterator != currentCommands.end(); iterator++)
     {
-        currentCommands.erase(it);
+        currentCommands.erase(iterator);
     }
+
+    // increasing turn
+    currentState.setTurn(currentState.getTurn() + 1);
 }
