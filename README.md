@@ -1,12 +1,3 @@
-
-# :warning: WARNING :warning:
-
-> When you try to compile, there should be normally 2 errors. To correct those 2 errors, you have to write the line below in Engine.h and Command.h (we are working on it!)
-
-```sh 
-#include "../state/State.h"
-```
-
 # Projet Logiciel Transversal 
 
 > This project is to make a video game in C++ for our final year in ENSEA "Informatique et systèmes" specialization
