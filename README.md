@@ -1,7 +1,7 @@
 
-# WARNING
+# :warning: WARNING :warning:
 
-> When you try to compile, there should be normally 2 errors. To correct those 2 errors, you have to write the line below in Engine.h and Command.h
+> When you try to compile, there should be normally 2 errors. To correct those 2 errors, you have to write the line below in Engine.h and Command.h (we are working on it!)
 
 ```sh 
 #include "../state/State.h"
