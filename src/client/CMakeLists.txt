@@ -12,7 +12,7 @@ list(REMOVE_ITEM client_sources "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
 # Build the "client" library, add required include and link against dependencies
 add_library(${lib_client_target} STATIC ${client_sources})
 add_dependencies(${lib_client_target} generate-headers)
-target_include_directories(${lib_client_target} INTERFACE
+target_include_directories(${lib_client_target} PUBLIC
   ${CMAKE_CURRENT_SOUCE_DIR}
   ${SFML_INCLUDE_DIR}
   )
