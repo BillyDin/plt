@@ -2,7 +2,7 @@
 
 > This project is to make a video game in C++ for our final year in ENSEA "Informatique et systèmes" specialization
 
-## Livraison 2.1
+## Livraison 2.2
 
 ## Get Started
 
@@ -39,7 +39,20 @@ $ make code-coverage
 $ ./bin/client render
 ```
 
+## Run the engine
+
+```sh
+$ ./bin/client engine
+```
+
+
 ## Release History
+
+* 2.2
+    * Report 2.2
+    * Engine diagram
+    * Implemented code for the game engine
+    * Print different renderings of state by calling the game engine 
 
 * 2.1
     * Report 2.1
