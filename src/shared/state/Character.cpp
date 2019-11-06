@@ -23,7 +23,7 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
     if (id == DISTANCE)
     {
         characterMove = 3;
-        characterAttack = 2;
+        characterAttackDistance = 2;
         stats.setHealth(100);
         stats.setAttack(50);
         stats.setDefense(30);
@@ -33,7 +33,7 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
     else if (id == STRENGHT)
     {
         characterMove = 2;
-        characterAttack = 1;
+        characterAttackDistance = 1;
         stats.setHealth(100);
         stats.setAttack(50);
         stats.setDefense(80);
@@ -43,7 +43,7 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
     else if (id == MAGICIAN)
     {
         characterMove = 1;
-        characterAttack = 2;
+        characterAttackDistance = 2;
         stats.setHealth(100);
         stats.setAttack(70);
         stats.setDefense(10);
@@ -123,25 +123,25 @@ std::vector<Position> Character::allowedPosToAttack(State &state)
     return canAttackList;
 }
 
-int Character::getCharacterMove()
+int Character::getCharacterMove() const
 {
     return characterMove;
 }
 
-bool Character::getIsInBase()
+bool Character::getIsInBase() const
 {
     return isInBase;
 }
-CharacterStatusID Character::getStatus()
+CharacterStatusID Character::getStatus() const
 {
     return status;
 }
 
-int Character::getCharacterAttack()
+int Character::getCharacterAttackDistance() const
 {
-    return characterAttack;
+    return characterAttackDistance;
 }
-CharacterTypeID Character::getType()
+CharacterTypeID Character::getType() const
 {
     return typeID;
 }
@@ -159,7 +159,7 @@ bool Character::isMapCell()
     return false;
 }
 
-int Character::getBoosted()
+int Character::getBoosted() const
 {
     return boosted;
 }
@@ -169,7 +169,7 @@ void Character::setBoosted(int numberOfTurns)
     this->boosted = numberOfTurns; // number of turns being boosted
 }
 
-Stats &Character::getStats()
+Stats &Character::getStats() 
 {
     Stats &refStats = stats;
     return refStats;

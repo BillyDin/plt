@@ -54,5 +54,6 @@ void CheckWinnerCommand::execute(state::State &state)
     if(winner){
         state.setEnd(true);
         cout << endl << "ATENTION!!! THE WINNER IS THE PLAYER " << winner << endl;
+        cout << endl << "All the opponent's characters are dead" << endl;
     }
 }
