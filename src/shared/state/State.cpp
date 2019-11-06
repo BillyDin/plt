@@ -174,4 +174,14 @@ void State::setEnd(bool result)
     this->end = result;
 }
 
+int State::getTurnOwner (){
+    return turnOwner;
+}
+void State::setTurnOwner (int newTurnOwner){
+    if(newTurnOwner == 1 || newTurnOwner == 2)
+        this->turnOwner = newTurnOwner;
+    else
+        cout << "error, State::setTurnOwner(int newTurnOwner) just allow 1 or 2 as param" << endl;
+}
+
 // Setters and Getters

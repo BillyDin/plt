@@ -88,6 +88,41 @@ std::vector<Position> Character::allowedPosToMove(State &state)
     return canGoList;
 }
 
+std::vector<Position> Character::allowedPosToAttack(State &state)
+{
+    std::vector<Position> canAttackList;
+
+    // xAxis: one tile west, one tile east
+    for (int xAxis = position.getX() - 1; xAxis <= position.getX() + 1; xAxis++)
+    {
+        // yAxis: one tile north, one tile south
+        for (int yAxis = position.getY() - 1; yAxis <= position.getY() + 1; yAxis++)
+        {
+            // gonna use absolute values,
+            // reference https://www.programiz.com/cpp-programming/library-function/cstdlib/abs
+            if (
+                //only nears
+                abs(xAxis - position.getX()) + abs(yAxis - position.getY()) <= 1
+                
+                //within the map top/left
+                && xAxis >= 0 && yAxis >= 0
+
+                //within the map bottom/right
+                && abs(xAxis) < state.getMap().size() && abs(yAxis) < state.getMap()[xAxis].size())
+            {
+                if (state.getMap()[xAxis][yAxis]->isOccupied(state) == -1 && state.getMap()[xAxis][yAxis]->isSpace())
+                {
+                    Position posHelper;
+                    posHelper.setX(xAxis);
+                    posHelper.setY(yAxis);
+                    canAttackList.push_back(posHelper);
+                }
+            }
+        }
+    }
+    return canAttackList;
+}
+
 int Character::getCharacterMove()
 {
     return characterMove;

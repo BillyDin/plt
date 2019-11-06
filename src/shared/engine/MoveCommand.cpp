@@ -15,7 +15,7 @@ void MoveCommand::execute(state::State &state)
 {
     cout << "Trying to move a character" << endl;
     bool allowed = false;
-    if (true /*characterTarget.getStatus() == SELECTED*/)
+    if (characterTarget.getStatus() == SELECTED)
     {
         // if the character has moves to do
         cout << "Move chances left " << characterTarget.getCharacterMove() << endl;
