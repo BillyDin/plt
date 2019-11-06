@@ -64,25 +64,9 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		s.initializeCharacters();
 		s.initializeMapCell();
 
-		// Looking the map and character distribution, it must be one cell free.
-		// because there are 4 map cells and only 3 characters.
-		// To the future, we know that always must be at least a free cell in the game to have sense.
-		bool mapCellFree = false;
-
-		for (auto &row : s.getMap())
-		{
-			for (auto &cell : row)
-			{
-				if ((mapCellFree = cell.get()->isOccupied(s)))
-					break;
-			}
-		}
-
-		BOOST_CHECK_EQUAL(mapCellFree, true);
 		s.setEnd(false);
 		BOOST_CHECK_EQUAL(s.getEnd(), false);
 
-		BOOST_CHECK_GT(s.getMap().size(), 0);		 // Greater than equl
 		BOOST_CHECK_GT(s.getCharacters().size(), 0); // Greater than equl
 
 		s.setTurn(2);
