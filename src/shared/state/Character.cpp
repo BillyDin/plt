@@ -144,3 +144,15 @@ void Character::setTypeID(CharacterTypeID typeID)
 {
     this->typeID = typeID;
 }
+
+int Character::getPlayerOwner() const {
+    return playerOwner;
+}
+
+void Character::setPlayerOwner(int pPlayerOwner){
+    // verifing
+    if(pPlayerOwner == 1 || pPlayerOwner == 2)
+        this->playerOwner = pPlayerOwner;
+    else
+        cout << "Function Character::setPlayerOwner(int playerOwner): Player numbers 1 or 2." << endl;
+}

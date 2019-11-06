@@ -162,7 +162,7 @@ int main()
                     unique_ptr<engine::Command> ptr_mc1(new engine::MoveCommand(*ngine.getState().getCharacters()[1], pos1));
                     ngine.addCommand(priority++, move(ptr_mc1));
 
-                    unique_ptr<engine::Command> ptr_ac1(new engine::AttackCommand(*ngine.getState().getCharacters()[0], *ngine.getState().getCharacters()[1]));
+                    unique_ptr<engine::Command> ptr_ac1(new engine::AttackCommand(*ngine.getState().getCharacters()[1], *ngine.getState().getCharacters()[0]));
                     ngine.addCommand(priority++, move(ptr_ac1));
 
                     ngine.update();
@@ -170,6 +170,7 @@ int main()
                 }
                 else if (turns2go == 0){
                     sleep(2);
+                    cout << "No more turns left" << endl;
                     cout << "ENGINE SHOW finished, closing window" << endl;
                     window.close();
                 }
