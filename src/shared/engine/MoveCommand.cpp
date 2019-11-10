@@ -21,9 +21,9 @@ void MoveCommand::execute(state::State &state)
         cout << "Move chances left " << characterTarget.getCharacterMove() << endl;
         if (characterTarget.getCharacterMove() > 0)
         {
-            for (auto &i : characterTarget.allowedPosToMove(state))
+            for (auto &pos: characterTarget.allowedPosToMove(state))
             {
-                if (i.equals(positionTarget))
+                if (pos.equals(positionTarget))
                 {
                     allowed = true;
                     break;
@@ -35,7 +35,8 @@ void MoveCommand::execute(state::State &state)
                 characterTarget.getPosition().setX(positionTarget.getX());
                 characterTarget.getPosition().setY(positionTarget.getY());
                 characterTarget.setCharacterMove(characterTarget.getCharacterMove() - 1);
-
+                // TODO refresh to the base move quantity for each character if the are not death.
+                
                 cout << "The character " << characterTarget.getName() << " has been moved to [" << positionTarget.getX() << ", " << positionTarget.getY() << "]" << endl;
                 cout << "Decreasing by 1 moving chances, now the character has " << characterTarget.getCharacterMove() << " move chances left" << endl;
             }
