@@ -76,7 +76,11 @@ void Engine::update()
             stateEvent.setStateEventID(CHARACTERCHANGED);
 
             if (endTurn == false && currentCommands[i]->getCommandID() == ATTACK || currentCommands[i]->getCommandID() == FINISH_TURN)
+{
+
+            currentState.setTurn(currentState.getTurn() + 1);
                 endTurn = true;
+}
 
             // TODO: Execute only the player active's commands.
             currentCommands[i]->execute(currentState);
@@ -89,9 +93,7 @@ void Engine::update()
         {
             currentCommands.erase(iterator);
         }
-        if(endTurn)
-            // increasing turn
-            currentState.setTurn(currentState.getTurn() + 1);
+        
     }
     else
     {
