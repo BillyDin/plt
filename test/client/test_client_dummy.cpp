@@ -19,8 +19,7 @@ BOOST_AUTO_TEST_CASE(TestSFML)
 BOOST_AUTO_TEST_CASE(TestClientNamespace)
 {
 	{
-		Exemple e{};
-		e.setX(1);
+
 	}
 }
 

@@ -1,5 +1,5 @@
 #include "Engine.h"
-#include "CheckWinnerCommand.h"
+#include "engine.h"
 #include <iostream>
 #include <unistd.h>
 
@@ -31,12 +31,34 @@ void Engine::addPassiveCommands()
 
     // passive commands...
     unique_ptr<Command> ptr_cw(new CheckWinnerCommand());
-    addCommand(priority++, move(ptr_cw));
+    addCommand(move(ptr_cw), priority++);
+    bool addFinishTurn = false;
+    for (size_t i = 0; i < currentCommands.size(); i++)
+    {
+        if (currentCommands[i]->getCommandID() == ATTACK)
+        {
+            addFinishTurn = true;
+            break;
+        }
+    }
+    if(addFinishTurn){
+        cout << "finishing because you attacked" << endl;
+        unique_ptr<Command> ptr_ft(new FinishTurnCommand());
+        addCommand(move(ptr_ft), priority++);
+    }
 }
 
-void Engine::addCommand(int prioriteratory, std::unique_ptr<Command> ptr_cmd)
+void Engine::addCommand(std::unique_ptr<Command> ptr_cmd, int priority)
 {
-    currentCommands[prioriteratory] = move(ptr_cmd);
+    if (priority == -1){
+        // find largest priority
+        if(currentCommands.size() > 0)
+            priority = currentCommands.rbegin()->first + 1;
+        else{
+            priority = 0;
+        }
+    }
+    currentCommands[priority] = move(ptr_cmd);
 }
 
 void Engine::update()
@@ -48,11 +70,14 @@ void Engine::update()
         cout << "Executing commands from turn " << currentState.getTurn() << endl;
         //default event
         StateEvent stateEvent(ALLCHANGED);
-
+        bool endTurn = false;
         for (size_t i = 0; i < currentCommands.size(); i++)
         {
-            if (currentCommands[i]->getCommandID() == MOVE)
-                stateEvent.setStateEventID(CHARACTERCHANGED);
+            stateEvent.setStateEventID(CHARACTERCHANGED);
+
+            if (endTurn == false && currentCommands[i]->getCommandID() == ATTACK || currentCommands[i]->getCommandID() == FINISH_TURN)
+                endTurn = true;
+
             // TODO: Execute only the player active's commands.
             currentCommands[i]->execute(currentState);
             currentState.notifyObservers(stateEvent, currentState);
@@ -64,9 +89,9 @@ void Engine::update()
         {
             currentCommands.erase(iterator);
         }
-
-        // increasing turn
-        currentState.setTurn(currentState.getTurn() + 1);
+        if(endTurn)
+            // increasing turn
+            currentState.setTurn(currentState.getTurn() + 1);
     }
     else
     {

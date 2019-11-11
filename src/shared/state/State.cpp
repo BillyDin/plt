@@ -12,11 +12,10 @@ using namespace std;
 using namespace state;
 
 // Operations
-State::State()
+State::State() : cursor(10, 10, 2)
 {
-    Cursor c{0, 0};
-    this->cursor = c;
     std::cout << "Creating an state object\n";
+    actualAction = IDLE;
 }
 
 State::~State()
@@ -45,6 +44,14 @@ bool State::getEnd()
     return end;
 }
 
+StateActualActionID State::getActualAction (){
+    return actualAction;
+}
+
+void State::setActualAction (StateActualActionID newActualAction){
+    this->actualAction = newActualAction;
+}
+
 Cursor &State::getCursor()
 {
     Cursor &refCursor = cursor;
@@ -58,12 +65,26 @@ void State::initializeCharacters()
     std::unique_ptr<Character> ptrC1(new Character(STRENGHT, true, "Soldier", 2, centerX, 1, 24));
     characters.push_back(move(ptrC1));
 
-    std::unique_ptr<Character> ptrC2(new Character(DISTANCE, true, "Miss Ranger", 17, centerX, 2, 12));
+    std::unique_ptr<Character> ptrC11(new Character(MAGICIAN, true, "Jakiro", 2, 4, 1, 1));
+    characters.push_back(move(ptrC11));
+
+    std::unique_ptr<Character> ptrC111(new Character(DISTANCE, true, "Windrunner", 2, 20, 1, 13));
+    characters.push_back(move(ptrC111));
+
+    std::unique_ptr<Character> ptrC2(new Character(STRENGHT, true, "Tiny", 17, centerX, 2, 25));
     characters.push_back(move(ptrC2));
+
+    std::unique_ptr<Character> ptrC22(new Character(MAGICIAN, true, "Lich", 17, 4, 2, 12));
+    characters.push_back(move(ptrC22));
+
+    std::unique_ptr<Character> ptrC222(new Character(DISTANCE, true, "Drow Ranger", 17, 20, 2, 2));
+    characters.push_back(move(ptrC222));
 
     // std::unique_ptr<Character> ptrC3(new Character(MAGICIAN, true, "Witch Doctor", (rand() % 18 + 1), (rand() % 23 + 1), 0));
     // characters.push_back(move(ptrC3));
+    cursor.setPosition(characters[0]->getPosition());
     cout << "characters inits finished\n";
+
 }
 
 void State::initializeMapCell()

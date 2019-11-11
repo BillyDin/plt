@@ -11,6 +11,7 @@ using namespace state;
 
 Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, int newY, int newX, int newPlayerOwner, int p_tileCode)
 {
+    
     tileCode = p_tileCode;
     typeID = id;
     isInBase = newIsInBase;
@@ -24,6 +25,8 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
     {
         characterMove = 3;
         characterAttackDistance = 2;
+        baseCharacterMove = 3;
+        baseCharacterActackDistance = 2;
         stats.setHealth(100);
         stats.setAttack(50);
         stats.setDefense(30);
@@ -34,6 +37,8 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
     {
         characterMove = 2;
         characterAttackDistance = 1;
+        baseCharacterMove = 2;
+        baseCharacterActackDistance = 1;
         stats.setHealth(100);
         stats.setAttack(50);
         stats.setDefense(80);
@@ -44,11 +49,17 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
     {
         characterMove = 1;
         characterAttackDistance = 2;
+        baseCharacterMove = 1;
+        baseCharacterActackDistance = 2;
         stats.setHealth(100);
         stats.setAttack(70);
         stats.setDefense(10);
         stats.setMana(100);
     }
+}
+
+int Character::getBaseCharacterMove(){
+    return baseCharacterMove;
 }
 
 // this algo will check for all the 

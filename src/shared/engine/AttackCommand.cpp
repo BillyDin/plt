@@ -14,10 +14,7 @@ AttackCommand::AttackCommand(state::Character &newAttacker, state::Character &ne
 void AttackCommand::execute(state::State &state){
 
     // check distance
-    int maxDistance = attacker.getCharacterAttackDistance();
-    // if the target is within the max distance of the attacker
-    if (attacker.getPosition().distance(target.getPosition()) <= maxDistance)
-    {
+    
         // attacking
         cout << "ATENTION! " << attacker.getName() << " is trying to attack " << target.getName() << endl;
         cout << "Actual health of " << target.getName() << ": " << target.getStats().getHealth() << endl;
@@ -41,5 +38,4 @@ void AttackCommand::execute(state::State &state){
             target.setStatus(DEATH);
 
         cout << "After HIT, the health of " << target.getName() << " descends to: " << target.getStats().getHealth() << endl;
-    }
 }
