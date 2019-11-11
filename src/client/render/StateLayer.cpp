@@ -12,7 +12,7 @@ using namespace render;
 using namespace std;
 using namespace state;
 
-StateLayer::StateLayer(state::State &state, sf::RenderWindow &window) : window(window)
+StateLayer::StateLayer(state::State &state, sf::RenderWindow &window) : window(window) , currentState(state)
 {
     font.loadFromFile("res/typographie.ttf");
 
@@ -36,28 +36,6 @@ std::vector<std::unique_ptr<Surface>> &StateLayer::getSurfaces()
 {
     std::vector<std::unique_ptr<Surface>> &refSurfaces = surface;
     return refSurfaces;
-}
-
-bool StateLayer::showText()
-{
-    sf::Text text;
-    text.setPosition(32.f, window.getSize().y - 32.f);
-    // select the font
-    text.setFont(font); // font is a sf::Font
-    // set the string to display
-    text.setString("Hello, welcome to our game! Enjoy.");
-
-    // set the character size
-    text.setCharacterSize(24); // in pixels, not points!
-
-    // set the color
-    text.setFillColor(sf::Color::White);
-
-    // set the text style
-
-    // inside the main loop, between window.clear() and window.display()
-    window.draw(text);
-    return true;
 }
 
 void StateLayer::initSurfaces(state::State &state)
@@ -181,10 +159,28 @@ bool StateLayer::printText()
             playerTwoBasePos += 100.f;
             texts.push_back(move(textStats));
         }
+        if(charac->getStatus() == SELECTED){
+            sf::Text selectedChar;
+            selectedChar.setPosition(window.getSize().y / 2.f + 6.f*32.f, window.getSize().y-32.f);
+            selectedChar.setFont(font);
+            string str = "Selected " + charac->getName() + " (Player " + std::to_string(charac->getPlayerOwner()) + ")";
+            selectedChar.setString(str);
+            selectedChar.setCharacterSize(18);
+            selectedChar.setFillColor(sf::Color::Green);
+            texts.push_back(move(selectedChar));
+        }
     }
 
+    sf::Text controls;
+    controls.setPosition(16.f, window.getSize().y-32.f);
+    controls.setFont(font);
+    controls.setString("Select: ENTER   -   Move: M   -   Attack: A   -   Pass: P");
+    controls.setCharacterSize(18);
+    controls.setFillColor(sf::Color::White);
+    texts.push_back(move(controls));
+
     sf::Text turnInfo;
-    turnInfo.setPosition(1.f, window.getSize().y - 32.f);
+    turnInfo.setPosition(((window.getSize().x) - 7*32.f), window.getSize().y - 32.f);
     turnInfo.setFont(font); // font is a sf::Font
 
     std::string str = "Turn: " + std::to_string(currentState.getTurn());
@@ -195,10 +191,10 @@ bool StateLayer::printText()
     texts.push_back(move(turnInfo));
 
     sf::Text turnInfo2;
-    turnInfo2.setPosition(((window.getSize().x / 2)+ 15.f), window.getSize().y - 32.f);
+    turnInfo2.setPosition(((window.getSize().x) - 4*32.f), window.getSize().y - 32.f);
     turnInfo2.setFont(font); // font is a sf::Font
 
-    std::string str2 = "Turn owner: Player " + std::to_string(currentState.getTurnOwner());
+    std::string str2 = "Player " + std::to_string(currentState.getTurnOwner());
 
     turnInfo2.setString(str2);
     turnInfo2.setCharacterSize(24); // in pixels, not points!
