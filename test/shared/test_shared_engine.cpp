@@ -20,19 +20,13 @@ BOOST_AUTO_TEST_CASE(TestEngineNamespace)
         ngine.getState().initializeMapCell();
 
         unique_ptr<engine::Command> ptr_sc(new engine::SelectCharacterCommand(*ngine.getState().getCharacters()[0]));
-        ngine.addCommand(0, move(ptr_sc));
-        state::Position pos1{10, 10};
-        unique_ptr<engine::Command> ptr_mc1(new engine::MoveCommand(*ngine.getState().getCharacters()[0], pos1));
-        ngine.addCommand(1, move(ptr_mc1));
+        ngine.addCommand(move(ptr_sc));
 
         unique_ptr<engine::Command> ptr_ac1(new engine::AttackCommand(*ngine.getState().getCharacters()[0], *ngine.getState().getCharacters()[1]));
-        ngine.addCommand(2, move(ptr_ac1));
-
-        unique_ptr<engine::Command> ptr_uh(new engine::UpdateHudCommand());
-        ngine.addCommand(3, move(ptr_uh));
+        ngine.addCommand(move(ptr_ac1));
 
         unique_ptr<engine::Command> ptr_fc(new engine::FinishTurnCommand());
-        ngine.addCommand(4, move(ptr_fc));
+        ngine.addCommand(move(ptr_fc));
         ngine.update();
     }
 }

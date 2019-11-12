@@ -10,9 +10,12 @@ using namespace state;
 
 Cursor::Cursor(int x, int y, int p_tileCode)
 {
+    this->lastPosition.setX(x);
+    this->lastPosition.setY(y);
     this->position.setX(x);
     this->position.setY(y);
     tileCode = p_tileCode;
+    visible = false;
 }
 
 bool Cursor::isMapCell()
@@ -20,8 +23,19 @@ bool Cursor::isMapCell()
     return false;
 }
 
+state::Position& Cursor::getLastPosition(){
+    return this->lastPosition;
+}
+
 void Cursor::move(Position &destination)
 {
+    this->lastPosition = position;
     this->position = destination;
+}
+bool Cursor::getVisible (){
+    return visible;
+}
+void Cursor::setVisible (bool visibility){
+    this->visible = visibility;
 }
 // Setters and Getters

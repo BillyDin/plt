@@ -8,6 +8,7 @@ using namespace std;
 
 CheckWinnerCommand::CheckWinnerCommand()
 {
+    id = CHECK_WINNER;
     // maybe this constructor will be useful
     // i dont know right now
 }

@@ -78,8 +78,66 @@ bool Surface::loadTextures(state::State &state, sf::Texture &textureTileset, sf:
             quad[1].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
             quad[2].texCoords = sf::Vector2f((tu + 1) * tileSize.x, (tv + 1) * tileSize.y);
             quad[3].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
+
+            // selected charac? he has posibilites to move?
+            if (state.getActualAction() == MOVING)
+            {
+                for (auto &charac : state.getCharacters())
+                {
+                    if (charac->getStatus() == SELECTED && charac->getCharacterMove() > 0)
+                    {
+                        // this tilemap exists in his allowed moves?
+                        int tilePosX = state.getMap()[i][j]->getPosition().getX();
+                        int tilePosY = state.getMap()[i][j]->getPosition().getY();
+                        for (auto &allowedPos : charac->allowedPosToMove(state))
+                        {
+                            // it is not intuitive, but we have to invert the axis when comparing here.
+                            // look documentation.
+                            if (allowedPos.getX() == tilePosY && allowedPos.getY() == tilePosX)
+                            {
+                                Color c = Color(30, 144, 255);
+                                quad[0].color = c;
+                                quad[1].color = c;
+                                quad[2].color = c;
+                                quad[3].color = c;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
+    return true;
+}
+
+bool Surface::loadCursor(state::State &state, sf::Texture &textureTileset, sf::Vector2u tileSize)
+{
+    // on redimensionne le tableau de vertex pour qu'il puisse contenir tout le niveau
+    quads.setPrimitiveType(sf::Quads);
+    quads.resize(25 * 20 * 4);
+
+    int tileNumber = state.getCursor().getTileCode();
+    texture = textureTileset;
+
+    // on en déduit sa position dans la texture du tileset
+    int tu = tileNumber % (texture.getSize().x / tileSize.x);
+    int tv = tileNumber / (texture.getSize().x / tileSize.x);
+
+    // on récupère un pointeur vers le quad à définir dans le tableau de vertex
+    sf::Vertex *quad = &quads[4];
+
+    // on définit ses quatre coins
+    quad[0].position = sf::Vector2f(state.getCursor().getPosition().getX() * tileSize.x, state.getCursor().getPosition().getY() * tileSize.y);
+    quad[1].position = sf::Vector2f((state.getCursor().getPosition().getX() + 1) * tileSize.x, state.getCursor().getPosition().getY() * tileSize.y);
+    quad[2].position = sf::Vector2f((state.getCursor().getPosition().getX() + 1) * tileSize.x, (state.getCursor().getPosition().getY() + 1) * tileSize.y);
+    quad[3].position = sf::Vector2f(state.getCursor().getPosition().getX() * tileSize.x, (state.getCursor().getPosition().getY() + 1) * tileSize.y);
+
+    // on définit ses quatre coordonnées de texture
+    quad[0].texCoords = sf::Vector2f(tu * tileSize.x, tv * tileSize.y);
+    quad[1].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
+    quad[2].texCoords = sf::Vector2f((tu + 1) * tileSize.x, (tv + 1) * tileSize.y);
+    quad[3].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
+
     return true;
 }
 

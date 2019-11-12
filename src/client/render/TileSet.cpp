@@ -29,12 +29,12 @@ TileSet::TileSet(TileSetID newID)
 		resourceFile = "res/32x32map.png";
 	}
 
-	// else if (id == TileSetID::CURSOR)
-	// {
-	// 	cellWidth = 16;
-	// 	cellHeight = 16;
-	// 	resourceFile = "res/a_cursor_tileset.png";
-	// }
+	else if (id == TileSetID::CURSOR)
+	{
+		cellWidth = 32;
+		cellHeight = 32;
+		resourceFile = "res/cursor.png";
+	}
 
 	textureTileset.loadFromFile(resourceFile);
 }

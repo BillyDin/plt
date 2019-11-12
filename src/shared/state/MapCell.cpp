@@ -31,7 +31,5 @@ int MapCell::isOccupied(State& state){
     return res;
 }
 
-bool MapCell::isSpace(){
-    return true;
-}
+
 // Setters and Getters
