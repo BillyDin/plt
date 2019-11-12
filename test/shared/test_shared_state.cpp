@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 
 	// State
 	{
-		State s;
+		State s{"render"};
 		s.initializeCharacters();
 		s.initializeMapCell();
 
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 
 		DummyObserver * dummyObs = new DummyObserver();
 		BOOST_CHECK_EQUAL(dummyObs->getNotified(), false);
-		State s;
+		State s{"render"};
 		StateEvent se{StateEventID::ALLCHANGED};
 		s.registerObserver((IObserver *)dummyObs);
 		s.notifyObservers(se, s);

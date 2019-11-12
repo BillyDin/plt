@@ -35,7 +35,7 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
 
     else if (id == STRENGHT)
     {
-        characterMove = 2;
+        characterMove = 3;
         characterAttackDistance = 1;
         baseCharacterMove = 2;
         baseCharacterActackDistance = 1;

@@ -7,7 +7,7 @@ using namespace state;
 using namespace engine;
 using namespace std;
 
-Engine::Engine() : currentState()
+Engine::Engine() : currentState("engine")
 {
 }
 
@@ -78,11 +78,23 @@ void Engine::update()
         {
             stateEvent.setStateEventID(CHARACTERCHANGED);
 
-            if (endTurn == false && currentCommands[i]->getCommandID() == ATTACK || currentCommands[i]->getCommandID() == FINISH_TURN)
+            if (currentState.mode == "engine")
             {
+                if (endTurn == false && currentCommands[i]->getCommandID() == FINISH_TURN)
+                {
 
-                currentState.setTurn(currentState.getTurn() + 1);
-                endTurn = true;
+                    currentState.setTurn(currentState.getTurn() + 1);
+                    endTurn = true;
+                }
+            }
+            else
+            {
+                if (endTurn == false && currentCommands[i]->getCommandID() == ATTACK || currentCommands[i]->getCommandID() == FINISH_TURN)
+                {
+
+                    currentState.setTurn(currentState.getTurn() + 1);
+                    endTurn = true;
+                }
             }
 
             // TODO: Execute only the player active's commands.

@@ -103,7 +103,7 @@ int main(int argc, char const *argv[])
         else if (strcmp(argv[1], "render") == 0)
         {
             cout << "--- Render ---" << endl;
-            State state;
+            State state{"render"};
             state.initializeMapCell();
             state.initializeCharacters();
             sf::RenderWindow window(sf::VideoMode(state.getMap()[0].size() * 32, (state.getMap().size() * 32) + 32), "Map");
@@ -173,141 +173,131 @@ int main(int argc, char const *argv[])
                         window.close();
                     else if (event.type == sf::Event::KeyPressed)
                     {
-                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-                            KeyboardListener::triggerAction(ngine, LEFT);
-                        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-                            KeyboardListener::triggerAction(ngine, TOP);
-                        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                            KeyboardListener::triggerAction(ngine, RIGHT);
-                        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-                            KeyboardListener::triggerAction(ngine, DOWN);
-                        else
+
+                        cout << "key pressed !" << endl;
+                        cout << endl
+                             << "#########################################" << endl;
+                        cout << "turn number: " << (((-(turns2go - 10)) == 10) ? 0 : -(turns2go - 7)) << endl;
+                        cout << "#########################################" << endl
+                             << endl;
+
+                        // harcoding now to 3 the chances to move for each round,
+                        // to meet quickly in the center of the map and have some fight.
+                        ngine.getState().getCharacters()[0]->setCharacterMove(3);
+                        ngine.getState().getCharacters()[1]->setCharacterMove(3);
+
+                        int initialXP1 = ngine.getState().getCharacters()[0]->getPosition().getX();
+                        int initialYP1 = ngine.getState().getCharacters()[0]->getPosition().getY();
+
+                        int initialXP2 = ngine.getState().getCharacters()[1]->getPosition().getX();
+                        int initialYP2 = ngine.getState().getCharacters()[1]->getPosition().getY();
+
+                        int priority = 0;
+
+                        if (turns2go == 9 || turns2go == 7)
                         {
-                            cout << "key pressed !" << endl;
-                            cout << endl
-                                 << "#########################################" << endl;
-                            cout << "turn number: " << (((-(turns2go - 10)) == 10) ? 0 : -(turns2go - 7)) << endl;
-                            cout << "#########################################" << endl
-                                 << endl;
 
-                            // harcoding now to 3 the chances to move for each round,
-                            // to meet quickly in the center of the map and have some fight.
-                            ngine.getState().getCharacters()[0]->setCharacterMove(3);
-                            ngine.getState().getCharacters()[1]->setCharacterMove(3);
+                            cout << "initial character [Player 1] pos " << ngine.getState().getCharacters()[0]->getPosition().getX() << " " << ngine.getState().getCharacters()[0]->getPosition().getY() << endl;
+                            unique_ptr<engine::Command> ptr_sc(new engine::SelectCharacterCommand(*ngine.getState().getCharacters()[0]));
+                            ngine.addCommand(move(ptr_sc), priority++);
+                            Position pos1{initialXP1, ++initialYP1};
+                            unique_ptr<engine::Command> ptr_mc1(new engine::MoveCommand(*ngine.getState().getCharacters()[0], pos1));
+                            ngine.addCommand(move(ptr_mc1), priority++);
 
-                            int initialXP1 = ngine.getState().getCharacters()[0]->getPosition().getX();
-                            int initialYP1 = ngine.getState().getCharacters()[0]->getPosition().getY();
+                            Position pos2{initialXP1, ++initialYP1};
+                            unique_ptr<engine::Command> ptr_mc2(new engine::MoveCommand(*ngine.getState().getCharacters()[0], pos2));
+                            ngine.addCommand(move(ptr_mc2), priority++);
 
-                            int initialXP2 = ngine.getState().getCharacters()[1]->getPosition().getX();
-                            int initialYP2 = ngine.getState().getCharacters()[1]->getPosition().getY();
+                            Position pos3{initialXP1, ++initialYP1};
+                            unique_ptr<engine::Command> ptr_mc3(new engine::MoveCommand(*ngine.getState().getCharacters()[0], pos3));
+                            ngine.addCommand(move(ptr_mc3), priority++);
 
-                            int priority = 0;
+                            unique_ptr<engine::Command> ptr_fc(new engine::FinishTurnCommand());
+                            ngine.addCommand(move(ptr_fc), priority++);
+                            cout << "Adding commands for this turn FINISHED. Executing..." << endl;
 
-                            if (turns2go == 9 || turns2go == 7)
-                            {
+                            ngine.update();
+                            turns2go--;
+                        }
+                        else if (turns2go == 8 || turns2go == 6)
+                        {
 
-                                cout << "initial character [Player 1] pos " << ngine.getState().getCharacters()[0]->getPosition().getX() << " " << ngine.getState().getCharacters()[0]->getPosition().getY() << endl;
-                                unique_ptr<engine::Command> ptr_sc(new engine::SelectCharacterCommand(*ngine.getState().getCharacters()[0]));
-                                ngine.addCommand(move(ptr_sc), priority++);
-                                Position pos1{initialXP1, ++initialYP1};
-                                unique_ptr<engine::Command> ptr_mc1(new engine::MoveCommand(*ngine.getState().getCharacters()[0], pos1));
-                                ngine.addCommand(move(ptr_mc1), priority++);
+                            cout << "initial character [Player 2] pos " << ngine.getState().getCharacters()[1]->getPosition().getX() << " " << ngine.getState().getCharacters()[0]->getPosition().getY() << endl;
+                            unique_ptr<engine::Command> ptr_sc(new engine::SelectCharacterCommand(*ngine.getState().getCharacters()[1]));
+                            ngine.addCommand(move(ptr_sc), priority++);
+                            Position pos1{initialXP2, --initialYP2};
+                            unique_ptr<engine::Command> ptr_mc1(new engine::MoveCommand(*ngine.getState().getCharacters()[1], pos1));
+                            ngine.addCommand(move(ptr_mc1), priority++);
 
-                                Position pos2{initialXP1, ++initialYP1};
-                                unique_ptr<engine::Command> ptr_mc2(new engine::MoveCommand(*ngine.getState().getCharacters()[0], pos2));
-                                ngine.addCommand(move(ptr_mc2), priority++);
+                            Position pos2{initialXP2, --initialYP2};
+                            unique_ptr<engine::Command> ptr_mc2(new engine::MoveCommand(*ngine.getState().getCharacters()[1], pos2));
+                            ngine.addCommand(move(ptr_mc2), priority++);
 
-                                Position pos3{initialXP1, ++initialYP1};
-                                unique_ptr<engine::Command> ptr_mc3(new engine::MoveCommand(*ngine.getState().getCharacters()[0], pos3));
-                                ngine.addCommand(move(ptr_mc3), priority++);
+                            Position pos3{initialXP2, --initialYP2};
+                            unique_ptr<engine::Command> ptr_mc3(new engine::MoveCommand(*ngine.getState().getCharacters()[1], pos3));
+                            ngine.addCommand(move(ptr_mc3), priority++);
 
-                                unique_ptr<engine::Command> ptr_fc(new engine::FinishTurnCommand());
-                                ngine.addCommand(move(ptr_fc), priority++);
-                                cout << "Adding commands for this turn FINISHED. Executing..." << endl;
+                            unique_ptr<engine::Command> ptr_fc(new engine::FinishTurnCommand());
+                            ngine.addCommand(move(ptr_fc), priority++);
+                            cout << "Adding commands for this turn FINISHED. Executing..." << endl;
 
-                                ngine.update();
-                                turns2go--;
-                            }
-                            else if (turns2go == 8 || turns2go == 6)
-                            {
+                            ngine.update();
+                            turns2go--;
+                        }
+                        else if (turns2go == 5 || turns2go == 3 || turns2go == 1)
+                        {
 
-                                cout << "initial character [Player 2] pos " << ngine.getState().getCharacters()[1]->getPosition().getX() << " " << ngine.getState().getCharacters()[0]->getPosition().getY() << endl;
-                                unique_ptr<engine::Command> ptr_sc(new engine::SelectCharacterCommand(*ngine.getState().getCharacters()[1]));
-                                ngine.addCommand(move(ptr_sc), priority++);
-                                Position pos1{initialXP2, --initialYP2};
-                                unique_ptr<engine::Command> ptr_mc1(new engine::MoveCommand(*ngine.getState().getCharacters()[1], pos1));
-                                ngine.addCommand(move(ptr_mc1), priority++);
+                            cout << "initial character [Player 1] pos " << ngine.getState().getCharacters()[0]->getPosition().getX() << " " << ngine.getState().getCharacters()[0]->getPosition().getY() << endl;
+                            unique_ptr<engine::Command> ptr_sc(new engine::SelectCharacterCommand(*ngine.getState().getCharacters()[0]));
+                            ngine.addCommand(move(ptr_sc), priority++);
+                            Position pos1{initialXP1, ++initialYP1};
+                            unique_ptr<engine::Command> ptr_mc1(new engine::MoveCommand(*ngine.getState().getCharacters()[0], pos1));
+                            ngine.addCommand(move(ptr_mc1), priority++);
 
-                                Position pos2{initialXP2, --initialYP2};
-                                unique_ptr<engine::Command> ptr_mc2(new engine::MoveCommand(*ngine.getState().getCharacters()[1], pos2));
-                                ngine.addCommand(move(ptr_mc2), priority++);
+                            Position pos2{initialXP1, ++initialYP1};
+                            unique_ptr<engine::Command> ptr_mc2(new engine::MoveCommand(*ngine.getState().getCharacters()[0], pos2));
+                            ngine.addCommand(move(ptr_mc2), priority++);
 
-                                Position pos3{initialXP2, --initialYP2};
-                                unique_ptr<engine::Command> ptr_mc3(new engine::MoveCommand(*ngine.getState().getCharacters()[1], pos3));
-                                ngine.addCommand(move(ptr_mc3), priority++);
+                            unique_ptr<engine::Command> ptr_ac1(new engine::AttackCommand(*ngine.getState().getCharacters()[0], *ngine.getState().getCharacters()[1]));
+                            ngine.addCommand(move(ptr_ac1), priority++);
 
-                                unique_ptr<engine::Command> ptr_fc(new engine::FinishTurnCommand());
-                                ngine.addCommand(move(ptr_fc), priority++);
-                                cout << "Adding commands for this turn FINISHED. Executing..." << endl;
+                            unique_ptr<engine::Command> ptr_fc(new engine::FinishTurnCommand());
+                            ngine.addCommand(move(ptr_fc), priority++);
+                            cout << "Adding commands for this turn FINISHED. Executing..." << endl;
 
-                                ngine.update();
-                                turns2go--;
-                            }
-                            else if (turns2go == 5 || turns2go == 3 || turns2go == 1)
-                            {
+                            ngine.update();
+                            turns2go--;
+                        }
+                        else if (turns2go == 4 || turns2go == 2)
+                        {
+                            cout << "initial character [Player 2] pos " << ngine.getState().getCharacters()[1]->getPosition().getX() << " " << ngine.getState().getCharacters()[0]->getPosition().getY() << endl;
+                            unique_ptr<engine::Command> ptr_sc(new engine::SelectCharacterCommand(*ngine.getState().getCharacters()[1]));
+                            ngine.addCommand(move(ptr_sc), priority++);
 
-                                cout << "initial character [Player 1] pos " << ngine.getState().getCharacters()[0]->getPosition().getX() << " " << ngine.getState().getCharacters()[0]->getPosition().getY() << endl;
-                                unique_ptr<engine::Command> ptr_sc(new engine::SelectCharacterCommand(*ngine.getState().getCharacters()[0]));
-                                ngine.addCommand(move(ptr_sc), priority++);
-                                Position pos1{initialXP1, ++initialYP1};
-                                unique_ptr<engine::Command> ptr_mc1(new engine::MoveCommand(*ngine.getState().getCharacters()[0], pos1));
-                                ngine.addCommand(move(ptr_mc1), priority++);
+                            Position pos1{initialXP2, ++initialYP2};
+                            unique_ptr<engine::Command> ptr_mc1(new engine::MoveCommand(*ngine.getState().getCharacters()[1], pos1));
+                            ngine.addCommand(move(ptr_mc1), priority++);
 
-                                Position pos2{initialXP1, ++initialYP1};
-                                unique_ptr<engine::Command> ptr_mc2(new engine::MoveCommand(*ngine.getState().getCharacters()[0], pos2));
-                                ngine.addCommand(move(ptr_mc2), priority++);
+                            Position pos2{initialXP2, ++initialYP2};
+                            unique_ptr<engine::Command> ptr_mc2(new engine::MoveCommand(*ngine.getState().getCharacters()[1], pos2));
+                            ngine.addCommand(move(ptr_mc2), priority++);
 
-                                unique_ptr<engine::Command> ptr_ac1(new engine::AttackCommand(*ngine.getState().getCharacters()[0], *ngine.getState().getCharacters()[1]));
-                                ngine.addCommand(move(ptr_ac1), priority++);
+                            unique_ptr<engine::Command> ptr_ac1(new engine::AttackCommand(*ngine.getState().getCharacters()[1], *ngine.getState().getCharacters()[0]));
+                            ngine.addCommand(move(ptr_ac1), priority++);
 
-                                unique_ptr<engine::Command> ptr_fc(new engine::FinishTurnCommand());
-                                ngine.addCommand(move(ptr_fc), priority++);
-                                cout << "Adding commands for this turn FINISHED. Executing..." << endl;
+                            unique_ptr<engine::Command> ptr_fc(new engine::FinishTurnCommand());
+                            ngine.addCommand(move(ptr_fc), priority++);
+                            cout << "Adding commands for this turn FINISHED. Executing..." << endl;
 
-                                ngine.update();
-                                turns2go--;
-                            }
-                            else if (turns2go == 4 || turns2go == 2)
-                            {
-                                cout << "initial character [Player 2] pos " << ngine.getState().getCharacters()[1]->getPosition().getX() << " " << ngine.getState().getCharacters()[0]->getPosition().getY() << endl;
-                                unique_ptr<engine::Command> ptr_sc(new engine::SelectCharacterCommand(*ngine.getState().getCharacters()[1]));
-                                ngine.addCommand(move(ptr_sc), priority++);
-
-                                Position pos1{initialXP2, ++initialYP2};
-                                unique_ptr<engine::Command> ptr_mc1(new engine::MoveCommand(*ngine.getState().getCharacters()[1], pos1));
-                                ngine.addCommand(move(ptr_mc1), priority++);
-
-                                Position pos2{initialXP2, ++initialYP2};
-                                unique_ptr<engine::Command> ptr_mc2(new engine::MoveCommand(*ngine.getState().getCharacters()[1], pos2));
-                                ngine.addCommand(move(ptr_mc2), priority++);
-
-                                unique_ptr<engine::Command> ptr_ac1(new engine::AttackCommand(*ngine.getState().getCharacters()[1], *ngine.getState().getCharacters()[0]));
-                                ngine.addCommand(move(ptr_ac1), priority++);
-
-                                unique_ptr<engine::Command> ptr_fc(new engine::FinishTurnCommand());
-                                ngine.addCommand(move(ptr_fc), priority++);
-                                cout << "Adding commands for this turn FINISHED. Executing..." << endl;
-
-                                ngine.update();
-                                turns2go--;
-                            }
-                            else if (turns2go == 0)
-                            {
-                                sleep(2);
-                                cout << "No more turns left" << endl;
-                                cout << "ENGINE SHOW finished, closing window" << endl;
-                                window.close();
-                            }
+                            ngine.update();
+                            turns2go--;
+                        }
+                        else if (turns2go == 0)
+                        {
+                            sleep(2);
+                            cout << "No more turns left" << endl;
+                            cout << "ENGINE SHOW finished, closing window" << endl;
+                            window.close();
                         }
                     }
                 }

@@ -28,9 +28,6 @@ BOOST_AUTO_TEST_CASE(TestEngineNamespace)
         unique_ptr<engine::Command> ptr_ac1(new engine::AttackCommand(*ngine.getState().getCharacters()[0], *ngine.getState().getCharacters()[1]));
         ngine.addCommand(move(ptr_ac1));
 
-        unique_ptr<engine::Command> ptr_uh(new engine::UpdateHudCommand());
-        ngine.addCommand(move(ptr_uh));
-
         unique_ptr<engine::Command> ptr_fc(new engine::FinishTurnCommand());
         ngine.addCommand(move(ptr_fc));
         ngine.update();
