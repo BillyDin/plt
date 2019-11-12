@@ -142,6 +142,17 @@ bool StateLayer::printText()
 
             playerOneBasePos += 100.f;
             texts.push_back(move(textStats));
+
+            // only for engine
+            if(currentState.mode == "engine" && currentState.getEnd() == true){
+                sf::Text win;
+                win.setPosition((window.getSize().x / 2.f) - 150.f, window.getSize().y / 2.f);
+                win.setFont(font);
+                win.setString("Player " + to_string(currentState.getTurnOwner()) + " wins");
+                win.setCharacterSize(38);
+                win.setFillColor(sf::Color::Red);
+                texts.push_back(move(win));
+            }
         }
         else
         {

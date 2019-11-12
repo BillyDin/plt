@@ -86,7 +86,6 @@ void Engine::update()
             {
                 if (endTurn == false && currentCommands[i]->getCommandID() == FINISH_TURN)
                 {
-
                     currentState.setTurn(currentState.getTurn() + 1);
                     endTurn = true;
                 }
@@ -104,7 +103,9 @@ void Engine::update()
             // TODO: Execute only the player active's commands.
             currentCommands[i]->execute(currentState);
             currentState.notifyObservers(stateEvent, currentState);
-            usleep(200 * 1000);
+            if(currentState.getMode() == "engine"){
+                usleep(200 * 1000);
+            }
         }
         // clean using iterator
         map<int, std::unique_ptr<Command>>::iterator iterator;

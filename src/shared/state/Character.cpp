@@ -37,7 +37,7 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
     {
         characterMove = 3;
         characterAttackDistance = 1;
-        baseCharacterMove = 2;
+        baseCharacterMove = 3;
         baseCharacterActackDistance = 1;
         stats.setHealth(100);
         stats.setAttack(50);
@@ -67,35 +67,30 @@ int Character::getBaseCharacterMove(){
 std::vector<Position> Character::allowedPosToMove(State &state)
 {
     std::vector<Position> canGoList;
+    int height = state.getMap().size();
+    int width = state.getMap()[0].size();
 
-    // xAxis: one tile west, one tile east
-    for (int xAxis = position.getX() - 1; xAxis <= position.getX() + 1; xAxis++)
-    {
-        // yAxis: one tile north, one tile south
-        for (int yAxis = position.getY() - 1; yAxis <= position.getY() + 1; yAxis++)
+    std::vector<Position> validNears;
+
+    for (auto &nearPosition : position.getNearPositions())
+        // if within map
+        if (nearPosition.getX() >= 0 && nearPosition.getY() >= 0 && nearPosition.getX() <= state.getMap()[0].size() - 1 && nearPosition.getY() <= state.getMap().size() - 1)
+            validNears.push_back(move(nearPosition));
+
+    for (auto &validNear : validNears)
+        for (auto &line : state.getMap())
         {
-            // gonna use absolute values,
-            // reference https://www.programiz.com/cpp-programming/library-function/cstdlib/abs
-            if (
-                //only nears
-                abs(xAxis - position.getX()) + abs(yAxis - position.getY()) <= 1
-                
-                //within the map top/left
-                && xAxis >= 0 && yAxis >= 0
-
-                //within the map bottom/right
-                && abs(xAxis) < state.getMap().size() && abs(yAxis) < state.getMap()[xAxis].size())
+            // optimize here to continue if its not near
+            if (abs(line[0]->getPosition().getX() - validNear.getX()) >= 2)
+                continue;
+            for (auto &mapcell : line)
             {
-                if (state.getMap()[xAxis][yAxis]->isOccupied(state) == -1 && state.getMap()[xAxis][yAxis]->isSpace())
-                {
-                    Position posHelper;
-                    posHelper.setX(xAxis);
-                    posHelper.setY(yAxis);
-                    canGoList.push_back(posHelper);
-                }
+                if (abs(mapcell->getPosition().getY() - validNear.getY()) >= 2)
+                    continue;
+                if (mapcell->getPosition().equals(validNear) && mapcell->isSpace() && mapcell->isOccupied(state) == -1)
+                    canGoList.push_back(move(mapcell->getPosition()));
             }
         }
-    }
     return canGoList;
 }
 

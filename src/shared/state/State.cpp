@@ -140,7 +140,6 @@ void State::initializeMapCell()
     mapp_obstacles[496] = WATER;
     mapp_obstacles[497] = WATER;
 
-    // be careful with this path ... TODO => FIND A PORTABLE SOLUTION
     std::ifstream file("res/map_v0.txt", ios::in);
     int map_tile[25 * 20];
 
@@ -154,9 +153,7 @@ void State::initializeMapCell()
         content += line;
     }
     cout << "--- file read succesfully ---" << endl;
-
     file.close();
-    cout << "--- file closed succesfully ---" << endl;
 
     // from string to stream
     std::stringstream contentStream(content);
@@ -169,6 +166,15 @@ void State::initializeMapCell()
         i++;
     }
     cout << "--- building map_tile array succesfully ---" << endl;
+
+    // unsigned int lineNumber, tileNumber = 0;
+    // for(auto &tileCode : map_tile){
+    //     if(lineNumber < 20){
+    //         std::vector<std::unique_ptr<MapCell>> newline;
+            
+    //     }
+    //     lineNumber++;
+    // }
 
     for (i = 0; i < 20; i++)
     {
