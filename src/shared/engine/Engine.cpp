@@ -11,6 +11,10 @@ Engine::Engine() : currentState("engine")
 {
 }
 
+Engine::Engine(std::string stateMode) : currentState(stateMode)
+{
+}
+
 Engine::~Engine()
 {
 }

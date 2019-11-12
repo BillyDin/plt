@@ -29,7 +29,7 @@ int main(int argc, char const *argv[])
         else if (strcmp(argv[1], "game") == 0)
         {
             cout << "--- Engine du jeu ---" << endl;
-            engine::Engine ngine;
+            engine::Engine ngine{"game"};
             cout << "--- engine object created ---" << endl;
 
             ngine.getState().initializeMapCell();
