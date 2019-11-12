@@ -136,8 +136,8 @@ int main(int argc, char const *argv[])
             cout << "--- characters initialized ---" << endl;
 
             //-----------------------------
-
-            sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32, ngine.getState().getMap().size() * 32 + 32, 32), "map");
+            sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
+            //sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32, ngine.getState().getMap().size() * 32 + 32, 32), "map");
             StateLayer layer(ngine.getState(), window);
 
             layer.initSurfaces(ngine.getState());
