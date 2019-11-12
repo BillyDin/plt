@@ -41,7 +41,8 @@ void Engine::addPassiveCommands()
             break;
         }
     }
-    if(addFinishTurn){
+    if (addFinishTurn)
+    {
         cout << "finishing because you attacked" << endl;
         unique_ptr<Command> ptr_ft(new FinishTurnCommand());
         addCommand(move(ptr_ft), priority++);
@@ -50,11 +51,13 @@ void Engine::addPassiveCommands()
 
 void Engine::addCommand(std::unique_ptr<Command> ptr_cmd, int priority)
 {
-    if (priority == -1){
+    if (priority == -1)
+    {
         // find largest priority
-        if(currentCommands.size() > 0)
+        if (currentCommands.size() > 0)
             priority = currentCommands.rbegin()->first + 1;
-        else{
+        else
+        {
             priority = 0;
         }
     }
@@ -76,11 +79,11 @@ void Engine::update()
             stateEvent.setStateEventID(CHARACTERCHANGED);
 
             if (endTurn == false && currentCommands[i]->getCommandID() == ATTACK || currentCommands[i]->getCommandID() == FINISH_TURN)
-{
+            {
 
-            currentState.setTurn(currentState.getTurn() + 1);
+                currentState.setTurn(currentState.getTurn() + 1);
                 endTurn = true;
-}
+            }
 
             // TODO: Execute only the player active's commands.
             currentCommands[i]->execute(currentState);
@@ -93,7 +96,6 @@ void Engine::update()
         {
             currentCommands.erase(iterator);
         }
-        
     }
     else
     {
