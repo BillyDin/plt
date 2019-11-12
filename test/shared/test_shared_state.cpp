@@ -28,15 +28,17 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 		BOOST_CHECK_GT(c.getCharacterAttackDistance(), 0);
 		c.setCharacterMove(10);
 		c.getStats();
-
+		
 		BOOST_CHECK_EQUAL(c.getIsInBase(), true);
-
 		Position p{10, 10};
 		c.setPosition(p);
 		BOOST_CHECK_EQUAL(c.getPosition().equals(p), true);
 		c.setTypeID(MAGICIAN);
 		BOOST_CHECK_EQUAL(c.getType(), MAGICIAN);
-
+		
+		// it must only set 1 or 2
+		c.setPlayerOwner(4444444444);
+		BOOST_CHECK_NE(c.getPlayerOwner(), 4444444444);
 		Position p2{-12, -32};
 		BOOST_CHECK_GT(p.distance(p2), 0); // distance returns a positive int.
 

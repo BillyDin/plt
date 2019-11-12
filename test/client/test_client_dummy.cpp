@@ -19,7 +19,14 @@ BOOST_AUTO_TEST_CASE(TestSFML)
 BOOST_AUTO_TEST_CASE(TestClientNamespace)
 {
 	{
-
+		engine::Engine e{"engine"};
+		e.getState().initializeCharacters();
+		e.getState().initializeMapCell();
+		KeyboardListener::triggerAction(e, SELECT);
+		e.getState().setActualAction(state::MOVING);
+		KeyboardListener::triggerAction(e, MOVE);
+		KeyboardListener::triggerAction(e, ATTACK);
+		KeyboardListener::triggerAction(e, PASS_TURN);
 	}
 }
 
