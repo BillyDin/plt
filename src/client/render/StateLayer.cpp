@@ -151,8 +151,8 @@ bool StateLayer::printText()
                 sf::Text win;
                 win.setPosition((window.getSize().x / 2.f) - 150.f, window.getSize().y / 2.f);
                 win.setFont(font);
-                win.setString("Player " + to_string(currentState.getTurnOwner()) + " wins");
-                win.setCharacterSize(38);
+                win.setString("Player 1 wins");
+                win.setCharacterSize(48);
                 win.setFillColor(sf::Color::Red);
                 texts.push_back(move(win));
             }
