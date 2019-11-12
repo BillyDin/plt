@@ -106,7 +106,7 @@ int main(int argc, char const *argv[])
             State state{"render"};
             state.initializeMapCell();
             state.initializeCharacters();
-            sf::RenderWindow window(sf::VideoMode(state.getMap()[0].size() * 32, (state.getMap().size() * 32) + 32), "Map");
+            sf::RenderWindow window(sf::VideoMode(state.getMap()[0].size() * 32 + 256, state.getMap().size() * 32 + 32, 32), "map");
             StateLayer layer(state, window);
             layer.initSurfaces(state);
             while (window.isOpen())
