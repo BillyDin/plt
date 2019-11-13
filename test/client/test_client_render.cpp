@@ -43,6 +43,8 @@ BOOST_AUTO_TEST_CASE(TestRenderNamespace)
         StateLayer layer(state, window, "test");
         layer.initSurfaces(state);
         layer.draw(window);
+        StateEvent se{StateEventID::CHARACTERCHANGED};
+        layer.stateChanged(se, state);
     }
 }
 
