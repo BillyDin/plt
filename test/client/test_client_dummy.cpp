@@ -21,9 +21,9 @@ BOOST_AUTO_TEST_CASE(TestClientNamespace)
 	{
 		engine::Engine e{"engine"};
 		e.getState().initializeCharacters();
-		e.getState().initializeMapCell();
+		e.getState().initializeMapCell("../../../res/map_v0.txt");
+		e.getState().getCursor().setPosition(e.getState().getCharacters()[0]->getPosition());
 		KeyboardListener::triggerAction(e, SELECT);
-		e.getState().setActualAction(state::MOVING);
 		KeyboardListener::triggerAction(e, MOVE);
 		KeyboardListener::triggerAction(e, ATTACK);
 		KeyboardListener::triggerAction(e, PASS_TURN);

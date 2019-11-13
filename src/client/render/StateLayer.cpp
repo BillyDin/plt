@@ -12,17 +12,17 @@ using namespace render;
 using namespace std;
 using namespace state;
 
-StateLayer::StateLayer(state::State &state, sf::RenderWindow &window) : window(window) , currentState(state)
+StateLayer::StateLayer(state::State &state, sf::RenderWindow &window, std::string env) : window(window) , currentState(state)
 {
     font.loadFromFile("res/typographie.ttf");
 
-    std::unique_ptr<TileSet> tilesetMapCell(new TileSet(TileSetID::MAPCELL));
+    std::unique_ptr<TileSet> tilesetMapCell(new TileSet(TileSetID::MAPCELL, env));
     tilesets.push_back(move(tilesetMapCell));
 
-    std::unique_ptr<TileSet> tilesetCharacters(new TileSet(TileSetID::CHARACTER));
+    std::unique_ptr<TileSet> tilesetCharacters(new TileSet(TileSetID::CHARACTER, env));
     tilesets.push_back(move(tilesetCharacters));
 
-    std::unique_ptr<TileSet> tilesetCursor(new TileSet(TileSetID::CURSOR));
+    std::unique_ptr<TileSet> tilesetCursor(new TileSet(TileSetID::CURSOR, env));
     tilesets.push_back(move(tilesetCursor));
 }
 

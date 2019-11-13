@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(TestStateNamespace)
 	{
 		State s{"render"};
 		s.initializeCharacters();
-		s.initializeMapCell();
+		s.initializeMapCell( "res/characters.png");
 
 		s.setEnd(false);
 		BOOST_CHECK_EQUAL(s.getEnd(), false);

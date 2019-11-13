@@ -106,7 +106,7 @@ void State::initializeCharacters()
     cout << "characters inits finished\n";
 }
 
-void State::initializeMapCell()
+void State::initializeMapCell(std::string mapResource)
 {
     // Iteration helpers
     unsigned int i = 0, j = 0, k = 0;
@@ -140,7 +140,7 @@ void State::initializeMapCell()
     mapp_obstacles[496] = WATER;
     mapp_obstacles[497] = WATER;
 
-    std::ifstream file("res/map_v0.txt", ios::in);
+    std::ifstream file(mapResource, ios::in);
     int map_tile[25 * 20];
 
     //this way we read the txt file.
@@ -206,6 +206,7 @@ void State::initializeMapCell()
         map.push_back(move(newline));
     }
     cout << "--- map created succesfully ---" << endl;
+    return;
 }
 
 void State::setTurn(int newTurn)
