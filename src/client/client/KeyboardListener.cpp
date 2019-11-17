@@ -191,7 +191,7 @@ bool KeyboardListener::triggerAction(engine::Engine &engine, KeyID key)
             cout << "trying to move a character " << endl;
             for (auto &charac : engine.getState().getCharacters())
             {
-                if (charac->getPlayerOwner() == actualPlayer)
+                if (charac->getPlayerOwner() == actualPlayer && charac->getStatus() == SELECTED)
                 {
                     bool allowed = false;
                     for (auto &allowPos : charac->allowedPosToMove(engine.getState()))

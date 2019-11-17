@@ -167,36 +167,29 @@ void State::initializeMapCell(std::string mapResource)
     }
     cout << "--- building map_tile array succesfully ---" << endl;
 
-    // unsigned int lineNumber, tileNumber = 0;
-    // for(auto &tileCode : map_tile){
-    //     if(lineNumber < 20){
-    //         std::vector<std::unique_ptr<MapCell>> newline;
-            
-    //     }
-    //     lineNumber++;
-    // }
+    std::vector<unique_ptr<MapCell>> primitive;
 
-    for (i = 0; i < 20; i++)
+    for (i = 0; i < 20; ++i)
     {
         std::vector<std::unique_ptr<MapCell>> newline;
-        for (j = 0; j < 25; j++)
+        for (j = 0; j < 25; ++j)
         {
             cout << map_tile[k] << ",";
-            if (map_tile[k] >= 0 && map_tile[k])
+            if (map_tile[k])
             {
                 if (mapp_spaces.find(map_tile[k]) != mapp_spaces.end())
                 {
-                    std::unique_ptr<SpaceMapCell> spc(new SpaceMapCell(mapp_spaces[map_tile[k]], i, j, map_tile[k]));
+                    std::unique_ptr<SpaceMapCell> spc(new SpaceMapCell(mapp_spaces[map_tile[k]], j, i, map_tile[k]));
                     newline.push_back(move(spc));
                 }
                 else if (mapp_obstacles.find(map_tile[k]) != mapp_obstacles.end())
                 {
-                    std::unique_ptr<ObstacleMapCell> obs(new ObstacleMapCell(mapp_obstacles[map_tile[k]], i, j, map_tile[k]));
+                    std::unique_ptr<ObstacleMapCell> obs(new ObstacleMapCell(mapp_obstacles[map_tile[k]], j, i, map_tile[k]));
                     newline.push_back(move(obs));
                 }
                 else
                 {
-                    std::unique_ptr<SpaceMapCell> spc(new SpaceMapCell(mapp_spaces[map_tile[118]], i, j, map_tile[118]));
+                    std::unique_ptr<SpaceMapCell> spc(new SpaceMapCell(mapp_spaces[map_tile[118]], j, i, map_tile[118]));
                     newline.push_back(move(spc));
                 }
             }

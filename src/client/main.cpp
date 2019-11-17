@@ -28,15 +28,11 @@ int main(int argc, char const *argv[])
 
         else if (strcmp(argv[1], "game") == 0)
         {
-            cout << "--- Engine du jeu ---" << endl;
             engine::Engine ngine{"game"};
-            cout << "--- engine object created ---" << endl;
 
             ngine.getState().initializeMapCell();
-            cout << "--- state map initialized ---" << endl;
 
             ngine.getState().initializeCharacters();
-            cout << "--- characters initialized ---" << endl;
 
             //-----------------------------
 
@@ -44,32 +40,20 @@ int main(int argc, char const *argv[])
             StateLayer layer(ngine.getState(), window);
 
             layer.initSurfaces(ngine.getState());
-            cout << "--- game window initialized ---" << endl;
-
             StateLayer stateLayer(ngine.getState(), window);
-            cout << "--- state layer initialized with the state and the window ---" << endl;
-
             stateLayer.initSurfaces(ngine.getState());
-            cout << "--- state layer's surfaces initialized ---" << endl;
-
             // Registering observer
             StateLayer *ptr_stateLayer = &stateLayer;
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
 
-            //turns number to show how it works
-            int turns2go = 9;
             while (window.isOpen())
             {
                 sf::Event event;
-
-                if (once)
-                {
+                if(once){
                     stateLayer.draw(window);
                     once = false;
-                    cout << "ATENTION!! push some key to trigger a turn..." << endl;
                 }
-
                 while (window.pollEvent(event))
                 {
                     if (event.type == sf::Event::Closed)

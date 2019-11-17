@@ -62,7 +62,7 @@ int Character::getBaseCharacterMove(){
     return baseCharacterMove;
 }
 
-// this algo will check for all the 
+// this algo will check for all the
 // tiles located in north, east, south and west of our character
 std::vector<Position> Character::allowedPosToMove(State &state)
 {
@@ -71,25 +71,41 @@ std::vector<Position> Character::allowedPosToMove(State &state)
 
     for (auto &nearPosition : position.getNearPositions())
         // if within map
-        if (nearPosition.getX() >= 0 && nearPosition.getY() >= 0 && nearPosition.getX() <= state.getMap()[0].size() - 1 && nearPosition.getY() <= state.getMap().size() - 1)
+        if (nearPosition.getY() >= 0 && nearPosition.getX() >= 0 
+        && (unsigned int)nearPosition.getX() <= state.getMap()[0].size()
+        && (unsigned int)nearPosition.getY() <= state.getMap().size())
             validNears.push_back(move(nearPosition));
 
     for (auto &validNear : validNears)
+    {
         for (auto &line : state.getMap())
         {
-            // optimize here to continue if its not near
-            if (abs(line[0]->getPosition().getX() - validNear.getX()) >= 2)
+            if(line[0]->getPosition().getY() != validNear.getY())
                 continue;
             for (auto &mapcell : line)
             {
-                if (abs(mapcell->getPosition().getY() - validNear.getY()) >= 2)
+                if(mapcell->getPosition().getX() != validNear.getX())
                     continue;
                 if (mapcell->getPosition().equals(validNear) && mapcell->isSpace() && mapcell->isOccupied(state) == -1)
                     canGoList.push_back(move(mapcell->getPosition()));
             }
         }
+    }
+
     return canGoList;
+    //return position.getNearPositions();
 }
+
+    // for(auto &line : state.getMap()){
+    //     for(auto &mapcell : line){
+    //         for(auto &near : position.getNearPositions()){
+                
+    //             if(mapcell->getPosition().getX() == near.getX() && 
+    //                 mapcell->getPosition().getY() == near.getY())
+    //                 canGoList.push_back(move(near));
+    //         }
+    //     }
+    // }
 
 int Character::getCharacterMove() const
 {

@@ -91,9 +91,7 @@ bool Surface::loadTextures(state::State &state, sf::Texture &textureTileset, sf:
                         int tilePosY = state.getMap()[i][j]->getPosition().getY();
                         for (auto &allowedPos : charac->allowedPosToMove(state))
                         {
-                            // it is not intuitive, but we have to invert the axis when comparing here.
-                            // look documentation.
-                            if (allowedPos.getX() == tilePosY && allowedPos.getY() == tilePosX)
+                            if (allowedPos.getX() == tilePosX && allowedPos.getY() == tilePosY)
                             {
                                 Color c = Color(30, 144, 255);
                                 quad[0].color = c;
@@ -105,6 +103,22 @@ bool Surface::loadTextures(state::State &state, sf::Texture &textureTileset, sf:
                     }
                 }
             }
+            // else if (state.getActualAction() == IDLE){
+            //     int tilePosX = state.getMap()[i][j]->getPosition().getX();
+            //     int tilePosY = state.getMap()[i][j]->getPosition().getY();
+            //     Position target{tilePosX, tilePosY};
+            //     for (auto &line : state.getMap()){
+            //         for ( auto &cell : line){
+            //             if (cell->isSpace() && cell->getPosition().equals(target))
+            //                 {
+            //                     quad[0].color = sf::Color::Green;
+            //                     quad[1].color =sf::Color::Green;
+            //                     quad[2].color = sf::Color::Green;
+            //                     quad[3].color = sf::Color::Green;
+            //                 }
+            //         }
+            //     }
+            // }
         }
     }
     return true;
