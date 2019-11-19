@@ -27,7 +27,8 @@ std::unique_ptr<state::Character> selectCharacter (state::State& state, int play
             possibleCharacters.push_back(move(character));
     }
     randomNumber = rand() % possibleCharacters.size(); 
-    return possibleCharacters[randomNumber];
+    unique_ptr<Character> result(new Character(*possibleCharacters.at(randomNumber).get()));
+    return result;
 }
  
 state::Character& chooseTarget (state::State& state){
