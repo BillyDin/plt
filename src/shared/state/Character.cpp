@@ -62,6 +62,22 @@ int Character::getBaseCharacterMove(){
     return baseCharacterMove;
 }
 
+std::vector<unique_ptr<Character>> Character::allowedTargetsToAttack(State &state){
+    vector<unique_ptr<Character>> result;
+    for (auto &character : state.getCharacters()){
+        // just work on the other player characters
+        if(character->getPlayerOwner() != this->playerOwner)
+        {
+            // check distances
+            int maxDistance = this->getCharacterAttackDistance() + 1;
+            if(this->position.distance(character->getPosition()) <= maxDistance){
+                result.push_back(move(character));
+            }
+        }
+    }
+    return result;
+}
+
 // this algo will check for all the
 // tiles located in north, east, south and west of our character
 std::vector<Position> Character::allowedPosToMove(State &state)
