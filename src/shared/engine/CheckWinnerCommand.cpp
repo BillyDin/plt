@@ -54,6 +54,7 @@ void CheckWinnerCommand::execute(state::State &state)
     winner = (p1StillInGame && p2StillInGame) ? 0 : (p1StillInGame) ? 1 : 2;
     if(winner){
         state.setEnd(true);
+        state.setWinner(winner);
         cout << endl << "ATENTION!!! THE WINNER IS THE PLAYER " << winner << endl;
         cout << endl << "All the opponent's characters are dead" << endl;
     }

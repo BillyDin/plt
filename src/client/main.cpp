@@ -12,6 +12,7 @@ void testSFML()
 #include <state.h>
 #include "render.h"
 #include "engine.h"
+#include "ai.h"
 #include "client.h"
 #include <iostream>
 #include <unistd.h>
@@ -19,6 +20,8 @@ using namespace std;
 using namespace state;
 using namespace render;
 using namespace client;
+using namespace ai;
+
 int main(int argc, char const *argv[])
 {
     if (argc > 1)
@@ -75,10 +78,120 @@ int main(int argc, char const *argv[])
                                 KeyboardListener::triggerAction(ngine, MOVE);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
                                 KeyboardListener::triggerAction(ngine, ATTACK);
-                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
                                 KeyboardListener::triggerAction(ngine, PASS_TURN);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
                                 KeyboardListener::triggerAction(ngine, SELECT);
+                        }
+                    }
+                }
+            }
+        }
+        else if (strcmp(argv[1], "random_ai") == 0)
+        {
+            srand(time(0));
+            engine::Engine ngine{"game"};
+
+            ngine.getState().initializeMapCell();
+
+            ngine.getState().initializeCharacters();
+            RandomAI rai2;
+
+            rai2.setPlayerNumber(2);
+            //-----------------------------
+
+            sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
+            StateLayer layer(ngine.getState(), window);
+
+            layer.initSurfaces(ngine.getState());
+            StateLayer stateLayer(ngine.getState(), window);
+            stateLayer.initSurfaces(ngine.getState());
+            // Registering observer
+            StateLayer *ptr_stateLayer = &stateLayer;
+            ngine.getState().registerObserver(ptr_stateLayer);
+            bool once = true;
+
+            while (window.isOpen())
+            {
+                sf::Event event;
+                if(once){
+                    stateLayer.draw(window);
+                    once = false;
+                }
+                while (window.pollEvent(event))
+                {
+                    if (event.type == sf::Event::Closed)
+                        window.close();
+                    else if (event.type == sf::Event::KeyPressed)
+                    {
+                        if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 1)
+                        {
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                                KeyboardListener::triggerAction(ngine, LEFT);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                                KeyboardListener::triggerAction(ngine, TOP);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                                KeyboardListener::triggerAction(ngine, RIGHT);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                                KeyboardListener::triggerAction(ngine, DOWN);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
+                                KeyboardListener::triggerAction(ngine, MOVE);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+                                KeyboardListener::triggerAction(ngine, ATTACK);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+                                KeyboardListener::triggerAction(ngine, PASS_TURN);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+                                KeyboardListener::triggerAction(ngine, SELECT);
+                        }
+                    }
+                    if(ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 2)
+                        rai2.run(ngine);
+                }
+            }
+        }
+        else if (strcmp(argv[1], "raivsrai") == 0)
+        {
+            srand(time(0));
+            engine::Engine ngine{"game"};
+
+            ngine.getState().initializeMapCell();
+
+            ngine.getState().initializeCharacters();
+            RandomAI rai1;
+            RandomAI rai2;
+
+            rai1.setPlayerNumber(1);
+            rai2.setPlayerNumber(2);
+            //-----------------------------
+
+            sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
+            StateLayer layer(ngine.getState(), window);
+
+            layer.initSurfaces(ngine.getState());
+            StateLayer stateLayer(ngine.getState(), window);
+            stateLayer.initSurfaces(ngine.getState());
+            // Registering observer
+            StateLayer *ptr_stateLayer = &stateLayer;
+            ngine.getState().registerObserver(ptr_stateLayer);
+            bool once = true;
+
+            while (window.isOpen())
+            {
+                sf::Event event;
+                if(once){
+                    stateLayer.draw(window);
+                    once = false;
+                }
+                while (window.pollEvent(event))
+                {
+                    if (event.type == sf::Event::Closed)
+                        window.close();
+                    else if (event.type == sf::Event::KeyPressed)
+                    {
+                        while(ngine.getState().getEnd() == false){
+                            rai1.run(ngine);
+                            if(ngine.getState().getEnd() == false)
+                                rai2.run(ngine);
                         }
                     }
                 }

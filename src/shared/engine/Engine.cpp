@@ -36,21 +36,7 @@ void Engine::addPassiveCommands()
     // passive commands...
     unique_ptr<Command> ptr_cw(new CheckWinnerCommand());
     addCommand(move(ptr_cw), priority++);
-    bool addFinishTurn = false;
-    for (size_t i = 0; i < currentCommands.size(); i++)
-    {
-        if (currentCommands[i]->getCommandID() == ATTACK)
-        {
-            addFinishTurn = true;
-            break;
-        }
-    }
-    if (addFinishTurn)
-    {
-        cout << "finishing because you attacked" << endl;
-        unique_ptr<Command> ptr_ft(new FinishTurnCommand());
-        addCommand(move(ptr_ft), priority++);
-    }
+    
 }
 
 void Engine::addCommand(std::unique_ptr<Command> ptr_cmd, int priority)
@@ -81,26 +67,6 @@ void Engine::update()
         for (size_t i = 0; i < currentCommands.size(); i++)
         {
             stateEvent.setStateEventID(CHARACTERCHANGED);
-
-            if (currentState.mode == "engine")
-            {
-                if (endTurn == false && currentCommands[i]->getCommandID() == FINISH_TURN)
-                {
-                    currentState.setTurn(currentState.getTurn() + 1);
-                    endTurn = true;
-                }
-            }
-            else
-            {
-                if (endTurn == false && currentCommands[i]->getCommandID() == ATTACK || currentCommands[i]->getCommandID() == FINISH_TURN)
-                {
-
-                    currentState.setTurn(currentState.getTurn() + 1);
-                    endTurn = true;
-                }
-            }
-
-            // TODO: Execute only the player active's commands.
             currentCommands[i]->execute(currentState);
             currentState.notifyObservers(stateEvent, currentState);
             if(currentState.getMode() == "engine"){

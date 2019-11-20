@@ -18,10 +18,10 @@ void FinishTurnCommand::execute (state::State& state){
     state.setActualAction(IDLE);
     state.getCursor().setTileCode(2);
     bool cursorPositionAssigned = false;
+    state.setTurn(state.getTurn() + 1);
     // other things?
     for(auto &charac : state.getCharacters()){
         if(charac->getStatus() != DEATH){
-            
             charac->setCharacterMove(charac->getBaseCharacterMove());
             // if it's your turn, your characters will become avaiables.
             if(charac->getPlayerOwner() == state.getTurnOwner()){

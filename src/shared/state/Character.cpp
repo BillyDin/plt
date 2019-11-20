@@ -62,20 +62,19 @@ int Character::getBaseCharacterMove(){
     return baseCharacterMove;
 }
 
-std::vector<unique_ptr<Character>> Character::allowedTargetsToAttack(State &state){
-    vector<unique_ptr<Character>> result;
-    for (auto &character : state.getCharacters()){
-        // just work on the other player characters
-        if(character->getPlayerOwner() != this->playerOwner)
-        {
+std::vector<int> Character::allowedTargetsToAttack(State &state){
+    vector<int> posibleIndexes;
+    for(unsigned int i = 0; i < state.getCharacters().size(); i++){
+        Character& charac = *state.getCharacters()[i];
+        if(charac.getPlayerOwner() != playerOwner && charac.getStatus() != DEATH){
             // check distances
-            int maxDistance = this->getCharacterAttackDistance() + 1;
-            if(this->position.distance(character->getPosition()) <= maxDistance){
-                result.push_back(move(character));
+            int maxDistance = characterAttackDistance + 1;
+            if(position.distance(charac.getPosition()) <= maxDistance){
+                posibleIndexes.push_back(i);
             }
         }
     }
-    return result;
+    return posibleIndexes;
 }
 
 // this algo will check for all the
