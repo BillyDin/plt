@@ -5,7 +5,7 @@
 [![forthebadge](https://forthebadge.com/images/badges/made-with-c-plus-plus.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
-## Livraison 2.2
+## Livraison 2.final
 
 ## Get Started
 
@@ -48,8 +48,26 @@ $ ./bin/client render
 $ ./bin/client engine
 ```
 
+## Play vs Random AI
+
+```sh
+$ ./bin/client random_ai
+```
+
+## Random AI vs Random AI
+
+```sh
+$ ./bin/client raivsrai
+```
 
 ## Release History
+
+* 2.final
+    * Report 2.final
+    * AI diagram
+    * Implemented code for the Random AI
+    * Player vs Random AI
+    * Random AI vs Random AI
 
 * 2.2
     * Report 2.2

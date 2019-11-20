@@ -82,7 +82,6 @@ void StateLayer::stateChanged(const state::StateEvent &e, state::State &state)
     {
         initSurfaces(state);
         draw(window);
-        std::cout << "STATE CHANGED EVENT: character changed" << endl;
     }
     else if (e.stateEventID == StateEventID::CURSOR_CHANGED)
     {
@@ -115,18 +114,32 @@ bool StateLayer::printText()
     player1.setPosition(window.getSize().x - 240.f, 0.f);
     player1.setFont(font);
     player1.setString("Player 1");
-    player1.setFillColor(sf::Color::White);
+    if(currentState.getTurnOwner() == 1)
+        player1.setFillColor(sf::Color::Green);    
     texts.push_back(move(player1));
 
     sf::Text player2;
     player2.setPosition(window.getSize().x - 240.f, (window.getSize().y / 2));
     player2.setFont(font);
     player2.setString("Player 2");
-    player2.setFillColor(sf::Color::White);
+    if(currentState.getTurnOwner() == 2)
+        player2.setFillColor(sf::Color::Green);
     texts.push_back(move(player2));
 
     float playerOneBasePos = player1.getPosition().y + 32.f;
     float playerTwoBasePos = player2.getPosition().y + 32.f;
+
+    if (currentState.getEnd() == true)
+    {
+        sf::Text win;
+        win.setPosition((window.getSize().x / 2.f) - 150.f, window.getSize().y / 2.f);
+        win.setFont(font);
+        string str = "Player " + to_string(currentState.getWinner()) + " wins";
+        win.setString(str);
+        win.setCharacterSize(48);
+        win.setFillColor(sf::Color::Red);
+        texts.push_back(move(win));
+    }
 
     for (auto &charac : currentState.getCharacters())
     {
@@ -136,26 +149,21 @@ bool StateLayer::printText()
             textStats.setPosition(window.getSize().x - 240.f, playerOneBasePos);
             textStats.setFont(font);
             std::string str = charac->getName() + "\n";
-            str += "Health: " + std::to_string(charac->getStats().getHealth()) + "\n";
+            str += "Health: " + std::to_string((charac->getStats().getHealth() <= 0) ? 0 : charac->getStats().getHealth()) + "\n";
             str += "Moves: " + std::to_string(charac->getCharacterMove()) + "\n";
             str += "Attack dist.: " + std::to_string(charac->getCharacterAttackDistance());
             textStats.setString(str);
-            textStats.setFillColor(sf::Color::White);
+            
+            if(charac->getStatus() == SELECTED)
+                textStats.setFillColor(sf::Color::Green);
+
+            else if(charac->getStatus() == DEATH)
+                textStats.setFillColor(sf::Color::Red);
+
             textStats.setCharacterSize(15); // in pixels, not points!
 
             playerOneBasePos += 100.f;
             texts.push_back(move(textStats));
-
-            // only for engine
-            if(currentState.mode == "engine" && currentState.getEnd() == true){
-                sf::Text win;
-                win.setPosition((window.getSize().x / 2.f) - 150.f, window.getSize().y / 2.f);
-                win.setFont(font);
-                win.setString("Player 1 wins");
-                win.setCharacterSize(48);
-                win.setFillColor(sf::Color::Red);
-                texts.push_back(move(win));
-            }
         }
         else
         {
@@ -163,13 +171,18 @@ bool StateLayer::printText()
             textStats.setPosition(window.getSize().x - 240.f, playerTwoBasePos);
             textStats.setFont(font);
             std::string str = charac->getName() + "\n";
-            str += "Health: " + std::to_string(charac->getStats().getHealth()) + "\n";
+            str += "Health: " + std::to_string((charac->getStats().getHealth() <= 0) ? 0 : charac->getStats().getHealth()) + "\n";
             str += "Moves: " + std::to_string(charac->getCharacterMove()) + "\n";
             str += "Attack dist.: " + std::to_string(charac->getCharacterAttackDistance());
             textStats.setString(str);
-            textStats.setFillColor(sf::Color::White);
-            textStats.setCharacterSize(15); // in pixels, not points!
+            
+            if(charac->getStatus() == SELECTED)
+                textStats.setFillColor(sf::Color::Green);
 
+            else if(charac->getStatus() == DEATH)
+                textStats.setFillColor(sf::Color::Red);            
+                
+            textStats.setCharacterSize(15); // in pixels, not points!
             playerTwoBasePos += 100.f;
             texts.push_back(move(textStats));
         }
@@ -177,7 +190,7 @@ bool StateLayer::printText()
             sf::Text selectedChar;
             selectedChar.setPosition(window.getSize().y / 2.f + 6.f*32.f, window.getSize().y-32.f);
             selectedChar.setFont(font);
-            string str = "Selected " + charac->getName() + " (Player " + std::to_string(charac->getPlayerOwner()) + ")";
+            string str = "Selected " + charac->getName() + " (P" + std::to_string(charac->getPlayerOwner()) + ")";
             selectedChar.setString(str);
             selectedChar.setCharacterSize(18);
             selectedChar.setFillColor(sf::Color::Green);
@@ -188,13 +201,13 @@ bool StateLayer::printText()
     sf::Text controls;
     controls.setPosition(16.f, window.getSize().y-32.f);
     controls.setFont(font);
-    controls.setString("Select: ENTER   -   Move: M   -   Attack: A   -   Pass: P");
+    controls.setString("Select: ENTER   -   Move: M   -   Attack: A   -   Skip: S");
     controls.setCharacterSize(18);
     controls.setFillColor(sf::Color::White);
     texts.push_back(move(controls));
 
     sf::Text turnInfo;
-    turnInfo.setPosition(((window.getSize().x) - 7*32.f), window.getSize().y - 32.f);
+    turnInfo.setPosition(((window.getSize().x) - 8*32.f), window.getSize().y - 32.f);
     turnInfo.setFont(font); // font is a sf::Font
 
     std::string str = "Turn: " + std::to_string(currentState.getTurn());

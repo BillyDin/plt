@@ -241,6 +241,9 @@ bool KeyboardListener::triggerAction(engine::Engine &engine, KeyID key)
                                 {
                                     unique_ptr<engine::Command> ptr_ac1(new engine::AttackCommand(*attacker, *target));
                                     engine.addCommand(move(ptr_ac1));
+
+                                    unique_ptr<engine::Command> ptr_ftc(new engine::FinishTurnCommand());
+                                    engine.addCommand(move(ptr_ftc));
                                     engine.update();
                                     break;
                                 }

@@ -225,3 +225,12 @@ void State::setTurnOwner(int newTurnOwner)
 }
 
 // Setters and Getters
+void State::setWinner (int newWinner){
+    if(newWinner == 1 || newWinner == 2){
+        winner = newWinner;
+    }
+}
+
+int State::getWinner (){
+    return winner;
+}

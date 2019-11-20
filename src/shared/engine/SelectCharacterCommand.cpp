@@ -13,7 +13,7 @@ SelectCharacterCommand::SelectCharacterCommand(state::Character &pTarget) : targ
 void SelectCharacterCommand::execute(state::State &state)
 {
     for( auto & charac : state.getCharacters()){
-        if(state.getTurnOwner() == charac->getPlayerOwner())
+        if(charac->getStatus() != DEATH && state.getTurnOwner() == charac->getPlayerOwner())
             charac->setStatus(AVAILABLE);
     }
     target.setStatus(SELECTED);
