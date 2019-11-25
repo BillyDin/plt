@@ -28,7 +28,13 @@ int main(int argc, char const *argv[])
     {
         if (strcmp(argv[1], "hello") == 0)
             cout << "Bonjour " << ((argv[2]) ? argv[2] : "tout le monde") << endl;
-
+        else if(strcmp(argv[1], "heuristic_ai") == 0){
+            engine::Engine ngine{"game"};
+            ngine.getState().initializeCharacters();
+            ngine.getState().initializeMapCell();
+            HeuristicAI hai;
+            hai.run(ngine);
+        }
         else if (strcmp(argv[1], "game") == 0)
         {
             engine::Engine ngine{"game"};
