@@ -7,12 +7,22 @@
 
 using namespace ai;
 using namespace state;
+using namespace engine;
 using namespace std;
 
 void HeuristicAI::run(engine::Engine &engine){
     cout << "run heuristic ia" << endl;
-    if(initMapNodes(engine.getState())){
-        // code ...
+
+    // we do the best choice basing us in the distance between characters.
+    Character &selectedChar = *engine.getState().getCharacters()[selectCharacter(engine.getState())];
+    unique_ptr<Command> selectCommand(new SelectCharacterCommand(selectedChar));
+    engine.addCommand(move(selectCommand));
+
+    // can attack?
+    if (selectedChar.allowedTargetsToAttack(engine.getState()).size() > 0){
+        // can attack.
+    } else {
+        // can't attack. let's move until attack or moves chances == 0
     }
 }
 
@@ -25,23 +35,28 @@ int HeuristicAI::getPlayerNumber(){
     return playerNumber;
 }
 
-// by now, we are reusing the selectCharacter function of RandomAI
 int HeuristicAI::selectCharacter(state::State &state){
-    std::vector<int> posibleIndex;
-
-    for(unsigned int i = 0; i < state.getCharacters().size(); i++){
-        Character &charac = *state.getCharacters()[i];
-        if(charac.getPlayerOwner() == playerNumber && charac.getStatus() != DEATH)
-            posibleIndex.push_back(i);
-    }
-
-    int randomNumber = rand() % posibleIndex.size();
-    cout << "[";
-    for(auto &index : posibleIndex){
-        cout << index << ", ";
-    }
-    cout << "]" << endl;
-    return posibleIndex[randomNumber];
+    int index = -1;
+    int globalMinDist = INT32_MAX;
+    
+    // for each alive character of mine
+    for (unsigned int i = 0; i < state.getCharacters().size(); i++)
+        // just my characters
+        if(state.getCharacters()[i]->getPlayerOwner() == playerNumber && state.getCharacters()[i]->getStatus() != DEATH){
+            int minimalDistance = INT32_MAX;
+            // for each enemy character
+            for (auto &enemyCharacter : state.getCharacters())
+                // just enemies
+                if(enemyCharacter->getPlayerOwner() != playerNumber && enemyCharacter->getStatus() != DEATH)
+                    if(state.getCharacters()[i]->getPosition().distance(enemyCharacter->getPosition()) < minimalDistance)
+                        minimalDistance = state.getCharacters()[i]->getPosition().distance(enemyCharacter->getPosition());
+                
+            if(minimalDistance < globalMinDist){
+                globalMinDist = minimalDistance;
+                index = i;
+            }
+        }
+    return index;
 }
 
 // initializes mapNodes vector, which is a grid of all cells where a character can 

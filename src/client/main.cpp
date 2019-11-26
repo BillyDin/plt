@@ -33,6 +33,7 @@ int main(int argc, char const *argv[])
             ngine.getState().initializeCharacters();
             ngine.getState().initializeMapCell();
             HeuristicAI hai;
+            hai.initMapNodes(ngine.getState());
             hai.run(ngine);
         }
         else if (strcmp(argv[1], "game") == 0)
