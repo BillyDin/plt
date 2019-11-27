@@ -134,6 +134,8 @@ bool HeuristicAI::initMapNodes(state::State &state){
         for(unsigned j = 0; j < state.getMap()[i].size(); j++){
             mapNodes.push_back(MapNode{state.getMap()[i][j]->getPosition().getX(), 
                                 state.getMap()[i][j]->getPosition().getY(), k, !state.getMap()[i][j]->isSpace()});
+            if(state.getMap()[i][j]->isOccupied(state) != -1)
+                mapNodes.back().setOcuppied(true);
             k++;
         }
     }
