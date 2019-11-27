@@ -28,7 +28,66 @@ int main(int argc, char const *argv[])
     {
         if (strcmp(argv[1], "hello") == 0)
             cout << "Bonjour " << ((argv[2]) ? argv[2] : "tout le monde") << endl;
+        else if(strcmp(argv[1], "heuristic_ai") == 0){
+            engine::Engine ngine{"game"};
 
+            ngine.getState().initializeMapCell();
+
+            ngine.getState().initializeCharacters();
+            HeuristicAI heu2;
+            heu2.initMapNodes(ngine.getState());
+            heu2.setPlayerNumber(2);
+            //-----------------------------
+
+            sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
+            StateLayer layer(ngine.getState(), window);
+
+            layer.initSurfaces(ngine.getState());
+            StateLayer stateLayer(ngine.getState(), window);
+            stateLayer.initSurfaces(ngine.getState());
+            // Registering observer
+            StateLayer *ptr_stateLayer = &stateLayer;
+            ngine.getState().registerObserver(ptr_stateLayer);
+            bool once = true;
+
+            while (window.isOpen())
+            {
+                sf::Event event;
+                if(once){
+                    stateLayer.draw(window);
+                    once = false;
+                }
+                while (window.pollEvent(event))
+                {
+                    if (event.type == sf::Event::Closed)
+                        window.close();
+                    else if (event.type == sf::Event::KeyPressed)
+                    {
+                        if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 1)
+                        {
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                                KeyboardListener::triggerAction(ngine, LEFT);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                                KeyboardListener::triggerAction(ngine, TOP);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                                KeyboardListener::triggerAction(ngine, RIGHT);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                                KeyboardListener::triggerAction(ngine, DOWN);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
+                                KeyboardListener::triggerAction(ngine, MOVE);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+                                KeyboardListener::triggerAction(ngine, ATTACK);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+                                KeyboardListener::triggerAction(ngine, PASS_TURN);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+                                KeyboardListener::triggerAction(ngine, SELECT);
+                        }
+                    }
+                    if(ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 2)
+                        heu2.run(ngine);
+                }
+            }
+        }
         else if (strcmp(argv[1], "game") == 0)
         {
             engine::Engine ngine{"game"};
@@ -192,6 +251,56 @@ int main(int argc, char const *argv[])
                             rai1.run(ngine);
                             if(ngine.getState().getEnd() == false)
                                 rai2.run(ngine);
+                        }
+                    }
+                }
+            }
+        }
+        else if (strcmp(argv[1], "haivshai") == 0)
+        {
+            engine::Engine ngine{"game"};
+
+            ngine.getState().initializeMapCell();
+
+            ngine.getState().initializeCharacters();
+            HeuristicAI hai1;
+            HeuristicAI hai2;
+
+            hai1.setPlayerNumber(1);
+            hai2.setPlayerNumber(2);
+
+            hai1.initMapNodes(ngine.getState());
+            hai2.initMapNodes(ngine.getState());
+            //-----------------------------
+
+            sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
+            StateLayer layer(ngine.getState(), window);
+
+            layer.initSurfaces(ngine.getState());
+            StateLayer stateLayer(ngine.getState(), window);
+            stateLayer.initSurfaces(ngine.getState());
+            // Registering observer
+            StateLayer *ptr_stateLayer = &stateLayer;
+            ngine.getState().registerObserver(ptr_stateLayer);
+            bool once = true;
+
+            while (window.isOpen())
+            {
+                sf::Event event;
+                if(once){
+                    stateLayer.draw(window);
+                    once = false;
+                }
+                while (window.pollEvent(event))
+                {
+                    if (event.type == sf::Event::Closed)
+                        window.close();
+                    else if (event.type == sf::Event::KeyPressed)
+                    {
+                        while(ngine.getState().getEnd() == false){
+                            hai1.run(ngine);
+                            if(ngine.getState().getEnd() == false)
+                                hai2.run(ngine);
                         }
                     }
                 }

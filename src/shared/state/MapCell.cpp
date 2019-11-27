@@ -23,8 +23,10 @@ int MapCell::isOccupied(State& state){
 	vector<std::unique_ptr<Character>> & charactersList = state.getCharacters();
     for (size_t i = 0; i < charactersList.size(); i++)
     {
-
-        res = (position.equals(charactersList[i]->getPosition())) ? i : -1;
+        if(position.equals(charactersList[i]->getPosition()) && charactersList[i]->getStatus() != DEATH)
+            res =  i;
+        else
+            res = -1;
 
         if (res != -1) break;
     }
