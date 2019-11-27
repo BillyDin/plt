@@ -37,8 +37,8 @@ BOOST_AUTO_TEST_CASE(TestEngineNamespace)
         hai.run(ngine);
     }
     {
-        MapNode mn1{1,1};
-        MapNode mn2{1,2};
+        MapNode mn1{1,1,1,0};
+        MapNode mn2{1,2,2,1};
 
         mn1.addNear(&mn2);
         mn2.addNear(&mn1);

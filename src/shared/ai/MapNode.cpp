@@ -6,9 +6,11 @@
 using namespace ai;
 using namespace std;
 
-MapNode::MapNode(int x, int y){
+MapNode::MapNode(int x, int y, int newId, bool isObstacle){
     this->x = x;
     this->y = y;
+    this->id = newId;
+    this->isObstacle = isObstacle;
 }
 
 vector<MapNode *> MapNode::getNears(){

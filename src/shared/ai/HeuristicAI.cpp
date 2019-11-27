@@ -4,6 +4,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
+#include <queue>
+#include <list>
 
 using namespace ai;
 using namespace state;
@@ -49,11 +51,14 @@ void HeuristicAI::run(engine::Engine &engine){
         MapNode &target = mapNodes[findMapNodeIndex(engine.getState(), targetIndex)];
 
         // call algorithm to choose shortest path
-        vector<MapNode> path = shortestPath(source, target);
-
+        vector<MapNode> path = callShortestPath(source, target);
+        cout << " first path point to go " << path[0].getX() <<  ", "  << path[0].getY() << endl;
+        cout << " selected Character position " << selectedChar.getPosition().getX() 
+        <<  ", "  << selectedChar.getPosition().getY() << endl;
         while (movesLeft > 0 && nextPosInPath < path.size()){
             // select position to go from shortestPath
             MapNode mnToGo = path[nextPosInPath];
+
             Position p{mnToGo.getX(), mnToGo.getY()};
 
             // move this character
@@ -126,10 +131,14 @@ int HeuristicAI::selectCharacter(state::State &state){
 // even if a cell its occuped, isnt added to this vector.
 bool HeuristicAI::initMapNodes(state::State &state){
     // raw init
-    for (auto &line : state.getMap())
-        for (auto &mc : line)
-            if (mc->isSpace())
-                mapNodes.push_back(MapNode{mc->getPosition().getX(), mc->getPosition().getY()});
+    unsigned int k = 0;
+    for(unsigned int i = 0; i < state.getMap().size(); i++){
+        for(unsigned j = 0; j < state.getMap()[i].size(); j++){
+            mapNodes.push_back(MapNode{state.getMap()[i][j]->getPosition().getX(), 
+                                state.getMap()[i][j]->getPosition().getY(), k, !state.getMap()[i][j]->isSpace()});
+            k++;
+        }
+    }
 
     // nears (can be optimized but like this it takes miliseconds and just one time.)
     for (auto &mn : mapNodes)
@@ -192,8 +201,64 @@ int HeuristicAI::findMapNodeIndex(State& state, int characterIndex){
 }
 
 // TODO
-std::vector<MapNode> HeuristicAI::shortestPath(MapNode &source, MapNode &target){
-    // do the magic
+list<MapNode> HeuristicAI::shortestPath(MapNode &source, MapNode &target)
+{
+    list<MapNode> explored;
+    
+    queue<list<MapNode>> paths;
+    list<MapNode> first;
+    first.push_back(source);
+    paths.push(first);
+
+    // check if source == target
+
+    // bfs
+    while(paths.size() > 0){
+        //pop
+        list<MapNode> path = paths.front();
+        paths.pop();
+
+        MapNode node = path.back();
+        bool alreadyVisited = false;
+        for(auto &visited : explored)
+            if(node.id == visited.id)
+                alreadyVisited = true;
+
+        if(!alreadyVisited){
+            vector<MapNode *> nears = node.getNears();
+            for(auto &near : nears){
+                bool nearVisited = false;
+                for(auto &visited : explored)
+                    if(node.id == near->id)
+                        nearVisited = true;
+                
+                if(!nearVisited){
+                    list<MapNode> new_path(path);
+                    new_path.push_back(*near);
+                    paths.push(new_path);
+
+                    // if near is target
+                    if(near->id == target.id)
+                        return new_path;
+                }
+            }
+            explored.push_back(node);
+        }
+    }
+}
+
+// this IS NOT the algorithm, just some parsing and stuff.
+std::vector<MapNode> HeuristicAI::callShortestPath(MapNode &source, MapNode &target)
+{
+    list<MapNode> path = shortestPath(source,target);
     vector<MapNode> result;
+    
+    for(auto &node : path){
+        // continue if its first or last position of path
+        if(node.id == path.front().id || node.id == path.back().id)
+            continue;
+        MapNode n{node.getX(), node.getY(), node.id, node.isObstacle};
+        result.push_back(n);
+    }
     return result;
 }
