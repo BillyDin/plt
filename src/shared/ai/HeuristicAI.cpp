@@ -52,9 +52,7 @@ void HeuristicAI::run(engine::Engine &engine){
 
         // call algorithm to choose shortest path
         vector<MapNode> path = callShortestPath(source, target);
-        cout << " first path point to go " << path[0].getX() <<  ", "  << path[0].getY() << endl;
-        cout << " selected Character position " << selectedChar.getPosition().getX() 
-        <<  ", "  << selectedChar.getPosition().getY() << endl;
+
         while (movesLeft > 0 && nextPosInPath < path.size()){
             // select position to go from shortestPath
             MapNode mnToGo = path[nextPosInPath];
@@ -224,7 +222,7 @@ list<MapNode> HeuristicAI::shortestPath(MapNode &source, MapNode &target)
             if(node.id == visited.id)
                 alreadyVisited = true;
 
-        if(!alreadyVisited){
+        if(!alreadyVisited && !node.isObstacle){
             vector<MapNode *> nears = node.getNears();
             for(auto &near : nears){
                 bool nearVisited = false;
@@ -232,7 +230,7 @@ list<MapNode> HeuristicAI::shortestPath(MapNode &source, MapNode &target)
                     if(node.id == near->id)
                         nearVisited = true;
                 
-                if(!nearVisited){
+                if(!nearVisited && !near->isObstacle){
                     list<MapNode> new_path(path);
                     new_path.push_back(*near);
                     paths.push(new_path);
