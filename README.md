@@ -5,7 +5,7 @@
 [![forthebadge](https://forthebadge.com/images/badges/made-with-c-plus-plus.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
-## Livraison 2.final
+## Livraison 3.1
 
 ## Get Started
 
@@ -53,7 +53,11 @@ $ ./bin/client engine
 ```sh
 $ ./bin/client random_ai
 ```
+## Play vs Heuristic AI
 
+```sh
+$ ./bin/client heuristic_ai
+```
 ## Random AI vs Random AI
 
 ```sh
