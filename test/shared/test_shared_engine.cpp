@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE(TestStaticAssert)
 BOOST_AUTO_TEST_CASE(TestEngineNamespace)
 {
     {
-        Engine ngine;
+        Engine ngine{};
         ngine.getState().initializeCharacters();
         ngine.getState().initializeMapCell();
 

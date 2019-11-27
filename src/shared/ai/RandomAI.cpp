@@ -14,7 +14,6 @@ using namespace std;
 void RandomAI::run(engine::Engine &engine)
 {
     int randomCharSelected = selectCharacter(engine.getState());
-    cout << randomCharSelected << endl;
     // always select someone
     Character &selectedChar = *engine.getState().getCharacters()[randomCharSelected];
     unique_ptr<Command> selectCommand(new SelectCharacterCommand(selectedChar));
@@ -93,7 +92,6 @@ void RandomAI::run(engine::Engine &engine)
         engine.update();
         return;
     }
-    return;
 }
 
 int RandomAI::selectCharacter (state::State& state){

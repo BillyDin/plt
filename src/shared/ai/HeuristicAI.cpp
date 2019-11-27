@@ -12,6 +12,7 @@ using namespace std;
 
 void HeuristicAI::run(engine::Engine &engine){
     cout << "run heuristic ia" << endl;
+    updateMapNodes(engine.getState());
     int selectedIndex = selectCharacter(engine.getState());
 
     // we do the best choice basing us in the distance between characters.
