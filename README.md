@@ -48,6 +48,12 @@ $ ./bin/client render
 $ ./bin/client engine
 ```
 
+## Make a roll back
+
+```sh
+$ ./bin/client rollback
+```
+
 ## Play vs Random AI
 
 ```sh
@@ -58,13 +64,38 @@ $ ./bin/client random_ai
 ```sh
 $ ./bin/client heuristic_ai
 ```
+## Play vs Deep AI
+
+```sh
+$ ./bin/client deep_ai
+```
+
 ## Random AI vs Random AI
 
 ```sh
 $ ./bin/client raivsrai
 ```
+## Heuristic AI vs Heuristic AI
+
+```sh
+$ ./bin/client haivshai
+```
 
 ## Release History
+
+* 3.final
+    * Report 3.final
+    * AI diagram with DeepAI
+    * Implemented code for the Deep AI
+    * Player vs Deep AI
+    * Deep AI vs Deep AI
+
+* 3.1
+    * Report 3.1
+    * AI diagram with Heuristic
+    * Implemented code for the Heuristic AI
+    * Player vs Heuristic AI
+    * Heuristic AI vs Heuristic AI
 
 * 2.final
     * Report 2.final
