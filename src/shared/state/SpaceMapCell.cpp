@@ -16,6 +16,10 @@ SpaceMapCell::SpaceMapCell(SpaceMapCellID id, int newX, int newY, int p_tileCode
     tileCode = p_tileCode;
 }
 
+SpaceMapCell* SpaceMapCell::clone(){
+    return new SpaceMapCell(*this);
+}
+
 SpaceMapCellID SpaceMapCell::getSpaceMapCellID()
 {
     return this->typeID;

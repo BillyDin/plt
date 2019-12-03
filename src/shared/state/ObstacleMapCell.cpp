@@ -16,6 +16,10 @@ ObstacleMapCell::ObstacleMapCell(ObstacleMapCellID id, int newX, int newY, int p
     tileCode = p_tileCode;
 }
 
+ObstacleMapCell* ObstacleMapCell::clone(){
+    return new ObstacleMapCell(*this);
+}
+
 ObstacleMapCellID ObstacleMapCell::getObstacleMapCellID()
 {
     return this->typeID;
