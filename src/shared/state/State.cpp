@@ -6,6 +6,9 @@
 #include <vector>
 #include "SpaceMapCell.h"
 #include "ObstacleMapCell.h"
+#include "MementoState.h"
+#include "Observable.h"
+#include "Caretaker.h"
 #include <map>
 
 using namespace std;
@@ -53,7 +56,12 @@ MementoState State::saveToMemento(){
     s->turn = turn;
     s->turnOwner = turnOwner;
     s->winner = winner;
-    MementoState m {*s};
+    for (size_t i = 0; i < observers.size(); i++)
+    {
+        s->registerObserver(observers[i]);
+    }
+    
+    MementoState m{*s};
     return m;
 }
 

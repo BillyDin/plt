@@ -8,10 +8,9 @@
 using namespace std;
 using namespace state;
 
-MementoState::MementoState(State& state){
-    this->state = &state;
+MementoState::MementoState(State& state) : state(state){
 }
 
 State& MementoState::recoverState(){
-    return *state;
+    return state;
 }

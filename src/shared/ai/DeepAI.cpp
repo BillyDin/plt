@@ -266,6 +266,7 @@ std::vector<MapNode> DeepAI::callShortestPath(MapNode &source, MapNode &target)
 int DeepAI::evaluate(engine::Engine& engine){
 	int returnValue;
 	if(engine.getState().getEnd()){
+        // atention
 		if(engine.getState().getTurnOwner()){
 			returnValue=100-engine.getState().getTurn();
 		}
@@ -276,6 +277,7 @@ int DeepAI::evaluate(engine::Engine& engine){
 	else{
 		int totalPV=0, totalPVEnnemy=0, nbCharacterAlive=0, nbCharaterAliveEnnemy=0;
 		for(size_t i=0; i<engine.getState().getCharacters().size(); i++){
+            // atention
 			if(engine.getState().getCharacters()[i]->getPlayerOwner()){
 				totalPVEnnemy+=engine.getState().getCharacters()[i]->getStats().getHealth();
 				nbCharaterAliveEnnemy+=1;

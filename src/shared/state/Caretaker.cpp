@@ -9,13 +9,13 @@ using namespace std;
 using namespace state;
 
 void Caretaker::addMemento(MementoState& memento){
-    this->savedStates.push_back(memento);
+    MementoState m{memento};
+    savedStates.push_back(m);
 }
 
 MementoState& Caretaker::getMemento(int index){
     if (index != -1 && index < savedStates.size()){
-        auto it1 = std::next(savedStates.begin(), index);
-        return *it1;
+        return savedStates[index];
     }
-    return savedStates.back();
+    return savedStates[savedStates.size() - 1];
 }
