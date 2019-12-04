@@ -37,6 +37,26 @@ BOOST_AUTO_TEST_CASE(TestEngineNamespace)
         hai.run(ngine);
     }
     {
+        engine::Engine ngine{"game"};
+
+        ngine.getState().initializeMapCell("../../../res/map_v0.txt");
+        ngine.getState().initializeCharacters();
+
+        DeepAI dai;
+        BOOST_CHECK_EQUAL(2, dai.getPlayerNumber());
+        dai.setPlayerNumber(1);
+        dai.initMapNodes(ngine.getState());
+        
+        HeuristicAI hai;
+        hai.setPlayerNumber(2);
+        BOOST_CHECK_EQUAL(2, hai.getPlayerNumber());
+
+        hai.initMapNodes(ngine.getState());
+
+        dai.run(ngine);
+        hai.run(ngine);
+    }
+    {
         MapNode mn1{1,1,1,0};
         MapNode mn2{1,2,2,1};
 

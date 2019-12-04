@@ -13,6 +13,19 @@ BOOST_AUTO_TEST_CASE(TestStaticAssert)
 BOOST_AUTO_TEST_CASE(TestStateNamespace)
 {
 	{
+		State s{"game"};
+		s.initializeCharacters();
+		s.initializeMapCell("../../../map_v0.txt");
+		Caretaker caretaker;
+		MementoState m{s.saveToMemento()};
+		caretaker.addMemento(m);
+		s.setTurn(10);
+		BOOST_CHECK_EQUAL(s.getTurn(), 10);
+
+		s.recoverMemento(caretaker.getMemento());
+		BOOST_CHECK_NE(s.getTurn(), 10);
+	}
+	{
 		// Character
 		Character c{STRENGHT, true, "Testy", 0, 0, 1};
 		BOOST_CHECK_EQUAL(c.getPosition().getY(), 0);
