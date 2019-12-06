@@ -27,11 +27,8 @@ BOOST_AUTO_TEST_CASE(TestEngineNamespace)
         BOOST_CHECK_EQUAL(2, rai.getPlayerNumber());
         rai.setPlayerNumber(1);
 
-        HeuristicAI hai;
-        hai.setPlayerNumber(2);
+        HeuristicAI hai{ngine, 2};
         BOOST_CHECK_EQUAL(2, hai.getPlayerNumber());
-
-        hai.initMapNodes(ngine.getState());
 
         rai.run(ngine);
         hai.run(ngine);
@@ -42,16 +39,11 @@ BOOST_AUTO_TEST_CASE(TestEngineNamespace)
         ngine.getState().initializeMapCell("../../../res/map_v0.txt");
         ngine.getState().initializeCharacters();
 
-        DeepAI dai;
-        BOOST_CHECK_EQUAL(2, dai.getPlayerNumber());
+        DeepAI dai{ngine, 1};
         dai.setPlayerNumber(1);
-        dai.initMapNodes(ngine.getState());
         
-        HeuristicAI hai;
-        hai.setPlayerNumber(2);
+        HeuristicAI hai{ngine, 2};
         BOOST_CHECK_EQUAL(2, hai.getPlayerNumber());
-
-        hai.initMapNodes(ngine.getState());
 
         dai.run(ngine);
         hai.run(ngine);

@@ -12,6 +12,16 @@ using namespace state;
 using namespace engine;
 using namespace std;
 
+DeepAI::DeepAI(Engine& engine, int pn){
+    this->playerNumber = pn;
+    initMapNodes(engine.getState());
+    initDeepNodes(engine.getState());
+}
+
+bool DeepAI::initDeepNodes(State& state){
+    return true;
+}
+
 void DeepAI::run(engine::Engine &engine){
     cout << "run heuristic ia" << endl;
     updateMapNodes(engine.getState());
@@ -37,14 +47,14 @@ void DeepAI::run(engine::Engine &engine){
         return;
     } else {
         // can't attack. let's move until attack or moves chances == 0
-        int movesLeft = selectedChar.getCharacterMove();
-        int nextPosInPath = 0;
+        size_t movesLeft = selectedChar.getCharacterMove();
+        size_t nextPosInPath = 0;
 
         // until this character has 0 moves, he will try to get closer to an specific enemy character
         
         // selected target to get closer
         int targetIndex = selectTarget(engine.getState(), selectedIndex);
-        Character &targetToGetCloser = *engine.getState().getCharacters()[targetIndex];
+        // Character &targetToGetCloser = *engine.getState().getCharacters()[targetIndex];
         
         // localize source and target mapnodes
         MapNode &source = mapNodes[findMapNodeIndex(engine.getState(), selectedIndex)];
@@ -91,15 +101,6 @@ void DeepAI::run(engine::Engine &engine){
     }
 }
 
-void DeepAI::setPlayerNumber(int np){
-    if(np == 1 || np == 2)
-        this->playerNumber = np;
-}
-
-int DeepAI::getPlayerNumber(){
-    return playerNumber;
-}
-
 int DeepAI::selectCharacter(state::State &state){
     int index = -1;
     int globalMinDist = INT32_MAX;
@@ -129,7 +130,7 @@ int DeepAI::selectCharacter(state::State &state){
 // even if a cell its occuped, isnt added to this vector.
 bool DeepAI::initMapNodes(state::State &state){
     // raw init
-    unsigned int k = 0;
+    int k = 0;
     for(unsigned int i = 0; i < state.getMap().size(); i++){
         for(unsigned j = 0; j < state.getMap()[i].size(); j++){
             mapNodes.push_back(MapNode{state.getMap()[i][j]->getPosition().getX(), 
@@ -146,6 +147,7 @@ bool DeepAI::initMapNodes(state::State &state){
             for (auto &mc : line)
                 // match MapNode with MapCell
                 if (mn.getX() == mc->getPosition().getX() && mn.getY() == mc->getPosition().getY())
+                {
                     for (auto &nearPos : mc->getPosition().getNearPositions())
                         // if nearPos is within mapNodes
                         for (auto &mn2 : mapNodes)
@@ -154,6 +156,7 @@ bool DeepAI::initMapNodes(state::State &state){
                                 continue;
                             else if (mn2.getX() == nearPos.getX() && mn2.getY() == nearPos.getY())
                                 mn.addNear(&mn2);
+                }
     
     return true;
 }
@@ -229,7 +232,7 @@ list<MapNode> DeepAI::shortestPath(MapNode &source, MapNode &target)
             for(auto &near : nears){
                 bool nearVisited = false;
                 for(auto &visited : explored)
-                    if(node.id == near->id)
+                    if(visited.id == near->id)
                         nearVisited = true;
                 
                 if(!nearVisited && !near->isObstacle){
@@ -245,6 +248,7 @@ list<MapNode> DeepAI::shortestPath(MapNode &source, MapNode &target)
             explored.push_back(node);
         }
     }
+    return first;
 }
 
 // this IS NOT the algorithm, just some parsing and stuff.
@@ -263,31 +267,33 @@ std::vector<MapNode> DeepAI::callShortestPath(MapNode &source, MapNode &target)
     return result;
 }
 
-int DeepAI::evaluate(engine::Engine& engine){
-	int returnValue;
-	if(engine.getState().getEnd()){
-        // atention
-		if(engine.getState().getTurnOwner()){
-			returnValue=100-engine.getState().getTurn();
-		}
-		else{
-			returnValue=-100+engine.getState().getTurn();
-		}
-	}
-	else{
-		int totalPV=0, totalPVEnnemy=0, nbCharacterAlive=0, nbCharaterAliveEnnemy=0;
-		for(size_t i=0; i<engine.getState().getCharacters().size(); i++){
-            // atention
-			if(engine.getState().getCharacters()[i]->getPlayerOwner()){
-				totalPVEnnemy+=engine.getState().getCharacters()[i]->getStats().getHealth();
-				nbCharaterAliveEnnemy+=1;
-			}
-			else{
-				totalPV+=engine.getState().getCharacters()[i]->getStats().getHealth();
-				nbCharacterAlive+=1;
-			}	
-		}
-		returnValue=totalPV-totalPVEnnemy+100*nbCharacterAlive-100*nbCharaterAliveEnnemy;
-	}
-	return returnValue;
-}
+
+
+// int DeepAI::evaluate(engine::Engine& engine){
+// 	int returnValue;
+// 	if(engine.getState().getEnd()){
+//         // atention
+// 		if(engine.getState().getTurnOwner()){
+// 			returnValue=100-engine.getState().getTurn();
+// 		}
+// 		else{
+// 			returnValue=-100+engine.getState().getTurn();
+// 		}
+// 	}
+// 	else{
+// 		int totalPV=0, totalPVEnnemy=0, nbCharacterAlive=0, nbCharaterAliveEnnemy=0;
+// 		for(size_t i=0; i<engine.getState().getCharacters().size(); i++){
+//             // atention
+// 			if(engine.getState().getCharacters()[i]->getPlayerOwner()){
+// 				totalPVEnnemy+=engine.getState().getCharacters()[i]->getStats().getHealth();
+// 				nbCharaterAliveEnnemy+=1;
+// 			}
+// 			else{
+// 				totalPV+=engine.getState().getCharacters()[i]->getStats().getHealth();
+// 				nbCharacterAlive+=1;
+// 			}	
+// 		}
+// 		returnValue=totalPV-totalPVEnnemy+100*nbCharacterAlive-100*nbCharaterAliveEnnemy;
+// 	}
+// 	return returnValue;
+// }

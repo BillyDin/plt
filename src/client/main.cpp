@@ -35,9 +35,8 @@ int main(int argc, char const *argv[])
             ngine.getState().initializeMapCell();
 
             ngine.getState().initializeCharacters();
-            HeuristicAI heu2;
-            heu2.initMapNodes(ngine.getState());
-            heu2.setPlayerNumber(2);
+            HeuristicAI heu2{ngine, 2};
+
             //-----------------------------
 
             sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
@@ -269,15 +268,8 @@ int main(int argc, char const *argv[])
             ngine.getState().initializeMapCell();
 
             ngine.getState().initializeCharacters();
-            HeuristicAI hai1;
-            HeuristicAI hai2;
-
-            hai1.setPlayerNumber(1);
-            hai2.setPlayerNumber(2);
-
-            hai1.initMapNodes(ngine.getState());
-            hai2.initMapNodes(ngine.getState());
-            //-----------------------------
+            HeuristicAI hai1{ngine, 1};
+            HeuristicAI hai2{ngine, 2};
 
             sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
             StateLayer layer(ngine.getState(), window);
@@ -343,14 +335,9 @@ int main(int argc, char const *argv[])
 
             ngine.getState().initializeMapCell();
             ngine.getState().initializeCharacters();
-            HeuristicAI heu1;
-            heu1.initMapNodes(ngine.getState());
-            heu1.setPlayerNumber(1);
 
-            HeuristicAI heu2;
-            heu2.initMapNodes(ngine.getState());
-            heu2.setPlayerNumber(2);
-            //-----------------------------
+            HeuristicAI heu1{ngine, 1};
+            HeuristicAI heu2{ngine, 2};
 
             sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
             StateLayer layer(ngine.getState(), window);
