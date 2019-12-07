@@ -10,29 +10,42 @@ using namespace state;
 using namespace engine;
 using namespace std;
 
-KeyboardListener::KeyboardListener(engine::Engine& engine){
+KeyboardListener::KeyboardListener(engine::Engine &engine)
+{
     initQueues(engine.getState());
 }
 
-void KeyboardListener::initQueues(state::State& state){
+void KeyboardListener::initQueues(state::State &state)
+{
     for (size_t i = 0; i < state.getCharacters().size(); i++)
     {
-        if(state.getCharacters()[i]->getPlayerOwner() == 1)
+        if (state.getCharacters()[i]->getPlayerOwner() == 1)
             queuePlayer1.push(i);
         else
             queuePlayer2.push(i);
     }
 }
 
-int KeyboardListener::nearestEnemy(state::State& state, int selectedIndex, int playerNum){
-    Character &selectedChar = *state.getCharacters()[selectedIndex];
+int KeyboardListener::nearestEnemy(state::State &state, int playerNum)
+{
+    // getting selected index
+    int characIndex = -1;
+    for (size_t i = 0; i < state.getCharacters().size(); i++)
+    {
+        if(state.getCharacters()[i]->getPlayerOwner() == playerNum && state.getCharacters()[i]->getStatus() == SELECTED){
+            characIndex = i;
+            break;
+        }
+    }
+
+    Character &selectedChar = *state.getCharacters()[characIndex];
     int index = -1;
     int minimalDist = INT32_MAX;
     // iterate enemies and choose the nearest enemy
-    for(unsigned int i = 0; i < state.getCharacters().size(); i++){
-        if(state.getCharacters()[i]->getPlayerOwner() != playerNum 
-        && state.getCharacters()[i]->getStatus() != DEATH
-        && selectedChar.getPosition().distance(state.getCharacters()[i]->getPosition()) < minimalDist){
+    for (unsigned int i = 0; i < state.getCharacters().size(); i++)
+    {
+        if (state.getCharacters()[i]->getPlayerOwner() != playerNum && state.getCharacters()[i]->getStatus() != DEATH && selectedChar.getPosition().distance(state.getCharacters()[i]->getPosition()) < minimalDist)
+        {
             index = i;
             minimalDist = selectedChar.getPosition().distance(state.getCharacters()[i]->getPosition());
         }
@@ -40,18 +53,21 @@ int KeyboardListener::nearestEnemy(state::State& state, int selectedIndex, int p
     return index;
 }
 
-void KeyboardListener::verifyDead(state::State& state){
+void KeyboardListener::verifyDead(state::State &state)
+{
     queue<size_t> p1;
     queue<size_t> p2;
-    while(queuePlayer1.size() > 0){
-        if(state.getCharacters()[queuePlayer1.front()]->getStatus() != DEATH)
+    while (queuePlayer1.size() > 0)
+    {
+        if (state.getCharacters()[queuePlayer1.front()]->getStatus() != DEATH)
             p1.push(queuePlayer1.front());
         queuePlayer1.pop();
     }
     queuePlayer1 = p1;
 
-    while(queuePlayer2.size() > 0){
-        if(state.getCharacters()[queuePlayer2.front()]->getStatus() != DEATH)
+    while (queuePlayer2.size() > 0)
+    {
+        if (state.getCharacters()[queuePlayer2.front()]->getStatus() != DEATH)
             p2.push(queuePlayer2.front());
         queuePlayer2.pop();
     }
@@ -76,6 +92,48 @@ void KeyboardListener::infiniteSelecting(state::State &state, int playerNum)
     }
 }
 
+void KeyboardListener::infiniteSelectMoving(state::State &state, int playerNum)
+{
+    // getting selected index
+    int characIndex = -1;
+    for (size_t i = 0; i < state.getCharacters().size(); i++)
+    {
+        if(state.getCharacters()[i]->getPlayerOwner() == playerNum && state.getCharacters()[i]->getStatus() == SELECTED){
+            characIndex = i;
+            break;
+        }
+    }
+
+    // we are gonna use pop many times. so we have to check if the queue its empty 
+    if(toVisitQueue.empty()){
+        for(auto& pos : state.getCharacters()[characIndex]->allowedPosToMove(state)){
+            toVisitQueue.push(pos);
+        }
+    }
+    
+    state.getCursor().move(toVisitQueue.front());
+    
+    if(!toVisitQueue.empty())
+        toVisitQueue.pop();
+}
+
+void KeyboardListener::cursorAction(state::State &state, int playerNum)
+{
+    if (state.getActualAction() == IDLE)
+    {
+        infiniteSelecting(state, playerNum);
+    }
+    else if (state.getActualAction() == MOVING)
+    {
+        infiniteSelectMoving(state, playerNum);
+    }
+    else if (state.getActualAction() == ATTACKING)
+    {
+        int enemy = (playerNum == 1) ? 2 : 1;
+        infiniteSelecting(state, enemy);
+    }
+}
+
 bool KeyboardListener::triggerAction(engine::Engine &engine, KeyID key)
 {
     int actualPlayer = engine.getState().getTurnOwner();
@@ -84,68 +142,28 @@ bool KeyboardListener::triggerAction(engine::Engine &engine, KeyID key)
     {
     case LEFT:
     {
-        if (engine.getState().getActualAction() == IDLE)
-        {   
-            infiniteSelecting(engine.getState(), actualPlayer);
-        }
-        else if(engine.getState().getActualAction() == ATTACKING)
-        {
-            int enemy = (actualPlayer == 1) ? 2 : 1;
-            infiniteSelecting(engine.getState(), enemy);
-        }
-        else
-            engine.getState().getCursor().getPosition().setX(engine.getState().getCursor().getPosition().getX() - 1);
+        cursorAction(engine.getState(), actualPlayer);
         StateEvent se{StateEventID::CURSOR_CHANGED};
         engine.getState().notifyObservers(se, engine.getState());
         break;
     }
     case RIGHT:
     {
-        if (engine.getState().getActualAction() == IDLE)
-        {
-            infiniteSelecting(engine.getState(), actualPlayer);
-        }
-        else if(engine.getState().getActualAction() == ATTACKING)
-        {
-            int enemy = (actualPlayer == 1) ? 2 : 1;
-            infiniteSelecting(engine.getState(), enemy);
-        }
-        else
-            engine.getState().getCursor().getPosition().setX(engine.getState().getCursor().getPosition().getX() + 1);
+        cursorAction(engine.getState(), actualPlayer);
         StateEvent se{StateEventID::CURSOR_CHANGED};
         engine.getState().notifyObservers(se, engine.getState());
         break;
     }
     case TOP:
     {
-        if (engine.getState().getActualAction() == IDLE)
-        {
-            infiniteSelecting(engine.getState(), actualPlayer);
-        }
-        else if(engine.getState().getActualAction() == ATTACKING)
-        {
-            int enemy = (actualPlayer == 1) ? 2 : 1;
-            infiniteSelecting(engine.getState(), enemy);
-        }
-        else
-            engine.getState().getCursor().getPosition().setY(engine.getState().getCursor().getPosition().getY() - 1);
+        cursorAction(engine.getState(), actualPlayer);
         StateEvent se{StateEventID::CURSOR_CHANGED};
         engine.getState().notifyObservers(se, engine.getState());
         break;
     }
     case DOWN:
     {
-        if (engine.getState().getActualAction() == IDLE)
-        {
-            infiniteSelecting(engine.getState(), actualPlayer);
-        }
-        else if(engine.getState().getActualAction() == ATTACKING)
-        {
-            int enemy = (actualPlayer == 1) ? 2 : 1;
-            infiniteSelecting(engine.getState(), enemy);
-        }
-        else
-            engine.getState().getCursor().getPosition().setY(engine.getState().getCursor().getPosition().getY() + 1);
+        cursorAction(engine.getState(), actualPlayer);
         StateEvent se{StateEventID::CURSOR_CHANGED};
         engine.getState().notifyObservers(se, engine.getState());
         break;
@@ -158,7 +176,12 @@ bool KeyboardListener::triggerAction(engine::Engine &engine, KeyID key)
             if (charac->getStatus() == SELECTED && charac->getPlayerOwner() == actualPlayer)
             {
                 selected = true;
-                engine.getState().getCursor().move(charac->getPosition());
+                while(!toVisitQueue.empty()) toVisitQueue.pop();
+
+                for (size_t i = 1; i < charac->allowedPosToMove(engine.getState()).size(); i++)
+                    toVisitQueue.push(charac->allowedPosToMove(engine.getState())[i]);
+                
+                engine.getState().getCursor().move(charac->allowedPosToMove(engine.getState())[0]);
                 break;
             }
         }
@@ -187,20 +210,18 @@ bool KeyboardListener::triggerAction(engine::Engine &engine, KeyID key)
             {
                 // define enemy
                 int enemy = (actualPlayer == 1) ? 2 : 1;
-                if(enemy == 1)
+                if (enemy == 1)
                     engine.getState().getCursor().move(
-                        engine.getState().getCharacters()[nearestEnemy(engine.getState(), i, actualPlayer)]->getPosition()
-                        );
+                        engine.getState().getCharacters()[nearestEnemy(engine.getState(), actualPlayer)]->getPosition());
                 else
                     engine.getState().getCursor().move(
-                        engine.getState().getCharacters()[nearestEnemy(engine.getState(), i, actualPlayer)]->getPosition()
-                        );
+                        engine.getState().getCharacters()[nearestEnemy(engine.getState(), actualPlayer)]->getPosition());
 
                 selected = true;
                 break;
             }
         }
-        
+
         if (selected && (engine.getState().getActualAction() == IDLE || engine.getState().getActualAction() == MOVING))
         {
             engine.getState().setActualAction(ATTACKING);
@@ -250,6 +271,7 @@ bool KeyboardListener::triggerAction(engine::Engine &engine, KeyID key)
         }
         case MOVING:
         {
+            while(!toVisitQueue.empty()) toVisitQueue.pop();
             cout << "trying to move a character " << endl;
             for (auto &charac : engine.getState().getCharacters())
             {
