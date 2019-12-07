@@ -25,7 +25,7 @@ bool DeepAI::initDeepNodes(State& state){
 void DeepAI::run(engine::Engine &engine){
     cout << "run heuristic ia" << endl;
     updateMapNodes(engine.getState());
-    int selectedIndex = selectCharacter(engine.getState());
+    int selectedIndex = advancedSelectCharacter(engine.getState());
 
     // we do the best choice basing us in the distance between characters.
     Character &selectedChar = *engine.getState().getCharacters()[selectedIndex];
@@ -53,7 +53,7 @@ void DeepAI::run(engine::Engine &engine){
         // until this character has 0 moves, he will try to get closer to an specific enemy character
         
         // selected target to get closer
-        int targetIndex = selectTarget(engine.getState(), selectedIndex);
+        int targetIndex = advancedSelectTarget(engine.getState(), selectedIndex);
         // Character &targetToGetCloser = *engine.getState().getCharacters()[targetIndex];
         
         // localize source and target mapnodes
@@ -101,7 +101,7 @@ void DeepAI::run(engine::Engine &engine){
     }
 }
 
-int DeepAI::selectCharacter(state::State &state){
+int DeepAI::advancedSelectCharacter(state::State &state){
     int index = -1;
     int globalMinDist = INT32_MAX;
     
@@ -173,7 +173,7 @@ void DeepAI::updateMapNodes(State &state){
     }
 }
 
-int DeepAI::selectTarget(State& state, int selectedCharacIndex){
+int DeepAI::advancedSelectTarget(State& state, int selectedCharacIndex){
     Character &selectedChar = *state.getCharacters()[selectedCharacIndex];
     int index = -1;
     int minimalDist = INT32_MAX;
