@@ -2,7 +2,7 @@
 #include <string.h>
 // Les lignes suivantes ne servent qu'à vérifier que la compilation avec SFML fonctionne
 #include <SFML/Graphics.hpp>
-
+#include <SFML/Audio.hpp>
 void testSFML()
 {
     sf::Texture texture;
@@ -37,7 +37,13 @@ int main(int argc, char const *argv[])
             ngine.getState().initializeCharacters();
             HeuristicAI heu2{ngine, 2};
 
-            //-----------------------------
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
 
             sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
             StateLayer layer(ngine.getState(), window);
@@ -49,6 +55,7 @@ int main(int argc, char const *argv[])
             StateLayer *ptr_stateLayer = &stateLayer;
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
+            KeyboardListener kl{ngine};
 
             while (window.isOpen())
             {
@@ -67,21 +74,21 @@ int main(int argc, char const *argv[])
                         if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 1)
                         {
                             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-                                KeyboardListener::triggerAction(ngine, LEFT);
+                                kl.triggerAction(ngine, LEFT);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-                                KeyboardListener::triggerAction(ngine, TOP);
+                                kl.triggerAction(ngine, TOP);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                                KeyboardListener::triggerAction(ngine, RIGHT);
+                                kl.triggerAction(ngine, RIGHT);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-                                KeyboardListener::triggerAction(ngine, DOWN);
+                                kl.triggerAction(ngine, DOWN);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
-                                KeyboardListener::triggerAction(ngine, MOVE);
+                                kl.triggerAction(ngine, MOVE);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-                                KeyboardListener::triggerAction(ngine, ATTACK);
+                                kl.triggerAction(ngine, ATTACK);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-                                KeyboardListener::triggerAction(ngine, PASS_TURN);
+                                kl.triggerAction(ngine, PASS_TURN);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
-                                KeyboardListener::triggerAction(ngine, SELECT);
+                                kl.triggerAction(ngine, SELECT);
                         }
                     }
                     if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 2)
@@ -109,7 +116,14 @@ int main(int argc, char const *argv[])
             StateLayer *ptr_stateLayer = &stateLayer;
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
-
+            KeyboardListener kl{ngine};
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
             while (window.isOpen())
             {
                 sf::Event event;
@@ -128,21 +142,21 @@ int main(int argc, char const *argv[])
                         if (isMyTurn)
                         {
                             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-                                KeyboardListener::triggerAction(ngine, LEFT);
+                                kl.triggerAction(ngine, LEFT);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-                                KeyboardListener::triggerAction(ngine, TOP);
+                                kl.triggerAction(ngine, TOP);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                                KeyboardListener::triggerAction(ngine, RIGHT);
+                                kl.triggerAction(ngine, RIGHT);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-                                KeyboardListener::triggerAction(ngine, DOWN);
+                                kl.triggerAction(ngine, DOWN);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
-                                KeyboardListener::triggerAction(ngine, MOVE);
+                                kl.triggerAction(ngine, MOVE);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-                                KeyboardListener::triggerAction(ngine, ATTACK);
+                                kl.triggerAction(ngine, ATTACK);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-                                KeyboardListener::triggerAction(ngine, PASS_TURN);
+                                kl.triggerAction(ngine, PASS_TURN);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
-                                KeyboardListener::triggerAction(ngine, SELECT);
+                                kl.triggerAction(ngine, SELECT);
                         }
                     }
                 }
@@ -171,7 +185,14 @@ int main(int argc, char const *argv[])
             StateLayer *ptr_stateLayer = &stateLayer;
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
-
+            KeyboardListener kl{ngine};
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
             while (window.isOpen())
             {
                 sf::Event event;
@@ -189,21 +210,21 @@ int main(int argc, char const *argv[])
                         if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 1)
                         {
                             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-                                KeyboardListener::triggerAction(ngine, LEFT);
+                                kl.triggerAction(ngine, LEFT);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-                                KeyboardListener::triggerAction(ngine, TOP);
+                                kl.triggerAction(ngine, TOP);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                                KeyboardListener::triggerAction(ngine, RIGHT);
+                                kl.triggerAction(ngine, RIGHT);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-                                KeyboardListener::triggerAction(ngine, DOWN);
+                                kl.triggerAction(ngine, DOWN);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
-                                KeyboardListener::triggerAction(ngine, MOVE);
+                                kl.triggerAction(ngine, MOVE);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-                                KeyboardListener::triggerAction(ngine, ATTACK);
+                                kl.triggerAction(ngine, ATTACK);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-                                KeyboardListener::triggerAction(ngine, PASS_TURN);
+                                kl.triggerAction(ngine, PASS_TURN);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
-                                KeyboardListener::triggerAction(ngine, SELECT);
+                                kl.triggerAction(ngine, SELECT);
                         }
                     }
                     if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 2)
@@ -236,7 +257,14 @@ int main(int argc, char const *argv[])
             StateLayer *ptr_stateLayer = &stateLayer;
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
-
+            KeyboardListener kl{ngine};
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
             while (window.isOpen())
             {
                 sf::Event event;
@@ -281,7 +309,14 @@ int main(int argc, char const *argv[])
             StateLayer *ptr_stateLayer = &stateLayer;
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
-
+            KeyboardListener kl{ngine};
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
             while (window.isOpen())
             {
                 sf::Event event;
@@ -315,6 +350,13 @@ int main(int argc, char const *argv[])
             sf::RenderWindow window(sf::VideoMode(state.getMap()[0].size() * 32 + 256, state.getMap().size() * 32 + 32, 32), "map");
             StateLayer layer(state, window);
             layer.initSurfaces(state);
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
             while (window.isOpen())
             {
                 sf::Event event;
@@ -350,7 +392,14 @@ int main(int argc, char const *argv[])
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
             Caretaker caretaker;
-
+            KeyboardListener kl{ngine};
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
             while (window.isOpen())
             {
                 sf::Event event;
@@ -414,7 +463,13 @@ int main(int argc, char const *argv[])
             StateLayer *ptr_stateLayer = &stateLayer;
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
-
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
             //turns number to show how it works
             int turns2go = 9;
             while (window.isOpen())

@@ -23,10 +23,11 @@ BOOST_AUTO_TEST_CASE(TestClientNamespace)
 		e.getState().initializeCharacters();
 		e.getState().initializeMapCell("../../../res/map_v0.txt");
 		e.getState().getCursor().setPosition(e.getState().getCharacters()[0]->getPosition());
-		KeyboardListener::triggerAction(e, SELECT);
-		KeyboardListener::triggerAction(e, MOVE);
-		KeyboardListener::triggerAction(e, ATTACK);
-		KeyboardListener::triggerAction(e, PASS_TURN);
+		KeyboardListener kl{e};
+		kl.triggerAction(e, SELECT);
+		kl.triggerAction(e, MOVE);
+		kl.triggerAction(e, ATTACK);
+		kl.triggerAction(e, PASS_TURN);
 	}
 }
 
