@@ -56,9 +56,16 @@ int main(int argc, char const *argv[])
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
             KeyboardListener kl{ngine};
+            
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
 
             while (window.isOpen())
             {
+                epoch = time(nullptr);
+                stateLayer.showAlertMessage(epoch);
                 sf::Event event;
                 if (once)
                 {
@@ -107,6 +114,7 @@ int main(int argc, char const *argv[])
             //-----------------------------
 
             sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
+            window.setFramerateLimit(60);
             StateLayer layer(ngine.getState(), window);
 
             layer.initSurfaces(ngine.getState());
@@ -117,6 +125,12 @@ int main(int argc, char const *argv[])
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
             KeyboardListener kl{ngine};
+
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+            
             sf::Music backMusic;
             if (backMusic.openFromFile("res/epic_music.wav"))
             {
@@ -126,6 +140,8 @@ int main(int argc, char const *argv[])
             }
             while (window.isOpen())
             {
+                epoch = time(nullptr);
+                stateLayer.showAlertMessage(epoch);
                 sf::Event event;
                 if (once)
                 {
@@ -136,6 +152,7 @@ int main(int argc, char const *argv[])
                 {
                     if (event.type == sf::Event::Closed)
                         window.close();
+                    
                     else if (event.type == sf::Event::KeyPressed)
                     {
                         bool isMyTurn = true; // validate
@@ -186,6 +203,12 @@ int main(int argc, char const *argv[])
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
             KeyboardListener kl{ngine};
+
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+
             sf::Music backMusic;
             if (backMusic.openFromFile("res/epic_music.wav"))
             {
@@ -195,6 +218,8 @@ int main(int argc, char const *argv[])
             }
             while (window.isOpen())
             {
+                epoch = time(nullptr);
+                stateLayer.showAlertMessage(epoch);
                 sf::Event event;
                 if (once)
                 {
@@ -258,6 +283,12 @@ int main(int argc, char const *argv[])
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
             KeyboardListener kl{ngine};
+
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+
             sf::Music backMusic;
             if (backMusic.openFromFile("res/epic_music.wav"))
             {
@@ -267,6 +298,8 @@ int main(int argc, char const *argv[])
             }
             while (window.isOpen())
             {
+                epoch = time(nullptr);
+                stateLayer.showAlertMessage(epoch);
                 sf::Event event;
                 if (once)
                 {
@@ -310,6 +343,12 @@ int main(int argc, char const *argv[])
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
             KeyboardListener kl{ngine};
+
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+
             sf::Music backMusic;
             if (backMusic.openFromFile("res/epic_music.wav"))
             {
@@ -319,6 +358,8 @@ int main(int argc, char const *argv[])
             }
             while (window.isOpen())
             {
+                epoch = time(nullptr);
+                stateLayer.showAlertMessage(epoch);
                 sf::Event event;
                 if (once)
                 {
@@ -393,6 +434,12 @@ int main(int argc, char const *argv[])
             bool once = true;
             Caretaker caretaker;
             KeyboardListener kl{ngine};
+
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+
             sf::Music backMusic;
             if (backMusic.openFromFile("res/epic_music.wav"))
             {
@@ -402,6 +449,8 @@ int main(int argc, char const *argv[])
             }
             while (window.isOpen())
             {
+                epoch = time(nullptr);
+                stateLayer.showAlertMessage(epoch);
                 sf::Event event;
                 if (once)
                 {

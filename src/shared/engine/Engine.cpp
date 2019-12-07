@@ -66,7 +66,6 @@ void Engine::update()
         bool endTurn = false;
         for (size_t i = 0; i < currentCommands.size(); i++)
         {
-            stateEvent.setStateEventID(CHARACTERCHANGED);
             currentCommands[i]->execute(currentState);
             currentState.notifyObservers(stateEvent, currentState);
             if(currentState.getMode() == "engine"){
@@ -82,6 +81,7 @@ void Engine::update()
     }
     else
     {
+
         cout << "The game is ended, we have a winner" << endl;
     }
 }

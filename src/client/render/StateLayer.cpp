@@ -7,7 +7,7 @@
 #include <memory>
 #include <sstream>
 #include <unistd.h>
-
+#include <queue>
 using namespace render;
 using namespace std;
 using namespace state;
@@ -24,6 +24,50 @@ StateLayer::StateLayer(state::State &state, sf::RenderWindow &window, std::strin
 
     std::unique_ptr<TileSet> tilesetCursor(new TileSet(TileSetID::CURSOR, env));
     tilesets.push_back(move(tilesetCursor));
+}
+
+void StateLayer::registerAlertMessage(std::string message){
+    // wrap text
+    int n = message.rfind(' ', 30);
+    if (n != std::string::npos) {
+        message.at(n) = '\n';
+    }
+
+    timeLastAlertMsg = std::time(nullptr);
+    alertMessage = message;
+}
+
+void StateLayer::showAlertMessage (time_t epoch){
+    if ((epoch - timeLastAlertMsg) < 3)
+    {
+        // define a 120x50 rectangle
+        sf::RectangleShape rectangle(sf::Vector2f(220, 50));
+        rectangle.setFillColor(sf::Color::Black);
+        rectangle.setPosition({(currentState.getMap()[0].size() * 32 / 2) - (rectangle.getSize().x / 2),
+                               (currentState.getMap().size() * 32 / 2) - (rectangle.getSize().y / 2)});
+
+        // text
+        sf::Text message;
+        message.setPosition({rectangle.getPosition().x + 10, rectangle.getPosition().y + 10});
+        message.setFont(font);
+        message.setCharacterSize(10);
+        message.setString(alertMessage);
+
+        window.clear();
+        // draw mapcells
+        window.draw(*surface[0]);
+
+        // draw characters
+        window.draw(*surface[1]);
+
+        // draw cursor
+        window.draw(*surface[2]);
+        printText();
+        showWinnerMessage();
+        window.draw(rectangle);
+        window.draw(message);
+        window.display();
+    }
 }
 
 std::vector<std::unique_ptr<TileSet>> &StateLayer::getTilesets()
@@ -88,6 +132,30 @@ void StateLayer::stateChanged(const state::StateEvent &e, state::State &state)
         initSurfaces(state);
         draw(window);
     }
+    else if (e.stateEventID == StateEventID::ALERT)
+    {
+        registerAlertMessage(e.text);
+    }
+    else if (e.stateEventID == StateEventID::WINNER)
+    {
+        showWinnerMessage();
+        initSurfaces(state);
+        draw(window);
+    }
+}
+
+void StateLayer::showWinnerMessage(){
+    if (currentState.getWinner() != 0)
+    {
+        sf::Text win;
+        win.setPosition((window.getSize().x / 2.f) - 150.f, window.getSize().y / 2.f);
+        win.setFont(font);
+        string str = "Player " + to_string(currentState.getWinner()) + " wins";
+        win.setString(str);
+        win.setCharacterSize(48);
+        win.setFillColor(sf::Color::Red);
+        drawables.push_back(move(win));
+    } 
 }
 
 void StateLayer::draw(sf::RenderWindow &window)
@@ -101,14 +169,18 @@ void StateLayer::draw(sf::RenderWindow &window)
 
     // draw cursor
     window.draw(*surface[2]);
-
     printText();
+    
+    for(auto& d : drawables){
+        window.draw(d);
+    }
+
     window.display();
 }
 
 bool StateLayer::printText()
 {
-    std::vector<sf::Text> texts;
+    std::queue<sf::Text> texts;
 
     sf::Text player1;
     player1.setPosition(window.getSize().x - 240.f, 0.f);
@@ -116,7 +188,7 @@ bool StateLayer::printText()
     player1.setString("Player 1");
     if(currentState.getTurnOwner() == 1)
         player1.setFillColor(sf::Color::Green);    
-    texts.push_back(move(player1));
+    texts.push(player1);
 
     sf::Text player2;
     player2.setPosition(window.getSize().x - 240.f, (window.getSize().y / 2));
@@ -124,22 +196,10 @@ bool StateLayer::printText()
     player2.setString("Player 2");
     if(currentState.getTurnOwner() == 2)
         player2.setFillColor(sf::Color::Green);
-    texts.push_back(move(player2));
+    texts.push(player2);
 
     float playerOneBasePos = player1.getPosition().y + 32.f;
     float playerTwoBasePos = player2.getPosition().y + 32.f;
-
-    if (currentState.getEnd() == true)
-    {
-        sf::Text win;
-        win.setPosition((window.getSize().x / 2.f) - 150.f, window.getSize().y / 2.f);
-        win.setFont(font);
-        string str = "Player " + to_string(currentState.getWinner()) + " wins";
-        win.setString(str);
-        win.setCharacterSize(48);
-        win.setFillColor(sf::Color::Red);
-        texts.push_back(move(win));
-    }
 
     for (auto &charac : currentState.getCharacters())
     {
@@ -163,7 +223,7 @@ bool StateLayer::printText()
             textStats.setCharacterSize(15); // in pixels, not points!
 
             playerOneBasePos += 100.f;
-            texts.push_back(move(textStats));
+            texts.push(textStats);
         }
         else
         {
@@ -184,7 +244,7 @@ bool StateLayer::printText()
                 
             textStats.setCharacterSize(15); // in pixels, not points!
             playerTwoBasePos += 100.f;
-            texts.push_back(move(textStats));
+            texts.push(textStats);
         }
         if(charac->getStatus() == SELECTED){
             sf::Text selectedChar;
@@ -194,7 +254,7 @@ bool StateLayer::printText()
             selectedChar.setString(str);
             selectedChar.setCharacterSize(18);
             selectedChar.setFillColor(sf::Color::Green);
-            texts.push_back(move(selectedChar));
+            texts.push(selectedChar);
         }
     }
 
@@ -204,7 +264,7 @@ bool StateLayer::printText()
     controls.setString("Select: ENTER   -   Move: M   -   Attack: A   -   Skip: S");
     controls.setCharacterSize(18);
     controls.setFillColor(sf::Color::White);
-    texts.push_back(move(controls));
+    texts.push(controls);
 
     sf::Text turnInfo;
     turnInfo.setPosition(((window.getSize().x) - 8*32.f), window.getSize().y - 32.f);
@@ -215,7 +275,7 @@ bool StateLayer::printText()
     turnInfo.setCharacterSize(24); // in pixels, not points!
     turnInfo.setFillColor(sf::Color::White);
 
-    texts.push_back(move(turnInfo));
+    texts.push(turnInfo);
 
     sf::Text turnInfo2;
     turnInfo2.setPosition(((window.getSize().x) - 4*32.f), window.getSize().y - 32.f);
@@ -227,10 +287,11 @@ bool StateLayer::printText()
     turnInfo2.setCharacterSize(24); // in pixels, not points!
     turnInfo2.setFillColor(sf::Color::White);
 
-    texts.push_back(move(turnInfo2));
-
-    for (auto &i : texts)
-        window.draw(i);
-    texts.clear();
+    texts.push(turnInfo2);
+    
+    while(!texts.empty()){
+        window.draw(texts.front());
+        texts.pop();
+    }
     return true;
 }

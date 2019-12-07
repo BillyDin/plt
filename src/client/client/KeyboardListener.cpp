@@ -103,18 +103,21 @@ void KeyboardListener::infiniteSelectMoving(state::State &state, int playerNum)
             break;
         }
     }
-
-    // we are gonna use pop many times. so we have to check if the queue its empty 
-    if(toVisitQueue.empty()){
-        for(auto& pos : state.getCharacters()[characIndex]->allowedPosToMove(state)){
-            toVisitQueue.push(pos);
+    if(state.getCharacters()[characIndex]->getCharacterMove() > 0){
+        // we are gonna use pop many times. so we have to check if the queue its empty
+        if (toVisitQueue.empty())
+        {
+            for (auto &pos : state.getCharacters()[characIndex]->allowedPosToMove(state))
+            {
+                toVisitQueue.push(pos);
+            }
         }
+
+        state.getCursor().move(toVisitQueue.front());
+
+        if (!toVisitQueue.empty())
+            toVisitQueue.pop();
     }
-    
-    state.getCursor().move(toVisitQueue.front());
-    
-    if(!toVisitQueue.empty())
-        toVisitQueue.pop();
 }
 
 void KeyboardListener::cursorAction(state::State &state, int playerNum)
@@ -195,7 +198,9 @@ bool KeyboardListener::triggerAction(engine::Engine &engine, KeyID key)
         }
         else if (!selected)
         {
-            cout << " please first select some character " << endl;
+            StateEvent se{StateEventID::ALERT};
+            se.text = "First you have to select a character with ENTER";
+            engine.getState().notifyObservers(se, engine.getState());
         }
         break;
     }
@@ -232,7 +237,9 @@ bool KeyboardListener::triggerAction(engine::Engine &engine, KeyID key)
         }
         else if (!selected)
         {
-            cout << " please first select someone " << endl;
+            StateEvent se{StateEventID::ALERT};
+            se.text = "First you have to select a character with ENTER";
+            engine.getState().notifyObservers(se, engine.getState());
         }
         break;
     }
@@ -354,6 +361,5 @@ bool KeyboardListener::triggerAction(engine::Engine &engine, KeyID key)
     default:
         break;
     }
-
     return true;
 }
