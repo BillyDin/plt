@@ -24,9 +24,58 @@ BOOST_AUTO_TEST_CASE(TestClientNamespace)
 		e.getState().initializeMapCell("../../../res/map_v0.txt");
 		e.getState().getCursor().setPosition(e.getState().getCharacters()[0]->getPosition());
 		KeyboardListener kl{e};
+		kl.triggerAction(e, ATTACK);
+		kl.triggerAction(e, MOVE);
 		kl.triggerAction(e, SELECT);
 		kl.triggerAction(e, MOVE);
+		kl.triggerAction(e, LEFT);
+		kl.triggerAction(e, RIGHT);
+		kl.triggerAction(e, TOP);
+		kl.triggerAction(e, DOWN);
 		kl.triggerAction(e, ATTACK);
+		kl.triggerAction(e, LEFT);
+		kl.triggerAction(e, RIGHT);
+		kl.triggerAction(e, TOP);
+		kl.triggerAction(e, DOWN);
+		kl.triggerAction(e, PASS_TURN);
+	}
+	{
+		engine::Engine e{"engine"};
+		e.getState().initializeCharacters();
+		e.getState().initializeMapCell("../../../res/map_v0.txt");
+		e.getState().getCursor().setPosition(e.getState().getCharacters()[0]->getPosition());
+		KeyboardListener kl{e};
+		kl.triggerAction(e, SELECT);
+		kl.triggerAction(e, MOVE);
+		kl.triggerAction(e, LEFT);
+		kl.triggerAction(e, RIGHT);
+		kl.triggerAction(e, TOP);
+		kl.triggerAction(e, DOWN);
+		kl.triggerAction(e, SELECT);
+		kl.triggerAction(e, PASS_TURN);
+	}
+	{
+		engine::Engine e{"engine"};
+		e.getState().initializeCharacters();
+		e.getState().initializeMapCell("../../../res/map_v0.txt");
+		e.getState().getCursor().setPosition(e.getState().getCharacters()[0]->getPosition());
+		KeyboardListener kl{e};
+		kl.triggerAction(e, SELECT);
+		kl.triggerAction(e, MOVE);
+		kl.triggerAction(e, LEFT);
+		kl.triggerAction(e, SELECT);
+		kl.triggerAction(e, PASS_TURN);
+	}
+	{
+		engine::Engine e{"engine"};
+		e.getState().initializeCharacters();
+		e.getState().initializeMapCell("../../../res/map_v0.txt");
+		e.getState().getCursor().setPosition(e.getState().getCharacters()[0]->getPosition());
+		KeyboardListener kl{e};
+		kl.triggerAction(e, SELECT);
+		kl.triggerAction(e, ATTACK);
+		kl.triggerAction(e, LEFT);
+		kl.triggerAction(e, SELECT);
 		kl.triggerAction(e, PASS_TURN);
 	}
 }

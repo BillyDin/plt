@@ -49,6 +49,16 @@ BOOST_AUTO_TEST_CASE(TestEngineNamespace)
         hai.run(ngine);
     }
     {
+        Node deepNode1{0};
+        deepNode1.setValue(10);
+        Node deepNode2{1};
+        deepNode1.addAdjacent(deepNode2);
+        deepNode2.setParent(deepNode1);
+        BOOST_CHECK_GT(deepNode1.getAdjacents().size(), 0);
+        BOOST_CHECK_EQUAL(deepNode2.getParent().getValue(), deepNode1.getValue());
+        BOOST_CHECK_EQUAL(deepNode2.getParent().getIndex(), deepNode1.getIndex());
+    }
+    {
         MapNode mn1{1,1,1,0};
         MapNode mn2{1,2,2,1};
 

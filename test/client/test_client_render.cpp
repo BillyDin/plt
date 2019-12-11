@@ -47,6 +47,11 @@ BOOST_AUTO_TEST_CASE(TestRenderNamespace)
         layer.stateChanged(se, state);
         BOOST_CHECK_GT(layer.getTilesets().size(), 0);
         BOOST_CHECK_GT(layer.getSurfaces().size(), 0);
+        time_t epoch = time(nullptr);
+        layer.registerAlertMessage("Alert");
+        layer.showAlertMessage(epoch);
+        layer.showWinnerMessage();
+
     }
 }
 
