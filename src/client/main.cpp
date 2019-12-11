@@ -28,6 +28,82 @@ int main(int argc, char const *argv[])
     {
         if (strcmp(argv[1], "hello") == 0)
             cout << "Bonjour " << ((argv[2]) ? argv[2] : "tout le monde") << endl;
+        else if (strcmp(argv[1], "deep_ai") == 0)
+        {
+            engine::Engine ngine{"game"};
+
+            ngine.getState().initializeMapCell();
+
+            ngine.getState().initializeCharacters();
+            DeepAI deep{ngine, 2};
+
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
+
+            sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
+            StateLayer layer(ngine.getState(), window);
+
+            layer.initSurfaces(ngine.getState());
+            StateLayer stateLayer(ngine.getState(), window);
+            stateLayer.initSurfaces(ngine.getState());
+            // Registering observer
+            StateLayer *ptr_stateLayer = &stateLayer;
+            ngine.getState().registerObserver(ptr_stateLayer);
+            bool once = true;
+            KeyboardListener kl{ngine};
+
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+
+            while (window.isOpen())
+            {
+                epoch = time(nullptr);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
+                sf::Event event;
+                if (once)
+                {
+                    stateLayer.draw(window);
+                    once = false;
+                }
+                while (window.pollEvent(event))
+                {
+                    if (event.type == sf::Event::Closed)
+                        window.close();
+                    else if (event.type == sf::Event::KeyPressed)
+                    {
+                        if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 1)
+                        {
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                                kl.triggerAction(ngine, LEFT);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                                kl.triggerAction(ngine, TOP);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                                kl.triggerAction(ngine, RIGHT);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                                kl.triggerAction(ngine, DOWN);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
+                                kl.triggerAction(ngine, MOVE);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+                                kl.triggerAction(ngine, ATTACK);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+                                kl.triggerAction(ngine, PASS_TURN);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+                                kl.triggerAction(ngine, SELECT);
+                        }
+                    }
+                    if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 2)
+                        deep.run(ngine);
+                }
+            }
+        }
         else if (strcmp(argv[1], "heuristic_ai") == 0)
         {
             engine::Engine ngine{"game"};
@@ -56,7 +132,7 @@ int main(int argc, char const *argv[])
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
             KeyboardListener kl{ngine};
-            
+
             StateEvent se{StateEventID::ALERT};
             se.text = "Welcome!";
             ngine.getState().notifyObservers(se, ngine.getState());
@@ -65,7 +141,8 @@ int main(int argc, char const *argv[])
             while (window.isOpen())
             {
                 epoch = time(nullptr);
-                stateLayer.showAlertMessage(epoch);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
                 sf::Event event;
                 if (once)
                 {
@@ -130,7 +207,7 @@ int main(int argc, char const *argv[])
             se.text = "Welcome!";
             ngine.getState().notifyObservers(se, ngine.getState());
             time_t epoch = time(nullptr);
-            
+
             sf::Music backMusic;
             if (backMusic.openFromFile("res/epic_music.wav"))
             {
@@ -141,7 +218,8 @@ int main(int argc, char const *argv[])
             while (window.isOpen())
             {
                 epoch = time(nullptr);
-                stateLayer.showAlertMessage(epoch);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
                 sf::Event event;
                 if (once)
                 {
@@ -152,7 +230,7 @@ int main(int argc, char const *argv[])
                 {
                     if (event.type == sf::Event::Closed)
                         window.close();
-                    
+
                     else if (event.type == sf::Event::KeyPressed)
                     {
                         bool isMyTurn = true; // validate
@@ -219,7 +297,8 @@ int main(int argc, char const *argv[])
             while (window.isOpen())
             {
                 epoch = time(nullptr);
-                stateLayer.showAlertMessage(epoch);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
                 sf::Event event;
                 if (once)
                 {
@@ -299,7 +378,8 @@ int main(int argc, char const *argv[])
             while (window.isOpen())
             {
                 epoch = time(nullptr);
-                stateLayer.showAlertMessage(epoch);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
                 sf::Event event;
                 if (once)
                 {
@@ -359,7 +439,8 @@ int main(int argc, char const *argv[])
             while (window.isOpen())
             {
                 epoch = time(nullptr);
-                stateLayer.showAlertMessage(epoch);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
                 sf::Event event;
                 if (once)
                 {
@@ -377,6 +458,67 @@ int main(int argc, char const *argv[])
                             hai1.run(ngine);
                             if (ngine.getState().getEnd() == false)
                                 hai2.run(ngine);
+                        }
+                    }
+                }
+            }
+        }
+        else if (strcmp(argv[1], "daivsdai") == 0)
+        {
+            engine::Engine ngine{"game"};
+
+            ngine.getState().initializeMapCell();
+
+            ngine.getState().initializeCharacters();
+            DeepAI deep1{ngine, 1};
+            DeepAI deep2{ngine, 2};
+
+            sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
+            StateLayer layer(ngine.getState(), window);
+
+            layer.initSurfaces(ngine.getState());
+            StateLayer stateLayer(ngine.getState(), window);
+            stateLayer.initSurfaces(ngine.getState());
+            // Registering observer
+            StateLayer *ptr_stateLayer = &stateLayer;
+            ngine.getState().registerObserver(ptr_stateLayer);
+            bool once = true;
+            KeyboardListener kl{ngine};
+
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
+            while (window.isOpen())
+            {
+                epoch = time(nullptr);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
+                sf::Event event;
+                if (once)
+                {
+                    stateLayer.draw(window);
+                    once = false;
+                }
+                while (window.pollEvent(event))
+                {
+                    if (event.type == sf::Event::Closed)
+                        window.close();
+                    else if (event.type == sf::Event::KeyPressed)
+                    {
+                        while (ngine.getState().getEnd() == false)
+                        {
+                            deep1.run(ngine);
+                            if (ngine.getState().getEnd() == false)
+                                deep2.run(ngine);
                         }
                     }
                 }
@@ -450,7 +592,8 @@ int main(int argc, char const *argv[])
             while (window.isOpen())
             {
                 epoch = time(nullptr);
-                stateLayer.showAlertMessage(epoch);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
                 sf::Event event;
                 if (once)
                 {

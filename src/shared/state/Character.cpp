@@ -37,11 +37,11 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
     {
         characterMove = 3;
         characterAttackDistance = 0;
-        baseCharacterMove = 3;
+        baseCharacterMove = 2;
         baseCharacterActackDistance = 1;
         stats.setHealth(100);
-        stats.setAttack(50);
-        stats.setDefense(80);
+        stats.setAttack(49);
+        stats.setDefense(50);
         stats.setMana(20);
     }
 

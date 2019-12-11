@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <queue>
 #include <list>
+#include <limits>
 
 using namespace ai;
 using namespace state;
@@ -19,110 +20,270 @@ DeepAI::DeepAI(Engine& engine, int pn){
 }
 
 bool DeepAI::initDeepNodes(State& state){
+    
+    Node root{-1};
+    deepNodes.push_back(root);
+
+    for (size_t i = 0; i < state.getCharacters().size(); i++)
+    {
+        //mine
+        if(state.getCharacters()[i]->getPlayerOwner() == playerNumber){
+            Node node{i};
+            node.setParent(root);
+            root.addAdjacent(node);
+            deepNodes.push_back(node);
+        }
+    }
+
+    for (auto &n : deepNodes)
+    {
+        if(n.getIndex() == -1) continue;
+
+        for (size_t i = 0; i < state.getCharacters().size(); i++)
+        {
+            //enemies
+            if (state.getCharacters()[i]->getPlayerOwner() != playerNumber)
+            {
+                Node node{i};
+                node.setParent(n);
+                n.addAdjacent(node);
+                deepNodes.push_back(node);
+            }
+        }
+    }
     return true;
 }
 
 void DeepAI::run(engine::Engine &engine){
-    cout << "run heuristic ia" << endl;
+
+
+
+    cout << "run deep ia" << endl;
     updateMapNodes(engine.getState());
-    int selectedIndex = advancedSelectCharacter(engine.getState());
+    int dangerSituationIndex = evaluateEscape(engine.getState());
+    if (dangerSituationIndex == -1)
+    {
+        int selectedIndex = evaluateCharacter(engine.getState());
 
-    // we do the best choice basing us in the distance between characters.
-    Character &selectedChar = *engine.getState().getCharacters()[selectedIndex];
-    unique_ptr<Command> selectCommand(new SelectCharacterCommand(selectedChar));
-    engine.addCommand(move(selectCommand));
+        // we do the best choice basing us in the distance between characters.
+        Character &selectedChar = *engine.getState().getCharacters()[selectedIndex];
+        unique_ptr<Command> selectCommand(new SelectCharacterCommand(selectedChar));
+        engine.addCommand(move(selectCommand));
 
-    // can attack?
-    if (selectedChar.allowedTargetsToAttack(engine.getState()).size() > 0){
-        // can attack.
-        // will attack the first option for now...
-        Character &targetToAttack = *engine.getState().getCharacters()[selectedChar.allowedTargetsToAttack(engine.getState())[0]];
-        unique_ptr<Command> atkCmd(new AttackCommand(selectedChar, targetToAttack));
-        engine.addCommand(move(atkCmd));
-        engine.update();
-
-        unique_ptr<Command> finTurnCmd(new FinishTurnCommand());
-        engine.addCommand(move(finTurnCmd));
-        engine.update();
-        return;
-    } else {
-        // can't attack. let's move until attack or moves chances == 0
-        size_t movesLeft = selectedChar.getCharacterMove();
-        size_t nextPosInPath = 0;
-
-        // until this character has 0 moves, he will try to get closer to an specific enemy character
-        
-        // selected target to get closer
-        int targetIndex = advancedSelectTarget(engine.getState(), selectedIndex);
-        // Character &targetToGetCloser = *engine.getState().getCharacters()[targetIndex];
-        
-        // localize source and target mapnodes
-        MapNode &source = mapNodes[findMapNodeIndex(engine.getState(), selectedIndex)];
-        MapNode &target = mapNodes[findMapNodeIndex(engine.getState(), targetIndex)];
-
-        // call algorithm to choose shortest path
-        vector<MapNode> path = callShortestPath(source, target);
-
-        while (movesLeft > 0 && nextPosInPath < path.size()){
-            // select position to go from shortestPath
-            MapNode mnToGo = path[nextPosInPath];
-
-            Position p{mnToGo.getX(), mnToGo.getY()};
-
-            // move this character
-            unique_ptr<Command> mvCmd(new MoveCommand(selectedChar, p));
-            engine.addCommand(move(mvCmd));
+        // can attack?
+        if (selectedChar.allowedTargetsToAttack(engine.getState()).size() > 0)
+        {
+            // can attack.
+            // will attack the first option for now...
+            Character &targetToAttack = *engine.getState().getCharacters()[selectedChar.allowedTargetsToAttack(engine.getState())[0]];
+            unique_ptr<Command> atkCmd(new AttackCommand(selectedChar, targetToAttack));
+            engine.addCommand(move(atkCmd));
             engine.update();
 
-            // decrement local moves variable, incrementNextPosition.
-            movesLeft--;
-            nextPosInPath++;
-
-            // can attack?
-            if (selectedChar.allowedTargetsToAttack(engine.getState()).size() > 0)
-            {
-                // can attack.
-                // will attack the first option for now...
-                Character &targetToAttack = *engine.getState().getCharacters()[selectedChar.allowedTargetsToAttack(engine.getState())[0]];
-                unique_ptr<Command> atkCmd(new AttackCommand(selectedChar, targetToAttack));
-                engine.addCommand(move(atkCmd));
-                engine.update();
-
-                unique_ptr<Command> finTurnCmd(new FinishTurnCommand());
-                engine.addCommand(move(finTurnCmd));
-                engine.update();
-                return;
-            }
+            unique_ptr<Command> finTurnCmd(new FinishTurnCommand());
+            engine.addCommand(move(finTurnCmd));
+            engine.update();
+            return;
         }
-        unique_ptr<Command> finTurnCmd(new FinishTurnCommand());
-        engine.addCommand(move(finTurnCmd));
-        engine.update();
-        return;
+        else
+        {
+            // can't attack. let's move until attack or moves chances == 0
+            size_t movesLeft = selectedChar.getCharacterMove();
+            size_t nextPosInPath = 0;
+
+            // until this character has 0 moves, he will try to get closer to an specific enemy character
+
+            // selected target to get closer
+            int targetIndex = evaluateTarget(engine.getState(), selectedIndex);
+            // Character &targetToGetCloser = *engine.getState().getCharacters()[targetIndex];
+
+            // localize source and target mapnodes
+            MapNode &source = mapNodes[findMapNodeIndex(engine.getState(), selectedIndex)];
+            MapNode &target = mapNodes[findMapNodeIndex(engine.getState(), targetIndex)];
+
+            // call algorithm to choose shortest path
+            vector<MapNode> path = callShortestPath(source, target);
+
+            while (movesLeft > 0 && nextPosInPath < path.size())
+            {
+                // select position to go from shortestPath
+                MapNode mnToGo = path[nextPosInPath];
+
+                Position p{mnToGo.getX(), mnToGo.getY()};
+
+                // move this character
+                unique_ptr<Command> mvCmd(new MoveCommand(selectedChar, p));
+                engine.addCommand(move(mvCmd));
+                engine.update();
+
+                // decrement local moves variable, incrementNextPosition.
+                movesLeft--;
+                nextPosInPath++;
+
+                // can attack?
+                if (selectedChar.allowedTargetsToAttack(engine.getState()).size() > 0)
+                {
+                    // can attack.
+                    // will attack the first option for now...
+                    Character &targetToAttack = *engine.getState().getCharacters()[selectedChar.allowedTargetsToAttack(engine.getState())[0]];
+                    unique_ptr<Command> atkCmd(new AttackCommand(selectedChar, targetToAttack));
+                    engine.addCommand(move(atkCmd));
+                    engine.update();
+
+                    unique_ptr<Command> finTurnCmd(new FinishTurnCommand());
+                    engine.addCommand(move(finTurnCmd));
+                    engine.update();
+                    return;
+                }
+            }
+            unique_ptr<Command> finTurnCmd(new FinishTurnCommand());
+            engine.addCommand(move(finTurnCmd));
+            engine.update();
+            return;
+        }
+    }
+    else{
+        Character &selectedChar = *engine.getState().getCharacters()[dangerSituationIndex];
+        unique_ptr<Command> selectCommand(new SelectCharacterCommand(selectedChar));
+        engine.addCommand(move(selectCommand));
+
+        // can't attack. let's move until attack or moves chances == 0
+            size_t movesLeft = selectedChar.getCharacterMove();
+            size_t nextPosInPath = 0;
+
+            // until this character has 0 moves, he will try to get closer to an specific enemy character
+
+            // selected target to get closer
+            int targetIndex = findBestAlly(engine.getState(), dangerSituationIndex);
+            // Character &targetToGetCloser = *engine.getState().getCharacters()[targetIndex];
+
+            // localize source and target mapnodes
+            MapNode &source = mapNodes[findMapNodeIndex(engine.getState(), dangerSituationIndex)];
+            MapNode &target = mapNodes[findMapNodeIndex(engine.getState(), targetIndex)];
+
+            // call algorithm to choose shortest path
+            vector<MapNode> path = callShortestPath(source, target);
+
+            while (movesLeft > 0 && nextPosInPath < path.size())
+            {
+                // select position to go from shortestPath
+                MapNode mnToGo = path[nextPosInPath];
+
+                Position p{mnToGo.getX(), mnToGo.getY()};
+
+                // move this character
+                unique_ptr<Command> mvCmd(new MoveCommand(selectedChar, p));
+                engine.addCommand(move(mvCmd));
+                engine.update();
+
+                // decrement local moves variable, incrementNextPosition.
+                movesLeft--;
+                nextPosInPath++;
+            }
+            unique_ptr<Command> finTurnCmd(new FinishTurnCommand());
+            engine.addCommand(move(finTurnCmd));
+            engine.update();
+            return;
     }
 }
 
-int DeepAI::advancedSelectCharacter(state::State &state){
-    int index = -1;
-    int globalMinDist = INT32_MAX;
-    
-    // for each alive character of mine
-    for (unsigned int i = 0; i < state.getCharacters().size(); i++)
-        // just my characters
+int DeepAI::findBestAlly (state::State& state, int index){
+    int bestChoiceIndex = -1;
+    float bestChoice = 0;
+    for (size_t i = 0; i < state.getCharacters().size(); i++)
+    {
+        if(index != i && state.getCharacters()[i]->getPlayerOwner() == playerNumber && state.getCharacters()[i]->getStatus() != DEATH){
+            if(state.getCharacters()[i]->getStats().getHealthWithDefense() > bestChoice){
+                bestChoiceIndex = i;
+                bestChoice = state.getCharacters()[i]->getStats().getHealthWithDefense();
+            }
+        }
+    }
+    return bestChoiceIndex;
+}
+
+int DeepAI::evaluateEscape(state::State &state){
+    int charactersAlive = 0;
+
+    for(auto& charac : state.getCharacters()){
+        if(charac->getPlayerOwner() == playerNumber && charac->getStatus() != DEATH) charactersAlive++;
+    }
+
+    vector<int> dangerSituations;
+    for (size_t i = 0; i < state.getCharacters().size(); i++)
+    {
+        float realHealth = state.getCharacters()[i]->getStats().getHealthWithDefense();
+        //my chars
         if(state.getCharacters()[i]->getPlayerOwner() == playerNumber && state.getCharacters()[i]->getStatus() != DEATH){
-            int minimalDistance = INT32_MAX;
-            // for each enemy character
-            for (auto &enemyCharacter : state.getCharacters())
-                // just enemies
-                if(enemyCharacter->getPlayerOwner() != playerNumber && enemyCharacter->getStatus() != DEATH)
-                    if(state.getCharacters()[i]->getPosition().distance(enemyCharacter->getPosition()) < minimalDistance)
-                        minimalDistance = state.getCharacters()[i]->getPosition().distance(enemyCharacter->getPosition());
-                
-            if(minimalDistance < globalMinDist){
-                globalMinDist = minimalDistance;
+            for(auto &enemy : state.getCharacters()){
+                if(enemy->getPlayerOwner() != playerNumber){
+                    if(enemy->getStatus() != DEATH)
+                        if((realHealth + (5 * state.getCharacters()[i]->getPosition().distance(enemy->getPosition()))) < DANGER_SITUATION)
+                            dangerSituations.push_back(i);
+                }
+            }
+        }
+    }
+    if(!dangerSituations.empty() && charactersAlive > 1) return dangerSituations[0];
+    else return -1;
+}
+
+int DeepAI::evaluateCharacter(state::State &state){
+    int index = -1;
+    float globalValue = 0;
+
+    // evaluation
+    for (size_t i = 0; i < state.getCharacters().size(); i++)
+    {
+        if(state.getCharacters()[i]->getPlayerOwner() == playerNumber && state.getCharacters()[i]->getStatus() != DEATH){
+            const float realHealth = state.getCharacters()[i]->getStats().getHealthWithDefense();
+            float myBestChoice = realHealth;
+            for(auto& enemy : state.getCharacters()){
+                if(enemy->getPlayerOwner() != playerNumber){
+                    float distance = 0.5 * state.getCharacters()[i]->getPosition().distance(enemy->getPosition());
+                    if((realHealth - distance) > myBestChoice){
+                        myBestChoice = realHealth - distance;
+                    }
+                }
+            }
+            // here we have the best value
+
+            if(myBestChoice > globalValue){
+                globalValue = myBestChoice;
                 index = i;
             }
         }
+    }
+    
     return index;
+}
+
+int DeepAI::evaluateTarget(State& state, int selectedCharacIndex){
+    int enemiesQuantity = 0;
+    for(auto& enemy : state.getCharacters()){
+        if(enemy->getPlayerOwner() != playerNumber && enemy->getStatus() != DEATH) enemiesQuantity++;
+    }
+
+    const float myRealHealth = state.getCharacters()[selectedCharacIndex]->getStats().getHealthWithDefense();
+    float bestChoice = numeric_limits<float>::max();
+    int indexEnemy = -1;
+    for (size_t i = 0; i < state.getCharacters().size(); i++)
+    {
+        // each enemy
+        if(state.getCharacters()[i]->getPlayerOwner() != playerNumber && state.getCharacters()[i]->getStatus() != DEATH){
+
+            if(enemiesQuantity > 1 
+                && myRealHealth < state.getCharacters()[i]->getStats().getHealthWithDefense()) 
+                continue;
+
+            if(state.getCharacters()[i]->getStats().getHealthWithDefense() < bestChoice){
+                bestChoice = state.getCharacters()[i]->getStats().getHealthWithDefense();
+                indexEnemy = i;
+            }
+        }
+    }
+    
+    return indexEnemy;
 }
 
 // initializes mapNodes vector, which is a grid of all cells where a character can 
@@ -173,21 +334,7 @@ void DeepAI::updateMapNodes(State &state){
     }
 }
 
-int DeepAI::advancedSelectTarget(State& state, int selectedCharacIndex){
-    Character &selectedChar = *state.getCharacters()[selectedCharacIndex];
-    int index = -1;
-    int minimalDist = INT32_MAX;
-    // iterate enemies and choose the nearest enemy
-    for(unsigned int i = 0; i < state.getCharacters().size(); i++){
-        if(state.getCharacters()[i]->getPlayerOwner() != playerNumber 
-        && state.getCharacters()[i]->getStatus() != DEATH
-        && selectedChar.getPosition().distance(state.getCharacters()[i]->getPosition()) < minimalDist){
-            index = i;
-            minimalDist = selectedChar.getPosition().distance(state.getCharacters()[i]->getPosition());
-        }
-    }
-    return index;
-}
+
 
 int DeepAI::findMapNodeIndex(State& state, int characterIndex){
     Character &selectedChar = *state.getCharacters()[characterIndex];

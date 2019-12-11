@@ -31,7 +31,15 @@ void Node::setValue(int newValue){
     this->value=newValue;
 }
 
-void Node::addAdjacent(Node* adj)
+void Node::addAdjacent(Node& adj)
 {
-    adjacents.push_back(adj);
+    adjacents.push_back(&adj);
+}
+
+Node& Node::getParent (){
+    return *parent;
+}
+
+void Node::setParent (Node& parent){
+    this->parent = &parent;
 }
