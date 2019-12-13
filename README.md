@@ -80,6 +80,11 @@ $ ./bin/client raivsrai
 ```sh
 $ ./bin/client haivshai
 ```
+## Deep AI vs Deep AI
+
+```sh
+$ ./bin/client daivsdai
+```
 
 ## Release History
 
