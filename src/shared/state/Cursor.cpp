@@ -18,6 +18,10 @@ Cursor::Cursor(int x, int y, int p_tileCode)
     visible = false;
 }
 
+Cursor* Cursor::clone(){
+    return new Cursor(*this);
+}
+
 bool Cursor::isMapCell()
 {
     return false;

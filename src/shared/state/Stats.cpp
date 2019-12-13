@@ -16,6 +16,9 @@ int Stats::getAttack()
 {
     return this->attack;
 }
+float Stats::getHealthWithDefense(){
+    return health * (1 + (defense * 0.01));
+}
 int Stats::getDefense()
 {
     return this->defense;

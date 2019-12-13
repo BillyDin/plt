@@ -112,12 +112,3 @@ int RandomAI::selectCharacter (state::State& state){
     return posibleIndex[randomNumber];
 }
 
-int RandomAI::getPlayerNumber (){
-    return playerNumber;
-}
-
-void RandomAI::setPlayerNumber (int pn){
-    if(pn == 1 || pn == 2){
-        playerNumber = pn;
-    }
-}

@@ -52,8 +52,8 @@ std::vector<Position> Position::getNearPositions(){
 	Position west{this->getX() - 1, this->getY()};
 	Position east{this->getX() + 1, this->getY()};
 	result.push_back(move(north));
-	result.push_back(move(south));
 	result.push_back(move(west));
+	result.push_back(move(south));
 	result.push_back(move(east));
 
 	return result;

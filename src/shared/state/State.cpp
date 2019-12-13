@@ -6,6 +6,9 @@
 #include <vector>
 #include "SpaceMapCell.h"
 #include "ObstacleMapCell.h"
+#include "MementoState.h"
+#include "Observable.h"
+#include "Caretaker.h"
 #include <map>
 
 using namespace std;
@@ -18,6 +21,87 @@ State::State(std::string nMode) : cursor(10, 10, 2)
     std::cout << "Creating an state object in >>>" + mode + "<<< mode\n";
     actualAction = IDLE;
 }
+
+MementoState State::saveToMemento(){
+    State* s = new State("game");
+
+    // characters
+    for (size_t i = 0; i < characters.size(); i++)
+    {
+        unique_ptr<Character> newCRef(new Character(*characters[i]->clone()));
+        s->characters.push_back(move(newCRef));
+    }
+    
+    // map
+    for(auto& line : map){
+        vector<unique_ptr<MapCell>> clonedLine;
+        for(auto& cell : line){
+            if(cell->isSpace()){
+                SpaceMapCell* smc = (SpaceMapCell*)cell.get()->clone();
+                unique_ptr<MapCell> upmc(new SpaceMapCell(*smc));
+                clonedLine.push_back(move(upmc));
+            } else {
+                ObstacleMapCell* omc = (ObstacleMapCell*)cell.get()->clone();
+                unique_ptr<MapCell> upmc(new ObstacleMapCell(*omc));
+                clonedLine.push_back(move(upmc));
+            }
+        }
+        s->map.push_back(move(clonedLine));
+    }
+
+    s->actualAction = actualAction;
+    s->cursor = *cursor.clone();
+    s->end = end;
+    s->mode = mode;
+    s->turn = turn;
+    s->turnOwner = turnOwner;
+    s->winner = winner;
+    for (size_t i = 0; i < observers.size(); i++)
+    {
+        s->registerObserver(observers[i]);
+    }
+    
+    MementoState m{*s};
+    return m;
+}
+
+bool State::recoverMemento(MementoState& memento){
+    this->characters.clear();
+    this->map.clear();
+    // characters
+    for (size_t i = 0; i < memento.recoverState().characters.size(); i++)
+    {
+        unique_ptr<Character> newCRef(new Character(*memento.recoverState().characters[i]->clone()));
+        this->characters.push_back(move(newCRef));
+    }
+    
+    // map
+    for(auto& line : memento.recoverState().map){
+        vector<unique_ptr<MapCell>> clonedLine;
+        for(auto& cell : line){
+            if(cell->isSpace()){
+                SpaceMapCell* smc = (SpaceMapCell*)cell.get()->clone();
+                unique_ptr<MapCell> upmc(new SpaceMapCell(*smc));
+                clonedLine.push_back(move(upmc));
+            } else {
+                ObstacleMapCell* omc = (ObstacleMapCell*)cell.get()->clone();
+                unique_ptr<MapCell> upmc(new ObstacleMapCell(*omc));
+                clonedLine.push_back(move(upmc));
+            }
+        }
+        this->map.push_back(move(clonedLine));
+    }
+
+    this->actualAction = memento.recoverState().actualAction;
+    this->cursor = *memento.recoverState().cursor.clone();
+    this->end = memento.recoverState().end;
+    this->mode = memento.recoverState().mode;
+    this->turn = memento.recoverState().turn;
+    this->turnOwner = memento.recoverState().turnOwner;
+    this->winner = memento.recoverState().winner;
+    return true;
+}
+
 
 std::string State::getMode(){
     return mode;

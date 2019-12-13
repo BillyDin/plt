@@ -2,11 +2,8 @@
 #include <string.h>
 // Les lignes suivantes ne servent qu'à vérifier que la compilation avec SFML fonctionne
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
-void testSFML()
-{
-    sf::Texture texture;
-}
 // Fin test SFML
 
 #include <state.h>
@@ -28,16 +25,22 @@ int main(int argc, char const *argv[])
     {
         if (strcmp(argv[1], "hello") == 0)
             cout << "Bonjour " << ((argv[2]) ? argv[2] : "tout le monde") << endl;
-        else if(strcmp(argv[1], "heuristic_ai") == 0){
+        else if (strcmp(argv[1], "deep_ai") == 0)
+        {
             engine::Engine ngine{"game"};
 
             ngine.getState().initializeMapCell();
 
             ngine.getState().initializeCharacters();
-            HeuristicAI heu2;
-            heu2.initMapNodes(ngine.getState());
-            heu2.setPlayerNumber(2);
-            //-----------------------------
+            DeepAI deep{ngine, 2};
+
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
 
             sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
             StateLayer layer(ngine.getState(), window);
@@ -49,11 +52,21 @@ int main(int argc, char const *argv[])
             StateLayer *ptr_stateLayer = &stateLayer;
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
+            KeyboardListener kl{ngine};
+
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
 
             while (window.isOpen())
             {
+                epoch = time(nullptr);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
                 sf::Event event;
-                if(once){
+                if (once)
+                {
                     stateLayer.draw(window);
                     once = false;
                 }
@@ -66,24 +79,100 @@ int main(int argc, char const *argv[])
                         if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 1)
                         {
                             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-                                KeyboardListener::triggerAction(ngine, LEFT);
+                                kl.triggerAction(ngine, LEFT);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-                                KeyboardListener::triggerAction(ngine, TOP);
+                                kl.triggerAction(ngine, TOP);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                                KeyboardListener::triggerAction(ngine, RIGHT);
+                                kl.triggerAction(ngine, RIGHT);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-                                KeyboardListener::triggerAction(ngine, DOWN);
+                                kl.triggerAction(ngine, DOWN);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
-                                KeyboardListener::triggerAction(ngine, MOVE);
+                                kl.triggerAction(ngine, MOVE);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-                                KeyboardListener::triggerAction(ngine, ATTACK);
+                                kl.triggerAction(ngine, ATTACK);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-                                KeyboardListener::triggerAction(ngine, PASS_TURN);
+                                kl.triggerAction(ngine, PASS_TURN);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
-                                KeyboardListener::triggerAction(ngine, SELECT);
+                                kl.triggerAction(ngine, SELECT);
                         }
                     }
-                    if(ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 2)
+                    if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 2)
+                        deep.run(ngine);
+                }
+            }
+        }
+        else if (strcmp(argv[1], "heuristic_ai") == 0)
+        {
+            engine::Engine ngine{"game"};
+
+            ngine.getState().initializeMapCell();
+
+            ngine.getState().initializeCharacters();
+            HeuristicAI heu2{ngine, 2};
+
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
+
+            sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
+            StateLayer layer(ngine.getState(), window);
+
+            layer.initSurfaces(ngine.getState());
+            StateLayer stateLayer(ngine.getState(), window);
+            stateLayer.initSurfaces(ngine.getState());
+            // Registering observer
+            StateLayer *ptr_stateLayer = &stateLayer;
+            ngine.getState().registerObserver(ptr_stateLayer);
+            bool once = true;
+            KeyboardListener kl{ngine};
+
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+
+            while (window.isOpen())
+            {
+                epoch = time(nullptr);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
+                sf::Event event;
+                if (once)
+                {
+                    stateLayer.draw(window);
+                    once = false;
+                }
+                while (window.pollEvent(event))
+                {
+                    if (event.type == sf::Event::Closed)
+                        window.close();
+                    else if (event.type == sf::Event::KeyPressed)
+                    {
+                        if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 1)
+                        {
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                                kl.triggerAction(ngine, LEFT);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                                kl.triggerAction(ngine, TOP);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                                kl.triggerAction(ngine, RIGHT);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                                kl.triggerAction(ngine, DOWN);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
+                                kl.triggerAction(ngine, MOVE);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+                                kl.triggerAction(ngine, ATTACK);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+                                kl.triggerAction(ngine, PASS_TURN);
+                            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+                                kl.triggerAction(ngine, SELECT);
+                        }
+                    }
+                    if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 2)
                         heu2.run(ngine);
                 }
             }
@@ -99,6 +188,7 @@ int main(int argc, char const *argv[])
             //-----------------------------
 
             sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
+            window.setFramerateLimit(60);
             StateLayer layer(ngine.getState(), window);
 
             layer.initSurfaces(ngine.getState());
@@ -108,11 +198,28 @@ int main(int argc, char const *argv[])
             StateLayer *ptr_stateLayer = &stateLayer;
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
+            KeyboardListener kl{ngine};
 
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
             while (window.isOpen())
             {
+                epoch = time(nullptr);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
                 sf::Event event;
-                if(once){
+                if (once)
+                {
                     stateLayer.draw(window);
                     once = false;
                 }
@@ -120,27 +227,28 @@ int main(int argc, char const *argv[])
                 {
                     if (event.type == sf::Event::Closed)
                         window.close();
+
                     else if (event.type == sf::Event::KeyPressed)
                     {
                         bool isMyTurn = true; // validate
                         if (isMyTurn)
                         {
                             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-                                KeyboardListener::triggerAction(ngine, LEFT);
+                                kl.triggerAction(ngine, LEFT);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-                                KeyboardListener::triggerAction(ngine, TOP);
+                                kl.triggerAction(ngine, TOP);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                                KeyboardListener::triggerAction(ngine, RIGHT);
+                                kl.triggerAction(ngine, RIGHT);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-                                KeyboardListener::triggerAction(ngine, DOWN);
+                                kl.triggerAction(ngine, DOWN);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
-                                KeyboardListener::triggerAction(ngine, MOVE);
+                                kl.triggerAction(ngine, MOVE);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-                                KeyboardListener::triggerAction(ngine, ATTACK);
+                                kl.triggerAction(ngine, ATTACK);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-                                KeyboardListener::triggerAction(ngine, PASS_TURN);
+                                kl.triggerAction(ngine, PASS_TURN);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
-                                KeyboardListener::triggerAction(ngine, SELECT);
+                                kl.triggerAction(ngine, SELECT);
                         }
                     }
                 }
@@ -169,11 +277,28 @@ int main(int argc, char const *argv[])
             StateLayer *ptr_stateLayer = &stateLayer;
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
+            KeyboardListener kl{ngine};
 
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
             while (window.isOpen())
             {
+                epoch = time(nullptr);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
                 sf::Event event;
-                if(once){
+                if (once)
+                {
                     stateLayer.draw(window);
                     once = false;
                 }
@@ -186,24 +311,24 @@ int main(int argc, char const *argv[])
                         if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 1)
                         {
                             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-                                KeyboardListener::triggerAction(ngine, LEFT);
+                                kl.triggerAction(ngine, LEFT);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-                                KeyboardListener::triggerAction(ngine, TOP);
+                                kl.triggerAction(ngine, TOP);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                                KeyboardListener::triggerAction(ngine, RIGHT);
+                                kl.triggerAction(ngine, RIGHT);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-                                KeyboardListener::triggerAction(ngine, DOWN);
+                                kl.triggerAction(ngine, DOWN);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
-                                KeyboardListener::triggerAction(ngine, MOVE);
+                                kl.triggerAction(ngine, MOVE);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-                                KeyboardListener::triggerAction(ngine, ATTACK);
+                                kl.triggerAction(ngine, ATTACK);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-                                KeyboardListener::triggerAction(ngine, PASS_TURN);
+                                kl.triggerAction(ngine, PASS_TURN);
                             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
-                                KeyboardListener::triggerAction(ngine, SELECT);
+                                kl.triggerAction(ngine, SELECT);
                         }
                     }
-                    if(ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 2)
+                    if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 2)
                         rai2.run(ngine);
                 }
             }
@@ -233,11 +358,28 @@ int main(int argc, char const *argv[])
             StateLayer *ptr_stateLayer = &stateLayer;
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
+            KeyboardListener kl{ngine};
 
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
             while (window.isOpen())
             {
+                epoch = time(nullptr);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
                 sf::Event event;
-                if(once){
+                if (once)
+                {
                     stateLayer.draw(window);
                     once = false;
                 }
@@ -247,9 +389,10 @@ int main(int argc, char const *argv[])
                         window.close();
                     else if (event.type == sf::Event::KeyPressed)
                     {
-                        while(ngine.getState().getEnd() == false){
+                        while (ngine.getState().getEnd() == false)
+                        {
                             rai1.run(ngine);
-                            if(ngine.getState().getEnd() == false)
+                            if (ngine.getState().getEnd() == false)
                                 rai2.run(ngine);
                         }
                     }
@@ -263,15 +406,8 @@ int main(int argc, char const *argv[])
             ngine.getState().initializeMapCell();
 
             ngine.getState().initializeCharacters();
-            HeuristicAI hai1;
-            HeuristicAI hai2;
-
-            hai1.setPlayerNumber(1);
-            hai2.setPlayerNumber(2);
-
-            hai1.initMapNodes(ngine.getState());
-            hai2.initMapNodes(ngine.getState());
-            //-----------------------------
+            HeuristicAI hai1{ngine, 1};
+            HeuristicAI hai2{ngine, 2};
 
             sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
             StateLayer layer(ngine.getState(), window);
@@ -283,11 +419,28 @@ int main(int argc, char const *argv[])
             StateLayer *ptr_stateLayer = &stateLayer;
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
+            KeyboardListener kl{ngine};
 
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
             while (window.isOpen())
             {
+                epoch = time(nullptr);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
                 sf::Event event;
-                if(once){
+                if (once)
+                {
                     stateLayer.draw(window);
                     once = false;
                 }
@@ -297,10 +450,72 @@ int main(int argc, char const *argv[])
                         window.close();
                     else if (event.type == sf::Event::KeyPressed)
                     {
-                        while(ngine.getState().getEnd() == false){
+                        while (ngine.getState().getEnd() == false)
+                        {
                             hai1.run(ngine);
-                            if(ngine.getState().getEnd() == false)
+                            if (ngine.getState().getEnd() == false)
                                 hai2.run(ngine);
+                        }
+                    }
+                }
+            }
+        }
+        else if (strcmp(argv[1], "daivsdai") == 0)
+        {
+            engine::Engine ngine{"game"};
+
+            ngine.getState().initializeMapCell();
+
+            ngine.getState().initializeCharacters();
+            DeepAI deep1{ngine, 1};
+            DeepAI deep2{ngine, 2};
+
+            sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
+            StateLayer layer(ngine.getState(), window);
+
+            layer.initSurfaces(ngine.getState());
+            StateLayer stateLayer(ngine.getState(), window);
+            stateLayer.initSurfaces(ngine.getState());
+            // Registering observer
+            StateLayer *ptr_stateLayer = &stateLayer;
+            ngine.getState().registerObserver(ptr_stateLayer);
+            bool once = true;
+            KeyboardListener kl{ngine};
+
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
+            while (window.isOpen())
+            {
+                epoch = time(nullptr);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
+                sf::Event event;
+                if (once)
+                {
+                    stateLayer.draw(window);
+                    once = false;
+                }
+                while (window.pollEvent(event))
+                {
+                    if (event.type == sf::Event::Closed)
+                        window.close();
+                    else if (event.type == sf::Event::KeyPressed)
+                    {
+                        while (ngine.getState().getEnd() == false)
+                        {
+                            deep1.run(ngine);
+                            if (ngine.getState().getEnd() == false)
+                                deep2.run(ngine);
                         }
                     }
                 }
@@ -315,6 +530,13 @@ int main(int argc, char const *argv[])
             sf::RenderWindow window(sf::VideoMode(state.getMap()[0].size() * 32 + 256, state.getMap().size() * 32 + 32, 32), "map");
             StateLayer layer(state, window);
             layer.initSurfaces(state);
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
             while (window.isOpen())
             {
                 sf::Event event;
@@ -329,6 +551,77 @@ int main(int argc, char const *argv[])
             return 0;
         }
 
+        else if (strcmp(argv[1], "rollback") == 0)
+        {
+            engine::Engine ngine{"game"};
+
+            ngine.getState().initializeMapCell();
+            ngine.getState().initializeCharacters();
+
+            HeuristicAI heu1{ngine, 1};
+            HeuristicAI heu2{ngine, 2};
+
+            sf::RenderWindow window(sf::VideoMode(ngine.getState().getMap()[0].size() * 32 + 256, ngine.getState().getMap().size() * 32 + 32, 32), "map");
+            StateLayer layer(ngine.getState(), window);
+
+            layer.initSurfaces(ngine.getState());
+            StateLayer stateLayer(ngine.getState(), window);
+            stateLayer.initSurfaces(ngine.getState());
+            // Registering observer
+            StateLayer *ptr_stateLayer = &stateLayer;
+            ngine.getState().registerObserver(ptr_stateLayer);
+            bool once = true;
+            Caretaker caretaker;
+            KeyboardListener kl{ngine};
+
+            StateEvent se{StateEventID::ALERT};
+            se.text = "Welcome!";
+            ngine.getState().notifyObservers(se, ngine.getState());
+            time_t epoch = time(nullptr);
+
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
+            while (window.isOpen())
+            {
+                epoch = time(nullptr);
+                if (ngine.getState().getWinner() > 0)
+                    stateLayer.showAlertMessage(epoch);
+                sf::Event event;
+                if (once)
+                {
+                    stateLayer.draw(window);
+                    cout << "Welcome to rollback function. Touch any key to let the IA play." << endl
+                         << " When they reach turn 10 our patterns can rollback over all the previous states. " << endl
+                         << "In this case, to they will go to start." << endl;
+                    once = false;
+                }
+                while (window.pollEvent(event))
+                {
+                    if (event.type == sf::Event::Closed)
+                        window.close();
+                    else if (event.type == sf::Event::KeyPressed)
+                    {
+                        MementoState m{ngine.getState().saveToMemento()};
+                        caretaker.addMemento(m);
+                        if (ngine.getState().getTurn() == 10)
+                        {
+                            ngine.getState().recoverMemento(caretaker.getMemento(0));
+                            cout << "always returning to memento (start) " << endl;
+                        }
+                        if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 1)
+                            heu1.run(ngine);
+
+                        else if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 2)
+                            heu2.run(ngine);
+                    }
+                }
+            }
+        }
         else if (strcmp(argv[1], "engine") == 0)
         {
             cout << "--- Engine du jeu ---" << endl;
@@ -359,7 +652,13 @@ int main(int argc, char const *argv[])
             StateLayer *ptr_stateLayer = &stateLayer;
             ngine.getState().registerObserver(ptr_stateLayer);
             bool once = true;
-
+            sf::Music backMusic;
+            if (backMusic.openFromFile("res/epic_music.wav"))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
             //turns number to show how it works
             int turns2go = 9;
             while (window.isOpen())

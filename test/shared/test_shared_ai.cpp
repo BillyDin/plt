@@ -27,14 +27,36 @@ BOOST_AUTO_TEST_CASE(TestEngineNamespace)
         BOOST_CHECK_EQUAL(2, rai.getPlayerNumber());
         rai.setPlayerNumber(1);
 
-        HeuristicAI hai;
-        hai.setPlayerNumber(2);
+        HeuristicAI hai{ngine, 2};
         BOOST_CHECK_EQUAL(2, hai.getPlayerNumber());
-
-        hai.initMapNodes(ngine.getState());
 
         rai.run(ngine);
         hai.run(ngine);
+    }
+    {
+        engine::Engine ngine{"game"};
+
+        ngine.getState().initializeMapCell("../../../res/map_v0.txt");
+        ngine.getState().initializeCharacters();
+
+        DeepAI dai{ngine, 1};
+        dai.setPlayerNumber(1);
+        
+        HeuristicAI hai{ngine, 2};
+        BOOST_CHECK_EQUAL(2, hai.getPlayerNumber());
+
+        dai.run(ngine);
+        hai.run(ngine);
+    }
+    {
+        Node deepNode1{0};
+        deepNode1.setValue(10);
+        Node deepNode2{1};
+        deepNode1.addAdjacent(deepNode2);
+        deepNode2.setParent(deepNode1);
+        BOOST_CHECK_GT(deepNode1.getAdjacents().size(), 0);
+        BOOST_CHECK_EQUAL(deepNode2.getParent().getValue(), deepNode1.getValue());
+        BOOST_CHECK_EQUAL(deepNode2.getParent().getIndex(), deepNode1.getIndex());
     }
     {
         MapNode mn1{1,1,1,0};
