@@ -13,7 +13,7 @@ list(REMOVE_ITEM client_sources "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
 add_library(${lib_client_target} STATIC ${client_sources})
 add_dependencies(${lib_client_target} generate-headers)
 target_include_directories(${lib_client_target} PUBLIC
-  ${CMAKE_CURRENT_SOUCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
   ${SFML_INCLUDE_DIR}
   )
 target_link_libraries(${lib_client_target} PUBLIC
