@@ -13,6 +13,10 @@ FinishTurnCommand::FinishTurnCommand (){
 }
 
 Json::Value FinishTurnCommand::serialize (){
+    Json::Value newCommand;
+	newCommand["id"] = id;
+	
+	return newCommand;
     
 }
 

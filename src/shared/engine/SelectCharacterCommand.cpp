@@ -12,6 +12,13 @@ SelectCharacterCommand::SelectCharacterCommand(state::Character &pTarget) : targ
 }
 
 Json::Value SelectCharacterCommand::serialize (){
+    Json::Value newCommand;
+	newCommand["id"] = id;
+	newCommand["player"] = target.getPlayerOwner();
+	newCommand["target"] = target.getIndex();
+    
+	
+	return newCommand;
     
 }
 

@@ -12,6 +12,14 @@ MoveCommand::MoveCommand(state::Character &characterTarget, state::Position &pos
 }
 
 Json::Value MoveCommand::serialize (){
+    Json::Value newCommand;
+	newCommand["id"] = id;
+	newCommand["player"] = characterTarget.getPlayerOwner();
+	newCommand["target"] = characterTarget.getIndex();
+    newCommand["xDestination"] = positionTarget.getX();
+    newCommand["yDestination"] = positionTarget.getY();
+	
+	return newCommand;
     
 }
 
