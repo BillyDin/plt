@@ -10,7 +10,9 @@ AttackCommand::AttackCommand(state::Character &newAttacker, state::Character &ne
 {
     id = ATTACK;
 }
-
+Json::Value AttackCommand::serialize (){
+    
+}
 void AttackCommand::execute(state::State &state){
     cout << "ATENTION! " << attacker.getName() << " is trying to attack " << target.getName() << endl;
     // check distance

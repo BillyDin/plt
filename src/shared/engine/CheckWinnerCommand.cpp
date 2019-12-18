@@ -12,7 +12,9 @@ CheckWinnerCommand::CheckWinnerCommand()
     // maybe this constructor will be useful
     // i dont know right now
 }
-
+Json::Value CheckWinnerCommand::serialize (){
+    
+}
 void CheckWinnerCommand::execute(state::State &state)
 {
     // for each player, we have to check if his characters are all deaths.

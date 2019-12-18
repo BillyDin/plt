@@ -12,6 +12,10 @@ FinishTurnCommand::FinishTurnCommand (){
     // i dont know right now
 }
 
+Json::Value FinishTurnCommand::serialize (){
+    
+}
+
 void FinishTurnCommand::execute (state::State& state){
     state.setTurnOwner((state.getTurnOwner() == 1) ? 2 : 1);
     // at this point, the turn's owner has changed.
