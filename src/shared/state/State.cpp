@@ -184,6 +184,8 @@ void State::initializeCharacters()
         characters.push_back(move(ptrC222));
     }
 
+    for (size_t i = 0; i < characters.size(); i++) characters[i]->setIndex(i);
+
     // std::unique_ptr<Character> ptrC3(new Character(MAGICIAN, true, "Witch Doctor", (rand() % 18 + 1), (rand() % 23 + 1), 0));
     // characters.push_back(move(ptrC3));
     cursor.setPosition(characters[0]->getPosition());

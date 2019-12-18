@@ -58,8 +58,18 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
     }
 }
 
-Character* Character::clone(){
+Character* Character::clone()
+{
     return new Character(*this);
+}
+
+int Character::getIndex() const
+{
+    return index;
+}
+
+void Character::setIndex(int ind){
+    this->index = ind;
 }
 
 int Character::getBaseCharacterMove(){
