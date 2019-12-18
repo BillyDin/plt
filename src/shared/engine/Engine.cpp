@@ -9,10 +9,14 @@ using namespace std;
 
 Engine::Engine() : currentState("engine")
 {
+    record["lenght"] = 0;
+	record["commands"][0] = "";
 }
 
 Engine::Engine(std::string stateMode) : currentState(stateMode)
 {
+    record["lenght"] = 0;
+	record["commands"][0] = "";
 }
 
 Engine::~Engine()
@@ -37,6 +41,20 @@ void Engine::addPassiveCommands()
     unique_ptr<Command> ptr_cw(new CheckWinnerCommand());
     addCommand(move(ptr_cw), priority++);
     
+}
+
+void Engine::setEnableRecord(bool enableRecord){
+    this->enableRecord = enableRecord;
+}
+
+bool Engine::getEnableRecord() const
+{
+    return enableRecord;
+}
+
+Json::Value Engine::getRecord() 
+{
+	return record;
 }
 
 void Engine::addCommand(std::unique_ptr<Command> ptr_cmd, int priority)
