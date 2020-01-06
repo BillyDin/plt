@@ -8,6 +8,18 @@ using namespace std;
 
 SelectCharacterCommand::SelectCharacterCommand(state::Character &pTarget) : target(pTarget)
 {
+    id = SELECT_CHARACTER;
+}
+
+Json::Value SelectCharacterCommand::serialize (){
+    Json::Value newCommand;
+	newCommand["id"] = id;
+	newCommand["player"] = target.getPlayerOwner();
+	newCommand["target"] = target.getIndex();
+    
+	
+	return newCommand;
+    
 }
 
 void SelectCharacterCommand::execute(state::State &state)

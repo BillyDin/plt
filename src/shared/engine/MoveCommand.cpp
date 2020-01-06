@@ -11,6 +11,18 @@ MoveCommand::MoveCommand(state::Character &characterTarget, state::Position &pos
     id = MOVE;
 }
 
+Json::Value MoveCommand::serialize (){
+    Json::Value newCommand;
+	newCommand["id"] = id;
+	newCommand["player"] = characterTarget.getPlayerOwner();
+	newCommand["target"] = characterTarget.getIndex();
+    newCommand["xDestination"] = positionTarget.getX();
+    newCommand["yDestination"] = positionTarget.getY();
+	
+	return newCommand;
+    
+}
+
 void MoveCommand::execute(state::State &state)
 {
     cout << "Trying to move a character" << endl;

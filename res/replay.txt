@@ -1,0 +1,241 @@
+{
+	"CommandArray" : 
+	[
+		{
+			"id" : 3,
+			"player" : 1,
+			"target" : 0
+		},
+		{
+			"id" : 1,
+			"player" : 1,
+			"target" : 0,
+			"xDestination" : 12,
+			"yDestination" : 3
+		},
+		{
+			"id" : 1,
+			"player" : 1,
+			"target" : 0,
+			"xDestination" : 12,
+			"yDestination" : 4
+		},
+		{
+			"id" : 1,
+			"player" : 1,
+			"target" : 0,
+			"xDestination" : 12,
+			"yDestination" : 5
+		},
+		{
+			"id" : 4
+		},
+		{
+			"id" : 3,
+			"player" : 2,
+			"target" : 3
+		},
+		{
+			"id" : 1,
+			"player" : 2,
+			"target" : 3,
+			"xDestination" : 12,
+			"yDestination" : 16
+		},
+		{
+			"id" : 1,
+			"player" : 2,
+			"target" : 3,
+			"xDestination" : 12,
+			"yDestination" : 15
+		},
+		{
+			"id" : 4
+		},
+		{
+			"id" : 3,
+			"player" : 1,
+			"target" : 0
+		},
+		{
+			"id" : 1,
+			"player" : 1,
+			"target" : 0,
+			"xDestination" : 12,
+			"yDestination" : 6
+		},
+		{
+			"id" : 1,
+			"player" : 1,
+			"target" : 0,
+			"xDestination" : 12,
+			"yDestination" : 7
+		},
+		{
+			"id" : 4
+		},
+		{
+			"id" : 3,
+			"player" : 2,
+			"target" : 3
+		},
+		{
+			"id" : 1,
+			"player" : 2,
+			"target" : 3,
+			"xDestination" : 12,
+			"yDestination" : 14
+		},
+		{
+			"id" : 1,
+			"player" : 2,
+			"target" : 3,
+			"xDestination" : 12,
+			"yDestination" : 13
+		},
+		{
+			"id" : 4
+		},
+		{
+			"id" : 3,
+			"player" : 1,
+			"target" : 0
+		},
+		{
+			"id" : 1,
+			"player" : 1,
+			"target" : 0,
+			"xDestination" : 12,
+			"yDestination" : 8
+		},
+		{
+			"id" : 1,
+			"player" : 1,
+			"target" : 0,
+			"xDestination" : 12,
+			"yDestination" : 9
+		},
+		{
+			"id" : 4
+		},
+		{
+			"id" : 3,
+			"player" : 2,
+			"target" : 3
+		},
+		{
+			"id" : 1,
+			"player" : 2,
+			"target" : 3,
+			"xDestination" : 12,
+			"yDestination" : 12
+		},
+		{
+			"id" : 1,
+			"player" : 2,
+			"target" : 3,
+			"xDestination" : 12,
+			"yDestination" : 11
+		},
+		{
+			"id" : 4
+		},
+		{
+			"id" : 3,
+			"player" : 1,
+			"target" : 0
+		},
+		{
+			"id" : 1,
+			"player" : 1,
+			"target" : 0,
+			"xDestination" : 12,
+			"yDestination" : 10
+		},
+		{
+			"attacker" : 0,
+			"id" : 2,
+			"player" : 1,
+			"target" : 3
+		},
+		{
+			"id" : 4
+		},
+		{
+			"id" : 3,
+			"player" : 2,
+			"target" : 3
+		},
+		{
+			"attacker" : 3,
+			"id" : 2,
+			"player" : 2,
+			"target" : 0
+		},
+		{
+			"id" : 4
+		},
+		{
+			"id" : 3,
+			"player" : 1,
+			"target" : 0
+		},
+		{
+			"attacker" : 0,
+			"id" : 2,
+			"player" : 1,
+			"target" : 3
+		},
+		{
+			"id" : 4
+		},
+		{
+			"id" : 3,
+			"player" : 2,
+			"target" : 3
+		},
+		{
+			"attacker" : 3,
+			"id" : 2,
+			"player" : 2,
+			"target" : 0
+		},
+		{
+			"id" : 4
+		},
+		{
+			"id" : 3,
+			"player" : 1,
+			"target" : 0
+		},
+		{
+			"attacker" : 0,
+			"id" : 2,
+			"player" : 1,
+			"target" : 3
+		},
+		{
+			"id" : 4
+		},
+		{
+			"id" : 3,
+			"player" : 2,
+			"target" : 3
+		},
+		{
+			"attacker" : 3,
+			"id" : 2,
+			"player" : 2,
+			"target" : 0
+		},
+		{
+			"id" : 4
+		}
+	],
+	"Size" : 44,
+	"commands" : 
+	[
+		""
+	],
+	"lenght" : 0
+}

@@ -59,7 +59,7 @@ if(BUILD_CODE_COVERAGE)
   set(test_runner "${CMAKE_CURRENT_BINARY_DIR}/run_test.sh")
   file(WRITE ${test_runner}
     "cd \"${CMAKE_CURRENT_BINARY_DIR}/test\"\n"
-    "ctest||/usr/bin/true"
+    "ctest --timeout 300 ||/bin/true"
     )
   # Create target for code coverage
   SETUP_TARGET_FOR_COVERAGE_LCOV(
@@ -112,7 +112,7 @@ find_library(
 # Add source subdirectories
 add_subdirectory(src/shared)
 add_subdirectory(src/client)
-#add_subdirectory(src/server)
+add_subdirectory(src/server)
 
 # Rapport generation
 add_subdirectory(rapport)

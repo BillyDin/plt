@@ -5,7 +5,7 @@
 [![forthebadge](https://forthebadge.com/images/badges/made-with-c-plus-plus.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
-## Livraison 3.final
+## Release 4.1
 
 ## Get Started
 
@@ -86,7 +86,28 @@ $ ./bin/client haivshai
 $ ./bin/client daivsdai
 ```
 
+## Deep AI vs Deep AI with the engine in a different thread
+```sh
+$ ./bin/client thread
+```
+
+## Make IAs play the game for 5 turns and save all commands in "replay.txt"
+```sh
+$ ./bin/client record
+```
+
+## Play the game through the record stored in "replay.txt"
+```sh
+$ ./bin/client play
+```
+
+
 ## Release History
+
+* 4.1
+    * Report 4.1
+    * Implemented the engine of the game in a different thread than the main thread
+    * Implemented command serialization in JSON
 
 * 3.final
     * Report 3.final

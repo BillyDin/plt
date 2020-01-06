@@ -1,5 +1,15 @@
 #include <iostream>
+#include <fstream>
 #include <string.h>
+#include <sstream>
+#include <map>
+#include <memory>
+#include <unistd.h>
+#include <thread>
+#include <microhttpd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <sys/types.h>
 // Les lignes suivantes ne servent qu'à vérifier que la compilation avec SFML fonctionne
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -11,8 +21,7 @@
 #include "engine.h"
 #include "ai.h"
 #include "client.h"
-#include <iostream>
-#include <unistd.h>
+
 using namespace std;
 using namespace state;
 using namespace render;
@@ -177,6 +186,17 @@ int main(int argc, char const *argv[])
                 }
             }
         }
+        else if(strcmp(argv[1], "thread") == 0){			
+            sf::RenderWindow window(sf::VideoMode((25*32)+256, (20 * 32) + 32, 32), "map");
+	
+			Client client(window);
+			
+			while (window.isOpen()){
+				client.run();
+				sleep(2);
+				window.close();
+			}
+		}
         else if (strcmp(argv[1], "game") == 0)
         {
             engine::Engine ngine{"game"};
@@ -618,6 +638,109 @@ int main(int argc, char const *argv[])
 
                         else if (ngine.getState().getEnd() == false && ngine.getState().getTurnOwner() == 2)
                             heu2.run(ngine);
+                    }
+                }
+            }
+        }
+        else if (strcmp(argv[1], "play") == 0)
+        {
+            Json::Value root;
+            engine::Engine engine{"game"};
+            std::string commandsPath = "res/replay.txt";
+            engine.getState().initializeMapCell();
+            sf::RenderWindow window(sf::VideoMode(engine.getState().getMap()[0].size() * 32 + 256, engine.getState().getMap().size() * 32 + 32, 32), "map");
+            engine.getState().initializeCharacters();
+            StateLayer stateLayer(engine.getState(), window);
+            stateLayer.initSurfaces(engine.getState());
+
+            StateLayer *ptr_stateLayer = &stateLayer;
+            engine.getState().registerObserver(ptr_stateLayer);
+
+            cout << "Playing recorded game." << endl;
+
+            bool once = true;
+
+            std::string musicPath = "res/epic_music.wav";
+            sf::Music backMusic;
+            if (backMusic.openFromFile(musicPath))
+            {
+                backMusic.setVolume(40);
+                backMusic.setLoop(true);
+                backMusic.play();
+            }
+
+            bool gameShown = false;
+            sf::Event event;
+            StateEvent stateEvent(ALLCHANGED);
+
+            while (window.isOpen())
+            {
+                if (gameShown == false)
+                {
+                    std::ifstream commandsFile(commandsPath);
+                    if (commandsFile)
+                    {
+                        Json::Value root;
+                        Json::Reader reader;
+                        if (!reader.parse(commandsFile, root))
+                        {
+                            cout << "Failed to parse commands\n"
+                                 << reader.getFormattedErrorMessages();
+                            return 0;
+                        }
+                        commandsFile.close();
+                        Position pos(0, 0);
+                        for (unsigned int i = 0; i < root["CommandArray"].size(); i++)
+                        {
+                            if (root["CommandArray"][i]["id"].asUInt() == engine::MOVE)
+                            {
+
+                                pos.setX(root["CommandArray"][i]["xDestination"].asUInt());
+                                pos.setY(root["CommandArray"][i]["yDestination"].asUInt());
+                                engine::MoveCommand deplacement(*engine.getState().getCharacters()[root["CommandArray"][i]["target"].asUInt()], pos);
+                                unique_ptr<engine::Command> ptr_deplacement(new engine::MoveCommand(deplacement));
+                                engine.addCommand(move(ptr_deplacement));
+                                engine.update();
+                            }
+                            // Cas de l'attaque
+                            else if (root["CommandArray"][i]["id"].asUInt() == engine::ATTACK)
+                            {
+                                engine::AttackCommand attack(*engine.getState().getCharacters()[root["CommandArray"][i]["attacker"].asUInt()], *engine.getState().getCharacters()[root["CommandArray"][i]["target"].asUInt()]);
+                                unique_ptr<engine::Command> ptr_attack(new engine::AttackCommand(attack));
+                                engine.addCommand(move(ptr_attack));
+                                engine.update();
+                            }
+                            else if (root["CommandArray"][i]["id"].asUInt() == engine::SELECT_CHARACTER)
+                            {
+                                engine::SelectCharacterCommand scc{*engine.getState().getCharacters()[root["CommandArray"][i]["target"].asUInt()]};
+                                unique_ptr<engine::Command> ptr_select(new engine::SelectCharacterCommand(scc));
+                                engine.addCommand(move(ptr_select));
+                                engine.update();
+                            }
+                            else if (root["CommandArray"][i]["id"].asUInt() == engine::FINISH_TURN)
+                            {
+                                engine::FinishTurnCommand finish;
+                                unique_ptr<engine::Command> ptr_finish(new engine::FinishTurnCommand(finish));
+                                engine.addCommand(move(ptr_finish));
+                                engine.update();
+                            }
+                            else
+                                cout << "we can't handle " << i << " command" << endl;
+                        }
+                    }
+                    gameShown = true;
+                }
+
+                if (once)
+                {
+                    stateLayer.draw(window);
+                    once = false;
+                }
+                while (window.pollEvent(event))
+                {
+                    if (event.type == sf::Event::Closed)
+                    {
+                        window.close();
                     }
                 }
             }
