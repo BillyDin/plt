@@ -6,6 +6,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <thread>
 #include <pthread.h>
 using namespace state;
@@ -61,20 +62,19 @@ void Client::run()
     StateLayer *ptr_stateLayer = &stateLayer;
     engine.getState().registerObserver(ptr_stateLayer);
     // stateLayer.registerObserver(&engine);
-
+    sf::Music backMusic;
+    if (backMusic.openFromFile("res/epic_music.wav"))
+    {
+        backMusic.setVolume(40);
+        backMusic.setLoop(true);
+        backMusic.play();
+    }
     std::thread th(threadEngine, &engine);
     while (!engine.getState().getEnd())
     {
-        if (!engine.getState().getEnd())
-        {
-            StateEvent e(ALLCHANGED);
-            engine.getState().notifyObservers(e, engine.getState());
-        }
         if (once)
         {
             stateLayer.draw(window);
-            cout << "\n\t\t--- Tour " << engine.getState().getTurn() << " ---\n"
-                 << endl;
             once = false;
         }
 
