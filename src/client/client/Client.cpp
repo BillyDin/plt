@@ -35,7 +35,7 @@ Client::Client(sf::RenderWindow &window, std::string mode) : window(window)
 {
     this->mode = mode;
 
-    std::string map_path = (mode == "test") ? "../../../map_v0.txt" : "res/map_v0.txt";
+    std::string map_path = (mode == "test") ? "../../../res/map_v0.txt" : "res/map_v0.txt";
     engine.getState().initializeMapCell(map_path);
     engine.getState().initializeCharacters();
     aiTeamA = new DeepAI(engine, 1); // because by default is 2
@@ -63,7 +63,8 @@ void Client::run()
     engine.getState().registerObserver(ptr_stateLayer);
     // stateLayer.registerObserver(&engine);
     sf::Music backMusic;
-    if (backMusic.openFromFile("res/epic_music.wav"))
+    std::string music = (mode == "test") ? "../../../res/epic_music.wav" : "res/epic_music.wav";
+    if (backMusic.openFromFile(music))
     {
         backMusic.setVolume(40);
         backMusic.setLoop(true);
