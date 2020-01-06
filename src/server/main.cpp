@@ -43,12 +43,12 @@ int main(int argc, char const *argv[])
             HeuristicAI hai2{ngine, 2};
 
             cout << "\t\t--- Record ---" << endl;
-            cout << "On enregistre 5 tours de jeu dans le fichier " << commands_file << endl;
+            cout << "On enregistre 12 tours de jeu dans le fichier " << commands_file << endl;
             cout << "Deux IA heuristiques jouent l'une contre l'autre" << endl;
             sleep(2);
             cout << "--> Début de l'enregistrement <--" << endl;
 
-            // On simule 11 tours
+            // On simule 12 tours
             while (ngine.getState().getTurn() != 13)
             {
                 // hai1 player1
