@@ -31,7 +31,7 @@ void threadEngine(Engine *ptr)
     }
 }
 
-Client::Client(sf::RenderWindow &window, std::string mode) : window(window)
+Client::Client(sf::RenderWindow &window, std::string mode) : window(window), engine("game")
 {
     this->mode = mode;
 
