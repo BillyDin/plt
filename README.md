@@ -91,7 +91,7 @@ $ ./bin/client daivsdai
 $ ./bin/client thread
 ```
 
-## Make IAs play the game for 5 turns and save all commands in "replay.txt"
+## Make IAs play the game for 12 turns and save all commands in "replay.txt"
 ```sh
 $ ./bin/client record
 ```
