@@ -9,15 +9,17 @@ file(GLOB_RECURSE server_sources *.cpp)
 list(REMOVE_ITEM server_sources "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
 
 # Build the "server" library, add required include and link against dependencies
-add_library(${lib_server_target} STATIC ${server_sources} ${jsoncpp_sources})
+# 
+add_library(${lib_server_target} STATIC ${server_sources} ${jsoncpp_sources} ${client_sources} ${shared_sources} )
 add_dependencies(${lib_server_target} generate-headers)
 target_include_directories(${lib_server_target} PUBLIC
   ${CMAKE_CURRENT_SOUCE_DIR}
   ${jsoncpp_include_dir}
   )
 target_link_libraries(${lib_server_target} PUBLIC
-  ${MHD_LIBRARY}
+  ${SFML_LIBRARIES}
   $<TARGET_NAME:shared_static>
+  $<TARGET_NAME:client_static>
   )
 
 # Compile "server" executable
