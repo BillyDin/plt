@@ -69,6 +69,12 @@ void Engine::addCommand(std::unique_ptr<Command> ptr_cmd, int priority)
             priority = 0;
         }
     }
+    if (enableRecord && ptr_cmd->getCommandID() != CHECK_WINNER){
+		Json::Value newCommand = ptr_cmd->serialize();
+		record["CommandArray"][record["Size"].asUInt()] = newCommand;
+		record["Size"] = record["Size"].asUInt() + 1;
+
+	}
     currentCommands[priority] = move(ptr_cmd);
 }
 
