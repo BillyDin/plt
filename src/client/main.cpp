@@ -177,6 +177,17 @@ int main(int argc, char const *argv[])
                 }
             }
         }
+        else if(strcmp(argv[1], "thread") == 0){			
+            sf::RenderWindow window(sf::VideoMode((25*32)+256, (20 * 32) + 32, 32), "map");
+	
+			Client client(window);
+			
+			while (window.isOpen()){
+				client.run();
+				sleep(2);
+				window.close();
+			}
+		}
         else if (strcmp(argv[1], "game") == 0)
         {
             engine::Engine ngine{"game"};

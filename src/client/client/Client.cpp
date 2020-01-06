@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <SFML/Graphics.hpp>
 #include <thread>
-#include<pthread.h>
+#include <pthread.h>
 using namespace state;
 using namespace engine;
 using namespace render;
@@ -15,18 +15,89 @@ using namespace std;
 using namespace client;
 using namespace ai;
 
-Client::Client (){
-
+bool aux1 = false;
+bool aux2 = true;
+void threadEngine(Engine *ptr)
+{
+    while (aux2) // will be changed by the thread
+    {
+        usleep(1000);
+        if (aux1)
+        {
+            ptr->update();
+            aux1 = false;
+        }
+    }
 }
 
-void Client::engineUpdating (){
+Client::Client(sf::RenderWindow &window, std::string mode) : window(window)
+{
+    this->mode = mode;
 
+    std::string map_path = (mode == "test") ? "../../../map_v0.txt" : "res/map_v0.txt";
+    engine.getState().initializeMapCell(map_path);
+    engine.getState().initializeCharacters();
+    aiTeamA = new DeepAI(engine, 1); // because by default is 2
+    aiTeamB = new DeepAI(engine);
+    engine.registerObserver(this);
+    engine.multithread = true;
 }
 
-void Client::engineUpdated (){
-
+void Client::engineUpdating()
+{
+    aux1 = true;
+    usleep(150000);
 }
 
-void Client::run (){
-    
+void Client::engineUpdated()
+{
+}
+bool once = true;
+void Client::run()
+{
+    StateLayer stateLayer(engine.getState(), window);
+    stateLayer.initSurfaces(engine.getState());
+
+    StateLayer *ptr_stateLayer = &stateLayer;
+    engine.getState().registerObserver(ptr_stateLayer);
+    // stateLayer.registerObserver(&engine);
+
+    std::thread th(threadEngine, &engine);
+    while (!engine.getState().getEnd())
+    {
+        if (!engine.getState().getEnd())
+        {
+            StateEvent e(ALLCHANGED);
+            engine.getState().notifyObservers(e, engine.getState());
+        }
+        if (once)
+        {
+            stateLayer.draw(window);
+            cout << "\n\t\t--- Tour " << engine.getState().getTurn() << " ---\n"
+                 << endl;
+            once = false;
+        }
+
+        aiTeamA->run(engine);
+        aiTeamB->run(engine);
+
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
+                window.close();
+                engine.getState().setEnd(true);
+                cout << "\tWindow closed" << endl;
+                break;
+            }
+        }
+    }
+    aux2 = false;
+    th.join();
+}
+
+std::string Client::getMode() const
+{
+    return mode;
 }
