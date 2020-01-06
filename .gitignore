@@ -7,3 +7,4 @@ src/*/*/*.h
 .idea
 .vs
 .vscode
+res/replay.txt
