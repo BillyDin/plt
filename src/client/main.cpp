@@ -10,11 +10,11 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/types.h>
-// Les lignes suivantes ne servent qu'à vérifier que la compilation avec SFML fonctionne
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <SFML/Network.hpp>
 
-// Fin test SFML
 
 #include <state.h>
 #include "render.h"
@@ -197,6 +197,58 @@ int main(int argc, char const *argv[])
 				window.close();
 			}
 		}
+        else if(strcmp(argv[1], "network") == 0){
+
+            string name;
+            cout << "Entrez votre nom : " ;
+            cin >> name;
+
+            sf::Http http("http://localhost/", 8080);
+			
+			sf::Http::Request request1;
+			request1.setMethod(sf::Http::Request::Post);
+			request1.setUri("/player");
+			request1.setHttpVersion(1, 0);
+			request1.setField("name","free");
+			string body="{\"req\" : \"POST\", \"name\":\"" + name + "\", \"free\":true}"; 
+			request1.setBody(body);
+
+
+            sf::Http::Response response1 = http.sendRequest(request1);
+
+            Json::Reader jsonReader;
+			Json::Value rep1;
+        	if(jsonReader.parse(response1.getBody(),rep1)){
+				int idPlayer=rep1["id"].asInt();
+				cout<<"Vous avez rejoint la partie avec succès!"<<endl;
+				cout<<"Votre ID est : "<<idPlayer<<endl;
+				cout<<""<<endl;
+
+				cout<< "Liste des joueurs présents dans la partie :"<<endl;
+				for(int j=1; j<=idPlayer; j++){
+				
+					sf::Http::Request request2;
+					request2.setMethod(sf::Http::Request::Get);
+					string uri="/player/"+ to_string(j);
+					
+					request2.setUri(uri);
+					request2.setHttpVersion(1, 0);
+					request2.setField("name","free");
+
+					sf::Http::Response response2 = http.sendRequest(request2);
+					Json::Reader jsonReader2;
+		    		Json::Value rep2;
+				
+					if (jsonReader.parse(response2.getBody(), rep2)){	
+						string name=rep2["name"].asString();
+						cout<<"	-"<<name<<endl;		
+					}
+                }
+			}
+			else{
+				cout<<"Aucune place de libre. Le nombre est limité à 2."<<endl;
+			}
+        }
         else if (strcmp(argv[1], "game") == 0)
         {
             engine::Engine ngine{"game"};
