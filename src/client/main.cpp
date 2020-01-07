@@ -216,7 +216,7 @@ int main(int argc, char const *argv[])
             request1.setMethod(sf::Http::Request::Post);
             request1.setUri("/player");
             request1.setHttpVersion(1, 0);
-            string body = "{\"req\" : \"POST\", \"name\":\"" + name + "\", \"free\":true}";
+            string body = "{\"name\":\"" + name + "\", \"free\":true}";
             request1.setBody(body);
 
             sf::Http::Response response1 = http.sendRequest(request1);

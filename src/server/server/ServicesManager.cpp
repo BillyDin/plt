@@ -24,12 +24,12 @@ AbstractService *ServicesManager::findService(string url)
 HttpStatus ServicesManager::queryService(string &out, string &in, string url, string method)
 {
     AbstractService *service = findService(url);
-    if (!service) throw ServiceException(HttpStatus::NOT_FOUND, "Service " + url + " non trouvé");
+    if (!service) throw ServiceException(HttpStatus::NOT_FOUND, "Service " + url + " not found");
 
     const string &pattern(service->getPattern());
     int id = -1; // not found
 
-    // validation
+    // validation and id assignment if possible
     if (url.size() > pattern.size())
     {
         string end = url.substr(pattern.size());
