@@ -15,7 +15,6 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 
-
 #include <state.h>
 #include "render.h"
 #include "engine.h"
@@ -186,67 +185,99 @@ int main(int argc, char const *argv[])
                 }
             }
         }
-        else if(strcmp(argv[1], "thread") == 0){			
-            sf::RenderWindow window(sf::VideoMode((25*32)+256, (20 * 32) + 32, 32), "map");
-	
-			Client client(window);
-			
-			while (window.isOpen()){
-				client.run();
-				sleep(2);
-				window.close();
-			}
-		}
-        else if(strcmp(argv[1], "network") == 0){
+        else if (strcmp(argv[1], "thread") == 0)
+        {
+            sf::RenderWindow window(sf::VideoMode((25 * 32) + 256, (20 * 32) + 32, 32), "map");
+
+            Client client(window);
+
+            while (window.isOpen())
+            {
+                client.run();
+                sleep(2);
+                window.close();
+            }
+        }
+        else if (strcmp(argv[1], "network") == 0)
+        {
 
             string name;
-            cout << "Entrez votre nom : " ;
+            cout << "Enter your name: ";
             cin >> name;
+            while (name.length() < 3 || name.length() > 15)
+            {
+                cout << "Invalid name. At least 3 characters and up to 15. Re-enter: ";
+                cin >> name;
+            }
 
             sf::Http http("http://localhost/", 8080);
-			
-			sf::Http::Request request1;
-			request1.setMethod(sf::Http::Request::Post);
-			request1.setUri("/player");
-			request1.setHttpVersion(1, 0);
-			request1.setField("name","free");
-			string body="{\"req\" : \"POST\", \"name\":\"" + name + "\", \"free\":true}"; 
-			request1.setBody(body);
+
+            sf::Http::Request request1;
+            request1.setMethod(sf::Http::Request::Post);
+            request1.setUri("/player");
+            request1.setHttpVersion(1, 0);
+            string body = "{\"req\" : \"POST\", \"name\":\"" + name + "\", \"free\":true}";
+            request1.setBody(body);
 
             sf::Http::Response response1 = http.sendRequest(request1);
 
             Json::Reader jsonReader;
-			Json::Value rep1;
-        	if(jsonReader.parse(response1.getBody(),rep1)){
-				int idPlayer=rep1["id"].asInt();
-				cout<<"Vous avez rejoint la partie avec succès!"<<endl;
-				cout<<"Votre ID est : "<<idPlayer<<endl;
-				cout<<""<<endl;
+            Json::Value rep1;
+            if (jsonReader.parse(response1.getBody(), rep1))
+            {
+                int idPlayer = rep1["id"].asInt();
 
-				cout<< "Liste des joueurs présents dans la partie :"<<endl;
-				for(int j=1; j<=idPlayer; j++){
-				
-					sf::Http::Request request2;
-					request2.setMethod(sf::Http::Request::Get);
-					string uri="/player/"+ to_string(j);
-					
-					request2.setUri(uri);
-					request2.setHttpVersion(1, 0);
-					request2.setField("name","free");
+                // query array of players in lobby.
+                sf::Http::Request players0;
+                players0.setMethod(sf::Http::Request::Get);
+                players0.setUri("/player");
+                players0.setHttpVersion(1, 0);
+                sf::Http::Response playersResp0 = http.sendRequest(players0);
+                Json::Reader jsonReaderPlayers0;
+                Json::Value jsonPlayers0;
+                jsonReaderPlayers0.parse(playersResp0.getBody(), jsonPlayers0);
 
-					sf::Http::Response response2 = http.sendRequest(request2);
-					Json::Reader jsonReader2;
-		    		Json::Value rep2;
-				
-					if (jsonReader.parse(response2.getBody(), rep2)){	
-						string name=rep2["name"].asString();
-						cout<<"	-"<<name<<endl;		
-					}
+                cout << "Hello " << name << "! You joined the lobby succesfully!" << endl;
+                cout << "Your ID is: " << idPlayer << endl << endl;
+                cout << "Players in the lobby: (" << jsonPlayers0["players"].size() << "/2)" << endl;
+                
+                for(auto& playerInLobby : jsonPlayers0["players"]){
+                    cout << "\t-" << playerInLobby[1].asString() << " [id: " << playerInLobby[0].asString() << "]" << endl;
                 }
-			}
-			else{
-				cout<<"Aucune place de libre. Le nombre est limité à 2."<<endl;
-			}
+
+                cout << "Press q to exit from the lobby" << endl;
+
+                while (getchar() != 'q'){/*endless retry*/}
+                
+                sf::Http::Request request3;
+                request3.setMethod(sf::Http::Request::Delete);
+                string uri2 = "/player/" + to_string(idPlayer);
+                request3.setUri(uri2);
+                request3.setHttpVersion(1, 0);
+                http.sendRequest(request3);
+                cout << "Player " << idPlayer << " deleted" << endl;
+
+                // query players in lobby again
+                sf::Http::Request players;
+                players.setMethod(sf::Http::Request::Get);
+                players.setUri("/player");
+                players.setHttpVersion(1, 0);
+                sf::Http::Response playersResp = http.sendRequest(players);
+
+                Json::Reader jsonReaderPlayers;
+                Json::Value jsonPlayers;
+                jsonReaderPlayers.parse(playersResp.getBody(), jsonPlayers);
+
+                cout << "Players in the lobby: (" << jsonPlayers["players"].size() << "/2)" << endl;
+                for (auto &playerStillInLobby : jsonPlayers["players"])
+                {
+                    cout << "\t-" << playerStillInLobby[1].asString() << " [id: " << playerStillInLobby[0].asString() << "]" << endl;
+                }
+            }
+            else
+            {
+                cout << "Out of places: 2/2 players in the lobby." << endl;
+            }
         }
         else if (strcmp(argv[1], "game") == 0)
         {
