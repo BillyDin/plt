@@ -16,17 +16,17 @@ using namespace std;
 using namespace client;
 using namespace ai;
 
-bool aux1 = false;
-bool aux2 = true;
+bool canRunEngine = false;
+bool runFunctionCalled = true;
 void threadEngine(Engine *ptr)
 {
-    while (aux2) // will be changed by the thread
+    while (runFunctionCalled) // will be changed by the thread
     {
         usleep(1000);
-        if (aux1)
+        if (canRunEngine)
         {
             ptr->update();
-            aux1 = false;
+            canRunEngine = false;
         }
     }
 }
@@ -46,7 +46,7 @@ Client::Client(sf::RenderWindow &window, std::string mode) : window(window), eng
 
 void Client::engineUpdating()
 {
-    aux1 = true;
+    canRunEngine = true;
     usleep(150000);
 }
 
@@ -94,7 +94,7 @@ void Client::run()
             }
         }
     }
-    aux2 = false;
+    runFunctionCalled = false;
     th.join();
 }
 
