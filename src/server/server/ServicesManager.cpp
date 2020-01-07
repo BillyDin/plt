@@ -21,7 +21,7 @@ AbstractService *ServicesManager::findService(string url)
     return nullptr;
 }
 
-HttpStatus ServicesManager::queryService(string &out, string &in, string &url, string &method)
+HttpStatus ServicesManager::queryService(string &out, string &in, string url, string method)
 {
     AbstractService *service = findService(url);
     if (!service) throw ServiceException(HttpStatus::NOT_FOUND, "Service " + url + " non trouvé");
