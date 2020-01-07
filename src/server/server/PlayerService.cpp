@@ -19,7 +19,7 @@ HttpStatus PlayerService::get(Json::Value &out, int id)
     return HttpStatus::OK;
 }
 
-HttpStatus PlayerService::post(Json::Value &in, int id)
+HttpStatus PlayerService::put(Json::Value &in, int id)
 {
     Player *player = game.getPlayerById(id);
     if (!player)
@@ -34,7 +34,7 @@ HttpStatus PlayerService::post(Json::Value &in, int id)
     return HttpStatus::OK;
 }
 
-HttpStatus PlayerService::put(Json::Value &out, Json::Value &in)
+HttpStatus PlayerService::post(Json::Value &out, Json::Value &in)
 {
     if (game.getPlayers().size() >= 2)
         throw ServiceException(HttpStatus::OUT_OF_RESOURCES, "Without free places to join");

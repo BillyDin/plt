@@ -52,22 +52,22 @@ HttpStatus ServicesManager::queryService(string &out, string &in, string url, st
         out = jsonOut.toStyledString();
         return status;
     }
-    else if (method == "POST")
-    {
-        Json::Reader jsonReader;
-        Json::Value jsonIn;
-        if (!jsonReader.parse(in, jsonIn))
-            throw ServiceException(HttpStatus::BAD_REQUEST, "Invalid data: " + jsonReader.getFormattedErrorMessages());
-        return service->post(jsonIn, id);
-    }
     else if (method == "PUT")
     {
         Json::Reader jsonReader;
         Json::Value jsonIn;
         if (!jsonReader.parse(in, jsonIn))
             throw ServiceException(HttpStatus::BAD_REQUEST, "Invalid data: " + jsonReader.getFormattedErrorMessages());
+        return service->put(jsonIn, id);
+    }
+    else if (method == "POST")
+    {
+        Json::Reader jsonReader;
+        Json::Value jsonIn;
+        if (!jsonReader.parse(in, jsonIn))
+            throw ServiceException(HttpStatus::BAD_REQUEST, "Invalid data: " + jsonReader.getFormattedErrorMessages());
         Json::Value jsonOut;
-        HttpStatus status = service->put(jsonOut, jsonIn);
+        HttpStatus status = service->post(jsonOut, jsonIn);
         out = jsonOut.toStyledString();
         return status;
     }

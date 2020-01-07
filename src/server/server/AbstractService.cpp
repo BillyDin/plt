@@ -20,11 +20,11 @@ HttpStatus AbstractService::get (Json::Value& out, int id)  {
     throw ServiceException(HttpStatus::NOT_IMPLEMENTED,"Not Implemented");
 }
 
-HttpStatus AbstractService::post ( Json::Value& in, int id) {
+HttpStatus AbstractService::put ( Json::Value& in, int id) {
     throw ServiceException(HttpStatus::NOT_IMPLEMENTED,"Not Implemented");
 }
 
-HttpStatus AbstractService::put (Json::Value& out,  Json::Value& in) {
+HttpStatus AbstractService::post (Json::Value& out,  Json::Value& in) {
     throw ServiceException(HttpStatus::NOT_IMPLEMENTED,"Not Implemented");
 }
 

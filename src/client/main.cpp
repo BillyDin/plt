@@ -213,7 +213,6 @@ int main(int argc, char const *argv[])
 			string body="{\"req\" : \"POST\", \"name\":\"" + name + "\", \"free\":true}"; 
 			request1.setBody(body);
 
-
             sf::Http::Response response1 = http.sendRequest(request1);
 
             Json::Reader jsonReader;

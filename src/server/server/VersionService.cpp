@@ -8,6 +8,6 @@ VersionService::VersionService () : AbstractService("/version") {
 }
 
 HttpStatus VersionService::get (Json::Value& out, int id) {
-    out["alpha"] = 0;
+    out["version"] = 0;
     return HttpStatus::OK;
 }
