@@ -62,7 +62,7 @@ function(add_custom_test name)
     ${ARG_TEST_LIBRARIES}
     $<TARGET_NAME:shared_static>
     $<TARGET_NAME:client_static>
-    #$<TARGET_NAME:server_static>
+    $<TARGET_NAME:server_static>
     )
   target_include_directories(${target_name} PRIVATE
     ${Boost_INCLUDE_DIRS}
@@ -87,7 +87,7 @@ endfunction()
 
 add_subdirectory(shared)
 add_subdirectory(client)
-#add_subdirectory(server)
+add_subdirectory(server)
 
 
 # vim: set sw=2 sts=2 et:
