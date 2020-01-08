@@ -20,6 +20,7 @@ target_link_libraries(${lib_server_target} PUBLIC
   ${SFML_LIBRARIES}
   $<TARGET_NAME:shared_static>
   $<TARGET_NAME:client_static>
+  ${MHD_LIBRARY}
   )
 
 # Compile "server" executable
