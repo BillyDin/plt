@@ -5,7 +5,7 @@
 [![forthebadge](https://forthebadge.com/images/badges/made-with-c-plus-plus.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
-## Release 4.1
+## Release 4.2
 
 ## Get Started
 
@@ -101,8 +101,19 @@ $ ./bin/client record
 $ ./bin/client play
 ```
 
+## Start the server and connect to it
+```sh
+$ ./bin/server listen
+$ ./bin/client network
+```
+
 
 ## Release History
+
+* 4.2
+    * Report 4.2
+    * Implemented WEB API
+
 
 * 4.1
     * Report 4.1
