@@ -55,14 +55,7 @@ BOOST_AUTO_TEST_CASE(TestServerNamespace)
         found->put(badJson, 3);
         string empty = "";
         sm.queryService(empty, empty, "/version", "GET");
-        AbstractService as{"/dummy"};
-        as.get(out, 100);
-        as.post(out, jsonIn);
-        as.put(jsonIn, 100);
-        as.remove(100);
-        ServiceException se{HttpStatus::NOT_IMPLEMENTED, "Not implemented"};
-        BOOST_CHECK_EQUAL(se.status(), HttpStatus::NOT_IMPLEMENTED);
-        
+
     }
 }
 
