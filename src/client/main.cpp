@@ -27,6 +27,38 @@ using namespace render;
 using namespace client;
 using namespace ai;
 
+bool running = false;
+
+void imReady(sf::Http &http, int idPlayer)
+{
+    sf::Http::Request request1;
+    request1.setMethod(sf::Http::Request::Post);
+    request1.setUri("/player");
+    request1.setHttpVersion(1, 0);
+
+    Json::Value me;
+    me["free"] = false;
+    me["player_id"] = idPlayer;
+
+    request1.setBody(me.toStyledString());
+
+    sf::Http::Response response1 = http.sendRequest(request1);
+}
+
+bool canStart(sf::Http &http){
+    sf::Http::Request req;
+    req.setMethod(sf::Http::Request::Get);
+    req.setUri("/game/1");
+    req.setHttpVersion(1, 0);
+    sleep(2);
+    sf::Http::Response resp = http.sendRequest(req);
+    Json::Reader reader;
+    Json::Value out;
+    reader.parse(resp.getBody(), out);
+    if(out["canStart"].asInt() == 1) return true;
+    return false;
+}
+
 bool canRunMultiplayer(sf::Http& http){
     sf::Http::Request req;
     req.setMethod(sf::Http::Request::Get);
@@ -36,7 +68,14 @@ bool canRunMultiplayer(sf::Http& http){
     Json::Reader reader;
     Json::Value out;
     reader.parse(resp.getBody(), out);
-    return (out["status"].asString() == "2"); // 1 => creating, 2 => running
+    bool result = (out["status"].asString() == "2");
+    if (result) {
+        running = true;
+        cout << "starting game ... " << endl;
+    } else {
+        cout << "waiting for players ... " << endl;
+    }
+    return result;// 1 => creating, 2 => running
 }
 
 int getPlayerNumberOnServer(sf::Http& http, int id){
@@ -393,23 +432,25 @@ int main(int argc, char const *argv[])
                 for(auto& playerInLobby : jsonPlayers0["players"]){
                     cout << "\t-" << playerInLobby[1].asString() << " [id: " << playerInLobby[0].asString() << "]" << endl;
                 }
-                cout << "The game will start when 2 player were connected" << endl;
+                cout << "The game will automatically start when 2 player were connected" << endl;
 
                 cout << "Press q to exit from the lobby" << endl;
 
-                while (true){
-                    if(getchar() == 'q') break;
-                    sleep(3);    
-                    // play if 2/2 players                
-                    if(canRunMultiplayer(http)){
-
-                        sf::RenderWindow window(sf::VideoMode((25 * 32) + 256, (20 * 32) + 32, 32), "map");
-                        NetworkClient net_client{url, port, getPlayerNumberOnServer(http, idPlayer), window, "game"};
-                        // play
+                while (getchar() != 'q')
+                {
+                    if (canRunMultiplayer(http))
+                    {
+                        int playerNumberInGame = getPlayerNumberOnServer(http, idPlayer);
+                        sf::RenderWindow window(sf::VideoMode((25 * 32) + 256, (20 * 32) + 32, 32), ("GameName - Player " + to_string(playerNumberInGame)));
+                        NetworkClient net_client{url, port, playerNumberInGame, window, "game"};
+                        imReady(http, idPlayer);
+                        // play if all ready
+                        while(!canStart(http)){}
                         runMultiPlayer(net_client);
                     }
                 }
-                exitFromLobby(http, idPlayer);
+                if (!running)
+                    exitFromLobby(http, idPlayer);
             }
             else
             {
