@@ -92,7 +92,6 @@ static int handler(void *cls,
     string response;
     try
     {
-
         ServicesManager *manager = (ServicesManager *)cls;
         status = manager->queryService(response, request->data, url, method);
     }
@@ -203,18 +202,20 @@ int main(int argc, char const *argv[])
         {
             try
             {
-                VersionService versionService;
-                std::unique_ptr<AbstractService> ptr_versionService(new VersionService(versionService));
-
+                Game game;
                 ServicesManager servicesManager;
+
+                std::unique_ptr<AbstractService> ptr_versionService(new VersionService());
                 servicesManager.registerService(move(ptr_versionService));
 
-                Game game;
-
-                PlayerService playerService(std::ref(game));
-                std::unique_ptr<AbstractService> ptr_playerService(new PlayerService(playerService));
-
+                std::unique_ptr<AbstractService> ptr_playerService(new PlayerService(ref(game)));
                 servicesManager.registerService(move(ptr_playerService));
+
+                std::unique_ptr<AbstractService> ptr_gameService(new GameService(ref(game)));
+                servicesManager.registerService(move(ptr_gameService));
+
+                std::unique_ptr<AbstractService> ptr_commandService(new CommandsService(game.getEngine()));
+                servicesManager.registerService(move(ptr_commandService));
 
                 struct MHD_Daemon *d;
                 if (argc != 2)

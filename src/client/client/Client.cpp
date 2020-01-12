@@ -61,7 +61,6 @@ void Client::run()
 
     StateLayer *ptr_stateLayer = &stateLayer;
     engine.getState().registerObserver(ptr_stateLayer);
-    // stateLayer.registerObserver(&engine);
     sf::Music backMusic;
     std::string music = (mode == "test") ? "../../../res/epic_music.wav" : "res/epic_music.wav";
     if (backMusic.openFromFile(music))

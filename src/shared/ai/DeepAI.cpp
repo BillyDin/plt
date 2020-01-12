@@ -78,11 +78,25 @@ void DeepAI::run(engine::Engine &engine){
             Character &targetToAttack = *engine.getState().getCharacters()[selectedChar.allowedTargetsToAttack(engine.getState())[0]];
             unique_ptr<Command> atkCmd(new AttackCommand(selectedChar, targetToAttack));
             engine.addCommand(move(atkCmd));
-            engine.update();
+            if(engine.multithread){
+                engine.notifyUpdating();
+            }
+            else
+            {
+                engine.update();
+            }
+            
 
             unique_ptr<Command> finTurnCmd(new FinishTurnCommand());
             engine.addCommand(move(finTurnCmd));
-            engine.update();
+            if(engine.multithread){
+                engine.notifyUpdating();
+            }
+            else
+            {
+                engine.update();
+            }
+            
             return;
         }
         else
@@ -114,7 +128,14 @@ void DeepAI::run(engine::Engine &engine){
                 // move this character
                 unique_ptr<Command> mvCmd(new MoveCommand(selectedChar, p));
                 engine.addCommand(move(mvCmd));
-                engine.update();
+                if(engine.multithread){
+                    engine.notifyUpdating();
+                }
+                else
+                {
+                    engine.update();
+                }
+                
 
                 // decrement local moves variable, incrementNextPosition.
                 movesLeft--;
@@ -128,17 +149,38 @@ void DeepAI::run(engine::Engine &engine){
                     Character &targetToAttack = *engine.getState().getCharacters()[selectedChar.allowedTargetsToAttack(engine.getState())[0]];
                     unique_ptr<Command> atkCmd(new AttackCommand(selectedChar, targetToAttack));
                     engine.addCommand(move(atkCmd));
-                    engine.update();
+                    if(engine.multithread){
+                        engine.notifyUpdating();
+                    }
+                    else
+                    {
+                        engine.update();
+                    }
+                    
 
                     unique_ptr<Command> finTurnCmd(new FinishTurnCommand());
                     engine.addCommand(move(finTurnCmd));
-                    engine.update();
+                    if(engine.multithread){
+                        engine.notifyUpdating();
+                    }
+                    else
+                    {
+                        engine.update();
+                    }
+                    
                     return;
                 }
             }
             unique_ptr<Command> finTurnCmd(new FinishTurnCommand());
             engine.addCommand(move(finTurnCmd));
-            engine.update();
+            if(engine.multithread){
+                engine.notifyUpdating();
+            }
+            else
+            {
+                engine.update();
+            }
+            
             return;
         }
     }
@@ -174,7 +216,14 @@ void DeepAI::run(engine::Engine &engine){
                 // move this character
                 unique_ptr<Command> mvCmd(new MoveCommand(selectedChar, p));
                 engine.addCommand(move(mvCmd));
-                engine.update();
+                if(engine.multithread){
+                    engine.notifyUpdating();
+                }
+                else
+                {
+                    engine.update();
+                }
+                
 
                 // decrement local moves variable, incrementNextPosition.
                 movesLeft--;
@@ -182,7 +231,14 @@ void DeepAI::run(engine::Engine &engine){
             }
             unique_ptr<Command> finTurnCmd(new FinishTurnCommand());
             engine.addCommand(move(finTurnCmd));
-            engine.update();
+            if(engine.multithread){
+                engine.notifyUpdating();
+            }
+            else
+            {
+                engine.update();
+            }
+            
             return;
     }
 }

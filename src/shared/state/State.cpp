@@ -18,7 +18,7 @@ using namespace state;
 State::State(std::string nMode) : cursor(10, 10, 2)
 {
     this-> mode = nMode;
-    std::cout << "Creating an state object in >>>" + mode + "<<< mode\n";
+    std::cout << "Creating a state object in >>>" + mode + "<<< mode\n";
     actualAction = IDLE;
 }
 

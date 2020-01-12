@@ -27,6 +27,71 @@ using namespace render;
 using namespace client;
 using namespace ai;
 
+bool canRunMultiplayer(sf::Http& http){
+    sf::Http::Request req;
+    req.setMethod(sf::Http::Request::Get);
+    req.setUri("/game");
+    req.setHttpVersion(1, 0);
+    sf::Http::Response resp = http.sendRequest(req);
+    Json::Reader reader;
+    Json::Value out;
+    reader.parse(resp.getBody(), out);
+    return (out["status"].asString() == "2"); // 1 => creating, 2 => running
+}
+
+int getPlayerNumberOnServer(sf::Http& http, int id){
+    sf::Http::Request req;
+    req.setMethod(sf::Http::Request::Get);
+    req.setUri("/player/" + to_string(id));
+    req.setHttpVersion(1, 0);
+    sf::Http::Response resp = http.sendRequest(req);
+    Json::Reader reader;
+    Json::Value out;
+    reader.parse(resp.getBody(), out);
+    return out["playerNumber"].asInt();
+}
+
+void runMultiPlayer(NetworkClient& client){
+    while (client.getWindow().isOpen())
+    {
+        client.run();
+        sleep(2);
+        client.getWindow().close();
+    }
+}
+
+Json::Value getPlayersOnServer(sf::Http &http)
+{
+    // query array of players in lobby.
+    sf::Http::Request players;
+    players.setMethod(sf::Http::Request::Get);
+    players.setUri("/player");
+    players.setHttpVersion(1, 0);
+    sf::Http::Response resp = http.sendRequest(players);
+    Json::Reader reader;
+    Json::Value out;
+    reader.parse(resp.getBody(), out);
+    return out;
+}
+
+void exitFromLobby(sf::Http& http, int idPlayer){
+    sf::Http::Request request3;
+    request3.setMethod(sf::Http::Request::Delete);
+    string uri2 = "/player/" + to_string(idPlayer);
+    request3.setUri(uri2);
+    request3.setHttpVersion(1, 0);
+    http.sendRequest(request3);
+    cout << "Player " << idPlayer << " deleted" << endl;
+
+    Json::Value jsonPlayers = getPlayersOnServer(http);
+
+    cout << "Players in the lobby: (" << jsonPlayers["players"].size() << "/2)" << endl;
+    for (auto &playerStillInLobby : jsonPlayers["players"])
+    {
+        cout << "\t-" << playerStillInLobby[1].asString() << " [id: " << playerStillInLobby[0].asString() << "]" << endl;
+    }
+}
+
 int main(int argc, char const *argv[])
 {
     if (argc > 1)
@@ -216,8 +281,12 @@ int main(int argc, char const *argv[])
             request1.setMethod(sf::Http::Request::Post);
             request1.setUri("/player");
             request1.setHttpVersion(1, 0);
-            string body = "{\"name\":\"" + name + "\", \"free\":true}";
-            request1.setBody(body);
+
+            Json::Value me;
+            me["name"] = name;
+            me["free"] = true;
+
+            request1.setBody(me.toStyledString());
 
             sf::Http::Response response1 = http.sendRequest(request1);
 
@@ -273,6 +342,74 @@ int main(int argc, char const *argv[])
                 {
                     cout << "\t-" << playerStillInLobby[1].asString() << " [id: " << playerStillInLobby[0].asString() << "]" << endl;
                 }
+            }
+            else
+            {
+                cout << "Out of places: 2/2 players in the lobby." << endl;
+            }
+        }
+        else if (strcmp(argv[1], "network_test") == 0)
+        {
+            bool launchGame = false;
+            string name;
+            string url="http://localhost/";
+            int port=8080;
+
+            cout << "Enter your name: ";
+            cin >> name;
+            while (name.length() < 3 || name.length() > 15)
+            {
+                cout << "Invalid name. At least 3 characters and up to 15. Re-enter: ";
+                cin >> name;
+            }
+
+            sf::Http http(url, port);
+
+            sf::Http::Request request1;
+            request1.setMethod(sf::Http::Request::Post);
+            request1.setUri("/player");
+            request1.setHttpVersion(1, 0);
+
+            Json::Value me;
+            me["name"] = name;
+            me["free"] = true;
+
+            request1.setBody(me.toStyledString());
+
+            sf::Http::Response response1 = http.sendRequest(request1);
+
+            Json::Reader jsonReader;
+            Json::Value rep1;
+            if (jsonReader.parse(response1.getBody(), rep1))
+            {
+                int idPlayer = rep1["id"].asInt();
+
+                Json::Value jsonPlayers0 = getPlayersOnServer(http);
+
+                cout << "Hello " << name << "! You joined the lobby succesfully!" << endl;
+                cout << "Your ID is: " << idPlayer << endl << endl;
+                cout << "Players in the lobby: (" << jsonPlayers0["players"].size() << "/2)" << endl;
+                
+                for(auto& playerInLobby : jsonPlayers0["players"]){
+                    cout << "\t-" << playerInLobby[1].asString() << " [id: " << playerInLobby[0].asString() << "]" << endl;
+                }
+                cout << "The game will start when 2 player were connected" << endl;
+
+                cout << "Press q to exit from the lobby" << endl;
+
+                while (true){
+                    if(getchar() == 'q') break;
+                    sleep(3);    
+                    // play if 2/2 players                
+                    if(canRunMultiplayer(http)){
+
+                        sf::RenderWindow window(sf::VideoMode((25 * 32) + 256, (20 * 32) + 32, 32), "map");
+                        NetworkClient net_client{url, port, getPlayerNumberOnServer(http, idPlayer), window, "game"};
+                        // play
+                        runMultiPlayer(net_client);
+                    }
+                }
+                exitFromLobby(http, idPlayer);
             }
             else
             {

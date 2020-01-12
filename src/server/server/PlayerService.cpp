@@ -27,6 +27,7 @@ HttpStatus PlayerService::get(Json::Value &out, int id)
         throw ServiceException(HttpStatus::NOT_FOUND, "Invalid player id");
     out["name"] = player->name;
     out["free"] = player->free;
+    out["playerNumber"] = (game.getPlayers().begin()->first == id) ? 1 : 2;
     return HttpStatus::OK;
 }
 

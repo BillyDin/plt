@@ -109,3 +109,7 @@ void Engine::update()
         cout << "The game is ended, we have a winner" << endl;
     }
 }
+
+std::map<int, std::unique_ptr<Command>>& Engine::getCurrentCommands (){
+    return currentCommands;
+}
