@@ -389,7 +389,6 @@ int main(int argc, char const *argv[])
         }
         else if (strcmp(argv[1], "network_test") == 0)
         {
-            bool launchGame = false;
             string name;
             string url="http://localhost/";
             int port=8080;

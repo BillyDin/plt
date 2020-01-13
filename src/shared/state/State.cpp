@@ -253,8 +253,6 @@ void State::initializeMapCell(std::string mapResource)
     }
     cout << "--- building map_tile array succesfully ---" << endl;
 
-    std::vector<unique_ptr<MapCell>> primitive;
-
     for (i = 0; i < 20; ++i)
     {
         std::vector<std::unique_ptr<MapCell>> newline;
