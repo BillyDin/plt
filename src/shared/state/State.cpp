@@ -174,13 +174,13 @@ void State::initializeCharacters()
         std::unique_ptr<Character> ptrC111(new Character(DISTANCE, true, "Windrunner", 2, 20, 1, 13));
         characters.push_back(move(ptrC111));
 
-        std::unique_ptr<Character> ptrC2(new Character(STRENGHT, true, "Tiny", 17, centerX, 2, 25));
+        std::unique_ptr<Character> ptrC2(new Character(STRENGHT, true, "Tiny", 17, centerX, 2, 24));
         characters.push_back(move(ptrC2));
 
-        std::unique_ptr<Character> ptrC22(new Character(MAGICIAN, true, "Lich", 17, 4, 2, 12));
+        std::unique_ptr<Character> ptrC22(new Character(MAGICIAN, true, "Lich", 17, 4, 2, 1));
         characters.push_back(move(ptrC22));
 
-        std::unique_ptr<Character> ptrC222(new Character(DISTANCE, true, "Drow Ranger", 17, 20, 2, 2));
+        std::unique_ptr<Character> ptrC222(new Character(DISTANCE, true, "Drow Ranger", 17, 20, 2, 13));
         characters.push_back(move(ptrC222));
     }
 

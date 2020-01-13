@@ -39,6 +39,11 @@ bool Surface::loadCharacters(state::State &state, sf::Texture &textureTileset, s
             quad[1].texCoords = sf::Vector2f((tu + 1) * tileSize.x, tv * tileSize.y);
             quad[2].texCoords = sf::Vector2f((tu + 1) * tileSize.x, (tv + 1) * tileSize.y);
             quad[3].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
+            // Color color = (state.getCharacters()[i]->getPlayerOwner() == 1) ? Color(0,0,255) : Color(255,0,0);
+            // quad[0].color = color;
+            // quad[1].color = color;
+            // quad[2].color = color;
+            // quad[3].color = color;
         }
     }
 

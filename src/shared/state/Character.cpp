@@ -23,10 +23,8 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
 
     if (id == DISTANCE)
     {
-        characterMove = 3;
-        characterAttackDistance = 1;
-        baseCharacterMove = 3;
-        baseCharacterActackDistance = 2;
+        characterMove = 2;
+        characterAttackDistance = 2;
         stats.setHealth(100);
         stats.setAttack(50);
         stats.setDefense(30);
@@ -35,10 +33,8 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
 
     else if (id == STRENGHT)
     {
-        characterMove = 3;
+        characterMove = 1;
         characterAttackDistance = 0;
-        baseCharacterMove = 2;
-        baseCharacterActackDistance = 1;
         stats.setHealth(100);
         stats.setAttack(49);
         stats.setDefense(50);
@@ -47,15 +43,15 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
 
     else if (id == MAGICIAN)
     {
-        characterMove = 1;
+        characterMove = 3;
         characterAttackDistance = 1;
-        baseCharacterMove = 1;
-        baseCharacterActackDistance = 2;
         stats.setHealth(100);
         stats.setAttack(70);
         stats.setDefense(10);
         stats.setMana(100);
     }
+    baseCharacterMove = characterMove;
+    baseCharacterActackDistance = characterAttackDistance;
 }
 
 Character* Character::clone()
