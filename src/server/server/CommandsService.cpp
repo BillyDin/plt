@@ -15,13 +15,20 @@ CommandsService::CommandsService(engine::Engine &engine) : AbstractService("/com
 
 HttpStatus CommandsService::get(Json::Value &out, int id)
 {
-    // only new commands
-    out = commands;
+    // if (id == 1)
+    // {
+    //     out["canGet"] = (commands.size() > 0) ? 1 : 0;
+    // }
+    // else
+    // {
+        // only new commands
+        out = commands;
 
-    // for each get , reinitialize the dynamic list of commands
-    commands["size"] = 0;
-    commands["commands"] = Json::Value(Json::arrayValue);  
-    
+        // for each get , reinitialize the dynamic list of commands
+        commands["size"] = 0;
+        commands["commands"] = Json::Value(Json::arrayValue);
+    // }
+
     return HttpStatus::OK;
 }
 

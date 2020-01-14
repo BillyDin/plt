@@ -440,7 +440,7 @@ int main(int argc, char const *argv[])
                     if (canRunMultiplayer(http))
                     {
                         int playerNumberInGame = getPlayerNumberOnServer(http, idPlayer);
-                        sf::RenderWindow window(sf::VideoMode((25 * 32) + 256, (20 * 32) + 32, 32), ("GameName - Player " + to_string(playerNumberInGame)));
+                        sf::RenderWindow window(sf::VideoMode((25 * 32) + 256, (20 * 32) + 32, 32), ("GameName - Player " + to_string(playerNumberInGame) + ((playerNumberInGame == 1) ? " Blue" : " Red")));
                         NetworkClient net_client{url, port, playerNumberInGame, window, "game"};
                         imReady(http, idPlayer);
                         // play if all ready

@@ -23,7 +23,7 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
 
     if (id == DISTANCE)
     {
-        characterMove = 2;
+        characterMove = 3;
         characterAttackDistance = 2;
         stats.setHealth(100);
         stats.setAttack(50);
@@ -33,7 +33,7 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
 
     else if (id == STRENGHT)
     {
-        characterMove = 1;
+        characterMove = 2;
         characterAttackDistance = 0;
         stats.setHealth(100);
         stats.setAttack(49);
@@ -43,7 +43,7 @@ Character::Character(CharacterTypeID id, bool newIsInBase, std::string newNom, i
 
     else if (id == MAGICIAN)
     {
-        characterMove = 3;
+        characterMove = 4;
         characterAttackDistance = 1;
         stats.setHealth(100);
         stats.setAttack(70);

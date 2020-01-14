@@ -31,6 +31,19 @@ void threadEngine (void* engine)
     }
 }
 
+// bool canIGetCommands(sf::Http &http){
+//     sf::Http::Request req;
+//     req.setMethod(sf::Http::Request::Get);
+//     req.setUri("/command/1"); // consult if can i get commands endpoint
+//     req.setHttpVersion(1, 0);
+//     usleep(10000);
+//     sf::Http::Response resp = http.sendRequest(req);
+//     Json::Reader reader;
+//     Json::Value jsonValue;
+//     reader.parse(resp.getBody(), jsonValue);
+//     return (jsonValue["canGet"].asUInt() == 1) ? true : false;
+// }
+
 NetworkClient::NetworkClient(std::string &url, int port, int character, sf::RenderWindow &window, std::string mode) : url(url), port(port), character(character), window(window), mode(mode), engine("game")
 {
 
@@ -75,35 +88,31 @@ bool NetworkClient::getServerCommands(Json::Value &out)
             MoveCommand moveComm(*engine.getState().getCharacters()[out["commands"][i]["target"].asUInt()], pos);
             unique_ptr<Command> ptr_move(new MoveCommand(moveComm));
             engine.addCommand(move(ptr_move));
-
             l1 = true;
-            usleep(150000);
+            usleep(100000);
         }
         else if (commandId == engine::ATTACK)
         {
             AttackCommand attack(*engine.getState().getCharacters()[out["commands"][i]["attacker"].asUInt()], *engine.getState().getCharacters()[out["commands"][i]["target"].asUInt()]);
             unique_ptr<Command> ptr_attack(new AttackCommand(attack));
             engine.addCommand(move(ptr_attack));
-
             l1 = true;
-            usleep(150000);
+            usleep(100000);
         }
         else if (commandId == engine::SELECT_CHARACTER)
         {
             SelectCharacterCommand select(*engine.getState().getCharacters()[out["commands"][i]["target"].asUInt()]);
             unique_ptr<Command> ptr_select(new SelectCharacterCommand(select));
             engine.addCommand(move(ptr_select));
-
             l1 = true;
-            usleep(150000);
+            usleep(100000);
         }
         else if (commandId == engine::FINISH_TURN)
         {
             unique_ptr<Command> ptr_finturn(new FinishTurnCommand());
             engine.addCommand(move(ptr_finturn));
-
             l1 = true;
-            usleep(150000);
+            usleep(100000);
         }
         else
         {
@@ -148,16 +157,17 @@ void NetworkClient::run()
             displayFirstTime = false;
         }
         playerAI->setPlayerNumber(character);
-        if (engine.getState().getTurnOwner() == playerAI->getPlayerNumber()) // is my turn
+        if (engine.getState().getTurnOwner() == character) // is my turn
         {
             // play
             playerAI->run(engine);
         }
         else
         {
-            // get commands from opponent passing my player number (1 or 2)
-            sleep(3);
+            // while is not my turn, wait
             sf::Http http(url, port);
+            sleep(1);
+            // get commands from opponent passing my player number (1 or 2)
             sf::Http::Request request;
             request.setMethod(sf::Http::Request::Get);
             string uri = "/command";
