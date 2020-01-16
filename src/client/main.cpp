@@ -314,7 +314,7 @@ int main(int argc, char const *argv[])
                 cin >> name;
             }
 
-            sf::Http http("http://localhost/", 8080);
+            sf::Http http("http://localhost/", 80);
 
             sf::Http::Request request1;
             request1.setMethod(sf::Http::Request::Post);
@@ -391,7 +391,7 @@ int main(int argc, char const *argv[])
         {
             string name;
             string url="http://localhost/";
-            int port=8080;
+            int port=80;
 
             cout << "Enter your name: ";
             cin >> name;
