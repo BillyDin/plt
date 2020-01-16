@@ -437,14 +437,17 @@ int main(int argc, char const *argv[])
 
                 while (getchar() != 'q')
                 {
+                    usleep(100000);
                     if (canRunMultiplayer(http))
                     {
+                        usleep(100000);
                         int playerNumberInGame = getPlayerNumberOnServer(http, idPlayer);
+                        if(playerNumberInGame == 2) sleep(3);
                         sf::RenderWindow window(sf::VideoMode((25 * 32) + 256, (20 * 32) + 32, 32), ("GameName - Player " + to_string(playerNumberInGame) + ((playerNumberInGame == 1) ? " Blue" : " Red")));
                         NetworkClient net_client{url, port, playerNumberInGame, window, "game"};
                         imReady(http, idPlayer);
                         // play if all ready
-                        while(!canStart(http)){}
+                        while(!canStart(http)){usleep(100000);}
                         runMultiPlayer(net_client);
                     }
                 }
