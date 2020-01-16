@@ -1,6 +1,7 @@
 
 #include "GameService.h"
 #include "ServiceException.h"
+#include <unistd.h>
 
 using namespace server;
 
@@ -17,6 +18,7 @@ HttpStatus GameService::get (Json::Value& out, int id) {
                 break;
             }
         }
+        if(can) sleep(3);
         out["canStart"] = can;
     }
     else {

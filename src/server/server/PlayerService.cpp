@@ -43,7 +43,7 @@ HttpStatus PlayerService::put(Json::Value &in, int id)
     if (in.isMember("free"))
         playermod->free = in["free"].asBool();
     game.modifyPlayer(id, std::move(playermod));
-    return HttpStatus::OK;
+    return HttpStatus::NO_CONTENT;
 }
 
 HttpStatus PlayerService::post(Json::Value &out, Json::Value &in)
@@ -68,5 +68,5 @@ HttpStatus PlayerService::remove(int id)
         throw ServiceException(HttpStatus::NOT_FOUND, "Invalid player id");
     
     game.removePlayer(id);
-    return HttpStatus::OK;
+    return HttpStatus::NO_CONTENT;
 }
