@@ -8,26 +8,19 @@ using namespace std;
 CommandsService::CommandsService(engine::Engine &engine) : AbstractService("/command"), engine(engine)
 {
     commands["size"] = 0;
-    commands["commands"][0] = "";
+    commands["commands"] = Json::Value(Json::arrayValue);
     commandsHistoric["size"] = 0;
-    commandsHistoric["commands"][0] = "";
+    commandsHistoric["commands"] = Json::Value(Json::arrayValue);
 }
 
 HttpStatus CommandsService::get(Json::Value &out, int id)
 {
-    // if (id == 1)
-    // {
-    //     out["canGet"] = (commands.size() > 0) ? 1 : 0;
-    // }
-    // else
-    // {
-        // only new commands
-        out = commands;
+    // only new commands
+    out = commands;
 
-        // for each get , reinitialize the dynamic list of commands
-        commands["size"] = 0;
-        commands["commands"] = Json::Value(Json::arrayValue);
-    // }
+    // for each get , reinitialize the dynamic list of commands
+    commands["size"] = 0;
+    commands["commands"] = Json::Value(Json::arrayValue);
 
     return HttpStatus::OK;
 }

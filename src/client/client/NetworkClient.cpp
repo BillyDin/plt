@@ -30,19 +30,110 @@ void threadEngine (void* engine)
         }
     }
 }
+// STATIC FUNCTIONS HERE
+void NetworkClient::registerAsReady(sf::Http &http, int idPlayer)
+{
+    sf::Http::Request request1;
+    request1.setMethod(sf::Http::Request::Post);
+    request1.setUri("/player");
+    request1.setHttpVersion(1, 0);
 
-// bool canIGetCommands(sf::Http &http){
-//     sf::Http::Request req;
-//     req.setMethod(sf::Http::Request::Get);
-//     req.setUri("/command/1"); // consult if can i get commands endpoint
-//     req.setHttpVersion(1, 0);
-//     usleep(10000);
-//     sf::Http::Response resp = http.sendRequest(req);
-//     Json::Reader reader;
-//     Json::Value jsonValue;
-//     reader.parse(resp.getBody(), jsonValue);
-//     return (jsonValue["canGet"].asUInt() == 1) ? true : false;
-// }
+    Json::Value me;
+    me["free"] = false;
+    me["player_id"] = idPlayer;
+
+    request1.setBody(me.toStyledString());
+
+    sf::Http::Response response1 = http.sendRequest(request1);
+}
+void NetworkClient::runMultiplayer(NetworkClient& client){
+    while (client.getWindow().isOpen())
+    {
+        client.run();
+        cout << "closing in 10 secs" << endl;
+        sleep(10);
+        client.getWindow().close();
+    }
+}
+void NetworkClient::runAsPlayer(int player, int idPlayer, sf::Http& http, string url, int port)
+{
+    usleep(100000);
+    if (player == 1)
+    {
+        sf::RenderWindow window(sf::VideoMode((25 * 32) + 256, (20 * 32) + 32, 32), ("GameName - Player " + to_string(player) + ((player == 1) ? " Blue" : " Red")));
+        NetworkClient net_client{url, port, player, window, "game"};
+        registerAsReady(http, idPlayer);
+        sleep(4); // some secs to wait p2
+        runMultiplayer(net_client);
+        exitFromLobby(http, idPlayer);
+    }
+    else if (player == 2)
+    {
+        sf::RenderWindow window(sf::VideoMode((25 * 32) + 256, (20 * 32) + 32, 32), ("GameName - Player " + to_string(player) + ((player == 1) ? " Blue" : " Red")));
+        NetworkClient net_client{url, port, player, window, "game"};
+        registerAsReady(http, idPlayer);
+        runMultiplayer(net_client);
+        exitFromLobby(http, idPlayer);
+    }
+}
+bool NetworkClient::canRunMultiplayer(sf::Http& http){
+    sf::Http::Request req;
+    req.setMethod(sf::Http::Request::Get);
+    req.setUri("/game");
+    req.setHttpVersion(1, 0);
+    sf::Http::Response resp = http.sendRequest(req);
+    Json::Reader reader;
+    Json::Value out;
+    reader.parse(resp.getBody(), out);
+    bool result = (out["status"].asString() == "2");
+    if (result) {
+        cout << "starting game ... " << endl;
+    } else {
+        cout << "waiting for players ... " << endl;
+    }
+    return result;// 1 => creating, 2 => running
+}
+int NetworkClient::getPlayerNumberOnServer(sf::Http& http, int id){
+    sf::Http::Request req;
+    req.setMethod(sf::Http::Request::Get);
+    req.setUri("/player/" + to_string(id));
+    req.setHttpVersion(1, 0);
+    sf::Http::Response resp = http.sendRequest(req);
+    Json::Reader reader;
+    Json::Value out;
+    reader.parse(resp.getBody(), out);
+    return out["playerNumber"].asInt();
+}
+Json::Value NetworkClient::getPlayersOnServer(sf::Http &http)
+{
+    // query array of players in lobby.
+    sf::Http::Request players;
+    players.setMethod(sf::Http::Request::Get);
+    players.setUri("/player");
+    players.setHttpVersion(1, 0);
+    sf::Http::Response resp = http.sendRequest(players);
+    Json::Reader reader;
+    Json::Value out;
+    reader.parse(resp.getBody(), out);
+    return out;
+}
+void NetworkClient::exitFromLobby(sf::Http& http, int idPlayer){
+    sf::Http::Request request3;
+    request3.setMethod(sf::Http::Request::Delete);
+    string uri2 = "/player/" + to_string(idPlayer);
+    request3.setUri(uri2);
+    request3.setHttpVersion(1, 0);
+    http.sendRequest(request3);
+    cout << "Player " << idPlayer << " deleted" << endl;
+
+    Json::Value jsonPlayers = getPlayersOnServer(http);
+
+    cout << "Players in the lobby: (" << jsonPlayers["players"].size() << "/2)" << endl;
+    for (auto &playerStillInLobby : jsonPlayers["players"])
+    {
+        cout << "\t-" << playerStillInLobby[1].asString() << " [id: " << playerStillInLobby[0].asString() << "]" << endl;
+    }
+}
 
 NetworkClient::NetworkClient(std::string &url, int port, int character, sf::RenderWindow &window, std::string mode) : url(url), port(port), character(character), window(window), mode(mode), engine("game")
 {
@@ -161,6 +252,7 @@ void NetworkClient::run()
         {
             // play
             playerAI->run(engine);
+            sleep(2);
         }
         else
         {
@@ -198,6 +290,7 @@ void NetworkClient::run()
             }
         }
     }
+    
     l2 = false;
     th.join();
 }
@@ -218,3 +311,42 @@ void NetworkClient::engineUpdating()
     engine.update();
     usleep(150000);
 }
+
+// bool canIGetCommands(sf::Http &http){
+//     sf::Http::Request req;
+//     req.setMethod(sf::Http::Request::Get);
+//     req.setUri("/command/1"); // consult if can i get commands endpoint
+//     req.setHttpVersion(1, 0);
+//     usleep(10000);
+//     sf::Http::Response resp = http.sendRequest(req);
+//     Json::Reader reader;
+//     Json::Value jsonValue;
+//     reader.parse(resp.getBody(), jsonValue);
+//     return (jsonValue["canGet"].asUInt() == 1) ? true : false;
+// }
+// bool isPlayerOneReady(sf::Http &http){
+//     sf::Http::Request req;
+//     req.setMethod(sf::Http::Request::Get);
+//     req.setUri("/game/1");
+//     req.setHttpVersion(1, 0);
+//     sleep(2);
+//     sf::Http::Response resp = http.sendRequest(req);
+//     Json::Reader reader;
+//     Json::Value out;
+//     reader.parse(resp.getBody(), out);
+//     if(out["ready"].asInt() == 1) return true;
+//     return false;
+// }
+// bool isPlayerTwoReady(sf::Http &http){
+//     sf::Http::Request req;
+//     req.setMethod(sf::Http::Request::Get);
+//     req.setUri("/game/2");
+//     req.setHttpVersion(1, 0);
+//     sleep(2);
+//     sf::Http::Response resp = http.sendRequest(req);
+//     Json::Reader reader;
+//     Json::Value out;
+//     reader.parse(resp.getBody(), out);
+//     if(out["ready"].asInt() == 1) return true;
+//     return false;
+// }
