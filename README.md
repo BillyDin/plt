@@ -117,12 +117,12 @@ $ ./bin/server listen
 
 ### In a second bash
 ```sh
-$ ./bin/client network_final
+$ ./bin/client network
 ```
 
 ### In a third bash
 ```sh
-$ ./bin/client network_final
+$ ./bin/client network
 ```
 
 ## Start the server, connect 2 players to it, launch the game with DeepAI vs Deep AI
