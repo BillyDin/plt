@@ -283,7 +283,7 @@ int main(int argc, char const *argv[])
                 cout << "Out of places: 2/2 players in the lobby." << endl;
             }
         }
-        else if (strcmp(argv[1], "network_test") == 0)
+        else if (strcmp(argv[1], "network_final") == 0)
         {
             string name;
             string url="http://localhost";
