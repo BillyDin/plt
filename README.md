@@ -13,6 +13,13 @@ Clone the repository
 ```sh 
 $ git clone https://github.com/BillyDin/plt.git
 ```
+## Install dependencies
+
+```sh
+$ apt-get update
+$ apt-get install python python3 libmicrohttpd-dev lcov libsfml-dev gcc cmake make libxml2-dev dia lcov libboost-all-dev gcovr python-pip \
+   && pip install gcovr
+```
 
 ## Build
 
