@@ -92,7 +92,6 @@ static int handler(void *cls,
     string response;
     try
     {
-
         ServicesManager *manager = (ServicesManager *)cls;
         status = manager->queryService(response, request->data, url, method);
     }
@@ -203,18 +202,20 @@ int main(int argc, char const *argv[])
         {
             try
             {
-                VersionService versionService;
-                std::unique_ptr<AbstractService> ptr_versionService(new VersionService(versionService));
-
+                Game game;
                 ServicesManager servicesManager;
+
+                std::unique_ptr<AbstractService> ptr_versionService(new VersionService());
                 servicesManager.registerService(move(ptr_versionService));
 
-                Game game;
-
-                PlayerService playerService(std::ref(game));
-                std::unique_ptr<AbstractService> ptr_playerService(new PlayerService(playerService));
-
+                std::unique_ptr<AbstractService> ptr_playerService(new PlayerService(ref(game)));
                 servicesManager.registerService(move(ptr_playerService));
+
+                std::unique_ptr<AbstractService> ptr_gameService(new GameService(ref(game)));
+                servicesManager.registerService(move(ptr_gameService));
+
+                std::unique_ptr<AbstractService> ptr_commandService(new CommandsService(game.getEngine()));
+                servicesManager.registerService(move(ptr_commandService));
 
                 struct MHD_Daemon *d;
                 if (argc != 2)
@@ -227,15 +228,15 @@ int main(int argc, char const *argv[])
                     MHD_USE_SELECT_INTERNALLY | MHD_USE_DEBUG,
                     // MHD_USE_THREAD_PER_CONNECTION | MHD_USE_DEBUG | MHD_USE_POLL,
                     // MHD_USE_THREAD_PER_CONNECTION | MHD_USE_DEBUG,
-                    8080,
+                    80, // TODO when deploy, change to 80
                     NULL, NULL,
                     &handler, (void *)&servicesManager,
                     MHD_OPTION_NOTIFY_COMPLETED, request_completed, NULL,
                     MHD_OPTION_END);
-
+                
                 if (d == NULL)
                     return 1;
-                cout << "server is listening in port 8080..." << endl << "press any button to stop the server" << endl;
+                cout << "server is listening in port 80..." << endl << "press any button to stop the server" << endl;
                 (void)getc(stdin);
                 MHD_stop_daemon(d);
             }

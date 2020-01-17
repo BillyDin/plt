@@ -5,13 +5,20 @@
 [![forthebadge](https://forthebadge.com/images/badges/made-with-c-plus-plus.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
-## Release 4.2
+## Release 4.final 
 
 ## Get Started
 
 Clone the repository
 ```sh 
 $ git clone https://github.com/BillyDin/plt.git
+```
+## Install dependencies
+
+```sh
+$ apt-get update
+$ apt-get install python python3 libmicrohttpd-dev lcov libsfml-dev gcc cmake make libxml2-dev dia lcov libboost-all-dev gcovr python-pip \
+   && pip install gcovr
 ```
 
 ## Build
@@ -101,14 +108,47 @@ $ ./bin/client record
 $ ./bin/client play
 ```
 
-## Start the server and connect to it
+## Start the server and connect 2 players to it
+
+### In a first bash
 ```sh
 $ ./bin/server listen
-$ ./bin/client network
+```
+
+### In a second bash
+```sh
+$ ./bin/client network_final
+```
+
+### In a third bash
+```sh
+$ ./bin/client network_final
+```
+
+## Start the server, connect 2 players to it, launch the game with DeepAI vs Deep AI
+
+### In a first bash
+```sh
+$ ./bin/server listen
+```
+
+### In a second bash
+```sh
+$ ./bin/client network_final
+```
+
+### In a third bash
+```sh
+$ ./bin/client network_final
 ```
 
 
 ## Release History
+
+* 4.final
+    * Report 4.final
+    * Implemented the final feature to make our game online
+
 
 * 4.2
     * Report 4.2

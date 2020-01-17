@@ -10,7 +10,7 @@ using std::unique_ptr;
 using std::map;
 using std::vector;
 
-Game::Game (){}
+Game::Game () : engine("game"){}
 
 Player* Game::getPlayerById (int id){
     auto it = players.find(id);
@@ -18,6 +18,15 @@ Player* Game::getPlayerById (int id){
         return nullptr;
     return it->second.get();
 };
+
+GameStatus Game::getStatus() const {
+    if(players.size() == 2) return RUNNING;
+    return CREATING;
+}
+
+engine::Engine& Game::getEngine(){
+    return engine;
+}
 
 const std::map<int, std::unique_ptr<Player>>& Game::getPlayers() const {
     return players;

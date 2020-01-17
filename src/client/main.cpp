@@ -210,14 +210,18 @@ int main(int argc, char const *argv[])
                 cin >> name;
             }
 
-            sf::Http http("http://localhost/", 8080);
+            sf::Http http("http://localhost/", 80);
 
             sf::Http::Request request1;
             request1.setMethod(sf::Http::Request::Post);
             request1.setUri("/player");
             request1.setHttpVersion(1, 0);
-            string body = "{\"name\":\"" + name + "\", \"free\":true}";
-            request1.setBody(body);
+
+            Json::Value me;
+            me["name"] = name;
+            me["free"] = true;
+
+            request1.setBody(me.toStyledString());
 
             sf::Http::Response response1 = http.sendRequest(request1);
 
@@ -272,6 +276,81 @@ int main(int argc, char const *argv[])
                 for (auto &playerStillInLobby : jsonPlayers["players"])
                 {
                     cout << "\t-" << playerStillInLobby[1].asString() << " [id: " << playerStillInLobby[0].asString() << "]" << endl;
+                }
+            }
+            else
+            {
+                cout << "Out of places: 2/2 players in the lobby." << endl;
+            }
+        }
+        else if (strcmp(argv[1], "network_final") == 0)
+        {
+            string name;
+            string url="http://localhost";
+            int port=80; // todo, let in 80
+            cout << "Enter your name: ";
+            cin >> name;
+            while (name.length() < 3 || name.length() > 15)
+            {
+                cout << "Invalid name. At least 3 characters and up to 15. Re-enter: ";
+                cin >> name;
+            }
+
+            sf::Http http(url, port);
+
+            sf::Http::Request request1;
+            request1.setMethod(sf::Http::Request::Post);
+            request1.setUri("/player");
+            request1.setHttpVersion(1, 0);
+
+            Json::Value me;
+            me["name"] = name;
+            me["free"] = true;
+
+            request1.setBody(me.toStyledString());
+
+            sf::Http::Response response1 = http.sendRequest(request1);
+
+            Json::Reader jsonReader;
+            Json::Value rep1;
+            if (jsonReader.parse(response1.getBody(), rep1))
+            {
+                int idPlayer = rep1["id"].asInt();
+
+                Json::Value jsonPlayers0 = NetworkClient::getPlayersOnServer(http);
+
+                cout << "Hello " << name << "! You joined the lobby succesfully!" << endl;
+                cout << "Your ID is: " << idPlayer << endl << endl;
+                cout << "Players in the lobby: (" << jsonPlayers0["players"].size() << "/2)" << endl;
+                
+                for(auto& playerInLobby : jsonPlayers0["players"]){
+                    cout << "\t-" << playerInLobby[1].asString() << " [id: " << playerInLobby[0].asString() << "]" << endl;
+                }
+                cout << "The game will automatically start when 2 player were connected" << endl;
+                
+                int playerNumberInGame = NetworkClient::getPlayerNumberOnServer(http, idPlayer);
+                bool goDirectlyToLaunch = false;
+                if(playerNumberInGame == 1)
+                    cout << "Press q to exit from the lobby, k to keep waiting others players" << endl;
+                else goDirectlyToLaunch = true;
+
+                char ch;
+                if(!goDirectlyToLaunch)
+                    while((ch = getchar()) != 'q' && ch != 'k'){}
+
+                if(!goDirectlyToLaunch && ch == 'q') NetworkClient::exitFromLobby(http, idPlayer);
+                else if (ch == 'k' || goDirectlyToLaunch)
+                {
+                    bool lobbyFull = NetworkClient::canRunMultiplayer(http);
+                    while (1)
+                    {
+                        sleep(2);
+                        if (lobbyFull || NetworkClient::canRunMultiplayer(http))
+                        {
+                            NetworkClient::runAsPlayer(playerNumberInGame, idPlayer, http, url, port);
+                            break;
+                        }
+                    }
                 }
             }
             else
